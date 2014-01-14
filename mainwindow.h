@@ -27,6 +27,8 @@ private slots:
 
     void on_pushButton_2_clicked();
 
+    void layoutFinished(QString timingResult);
+
 private:
     void loadGraph(string filename);
     void layoutGraph();

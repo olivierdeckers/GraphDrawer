@@ -1,5 +1,6 @@
 #include "graphcanvas.h"
 #include <QPainter>
+#include <QTimer>
 
 GraphCanvas::GraphCanvas(QWidget *parent) :
     QWidget(parent)
@@ -85,6 +86,9 @@ void GraphCanvas::paintEvent(QPaintEvent *)
             painter.drawEllipse(rectangle);
         }
     }
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    timer->start(1000);
 }
 
 void GraphCanvas::setGraph(ogdf::GraphAttributes &GA, ogdf::Graph &G)

@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "layoutworker.h"
 #include <ogdf/fileformats/GraphIO.h>
 #include <ogdf/energybased/TSALayout.h>
 #include <ogdf/energybased/DavidsonHarelLayout.h>
@@ -9,7 +10,7 @@
 #include <iostream>
 #include <QHash>
 #include <QFileDialog>
-#include <QTime>
+#include <QThread>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -53,9 +54,6 @@ void MainWindow::loadGraph(const string filename) {
 
 void MainWindow::layoutGraph()
 {
-    QTime timer;
-    timer.start();
-
     ogdf::LayoutModule *layout = 0;
 
     QString layoutName = ui->layoutSpinner->currentText();
@@ -94,12 +92,12 @@ void MainWindow::layoutGraph()
         layout = fmLayout;
     }
 
-    layout->call(*m_GA);
-
-    delete layout;
-
-    QString time;
-    ui->layoutDuration->setText(time.sprintf("%i ms", timer.elapsed()));
+    QThread *thread = new QThread;
+    LayoutWorker *worker = new LayoutWorker(layout, m_GA);
+    connect(thread, SIGNAL(started()), worker, SLOT(run()));
+    connect(worker, SIGNAL(finished(QString)), this, SLOT(layoutFinished(QString)));
+    worker->moveToThread(thread);
+    thread->start();
 }
 
 void MainWindow::on_loadGraph_clicked()
@@ -129,4 +127,8 @@ void MainWindow::on_pushButton_2_clicked()
     }
 
     ui->graphCanvas->repaint();
+}
+
+void MainWindow::layoutFinished(QString timingResult) {
+    ui->layoutDuration->setText(timingResult);
 }

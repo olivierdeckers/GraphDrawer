@@ -14,10 +14,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    graphcanvas.cpp
+    graphcanvas.cpp \
+    layoutworker.cpp
 
 HEADERS  += mainwindow.h \
-    graphcanvas.h
+    graphcanvas.h \
+    layoutworker.h
 
 FORMS    += mainwindow.ui
 
