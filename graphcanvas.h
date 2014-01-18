@@ -23,7 +23,8 @@ private:
     double minX, minY, maxX, maxY;
 
     void calculateBBox(double margin);
-    void scale(double &x, double &y);
+    void scalePoint(double &x, double &y);
+    void scaleDimension(double &w, double &h);
 
 signals:
 
