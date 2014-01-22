@@ -11,8 +11,7 @@ GraphCanvas::GraphCanvas(QWidget *parent) :
 
 GraphCanvas::~GraphCanvas()
 {
-    delete m_GA;
-    delete m_G;
+
 }
 
 void GraphCanvas::scalePoint(double &x, double &y)
