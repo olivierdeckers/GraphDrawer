@@ -15,14 +15,25 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     graphcanvas.cpp \
-    layoutworker.cpp
+    layoutworker.cpp \
+    TSA.cpp \
+    TSALayout.cpp \
+    Planarity.cpp \
+    PlanarityApprox.cpp
 
 HEADERS  += mainwindow.h \
     graphcanvas.h \
-    layoutworker.h
+    layoutworker.h \
+    TSA.h \
+    TSALayout.h \
+    Planarity.h \
+    PlanarityApprox.h
 
 FORMS    += mainwindow.ui
 
 LIBS += -L$$PWD/../../OGDF/OGDF/Win32/Debug -lOGDF
+LIBS += -L"E:/Program Files/Microsoft SDKs/Windows/v7.1/Lib" -lGdi32
 
 INCLUDEPATH += $$PWD/../../OGDF/OGDF/include
+
+DEFINES += OGDF_DEBUG

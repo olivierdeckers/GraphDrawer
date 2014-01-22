@@ -1,8 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "layoutworker.h"
-#include <ogdf/fileformats/GraphIO.h>
-#include <ogdf/energybased/TSALayout.h>
+#include <ogdf/fileformats/GmlParser.h>
+//#include <ogdf/fileformats/GraphIO.h>
+#include "TSALayout.h"
 #include <ogdf/energybased/DavidsonHarelLayout.h>
 #include <ogdf/energybased/FMMMLayout.h>
 #include <ogdf/energybased/SpringEmbedderFR.h>
@@ -39,7 +40,9 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::loadGraph(const string filename) {
-    ogdf::GraphIO::readGML(*m_GA, *m_G, filename);
+    //ogdf::GraphIO::readGML(*m_GA, *m_G, filename);
+    ogdf::GmlParser parser = ogdf::GmlParser(filename.c_str());
+    parser.read(*m_G, *m_GA);
 
     m_GA->setDirected(false);
 
@@ -71,12 +74,12 @@ void MainWindow::layoutGraph()
     }
     else if(layoutName.compare("DH") == 0) {
         ogdf::DavidsonHarelLayout *dLayout = new ogdf::DavidsonHarelLayout();
-        dLayout->setSpeed(ogdf::DavidsonHarelLayout::sppHQ);
-        dLayout->setPreferredEdgeLength(0);
+        dLayout->setSpeed(ogdf::DavidsonHarelLayout::sppFast);
+        dLayout->fixSettings(ogdf::DavidsonHarelLayout::spPlanar);
         dLayout->setPreferredEdgeLengthMultiplier(ui->edgeLengthInput->value());
-        dLayout->setAttractionWeight(ui->attractionWeight->value());
-        dLayout->setRepulsionWeight(ui->repulsionWeight->value());
-        dLayout->setPlanarityWeight(ui->planarityInput->value());
+//        dLayout->setAttractionWeight(ui->attractionWeight->value());
+//        dLayout->setRepulsionWeight(ui->repulsionWeight->value());
+//        dLayout->setPlanarityWeight(ui->planarityInput->value());
         layout = dLayout;
     }
     else if(layoutName.compare("FR") == 0) {
@@ -103,13 +106,13 @@ void MainWindow::layoutGraph()
 void MainWindow::on_loadGraph_clicked()
 {
     QString filename = QFileDialog::getOpenFileName(this, tr("Open graph"), "E:\\Users\\olivier\\Documents\\My Dropbox\\Thesis\\graphs\\", tr("*.gml"));
-    loadGraph(filename.toStdString());
+    loadGraph(filename.toStdString().c_str());
 }
 
 void MainWindow::on_graphFileInput_currentIndexChanged(const QString &index)
 {
     QString filename = graphs->value(index);
-    loadGraph(filename.toStdString());
+    loadGraph(filename.toStdString().c_str());
 }
 
 void MainWindow::on_layoutButton_clicked()
@@ -122,8 +125,8 @@ void MainWindow::on_pushButton_2_clicked()
 {
     ogdf::node v;
     forall_nodes(v, *m_G) {
-        m_GA->x(v) = rand() * 1;
-        m_GA->y(v) = rand() * 1;
+        m_GA->x(v) = rand() % 1024;
+        m_GA->y(v) = rand() % 1024;
     }
 
     ui->graphCanvas->repaint();
