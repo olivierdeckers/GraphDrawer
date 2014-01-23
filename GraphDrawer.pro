@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = GraphDrawer
 TEMPLATE = app
@@ -21,7 +21,9 @@ SOURCES += main.cpp\
     PlanarityApprox.cpp \
     TSAAttraction.cpp \
     TSARepulsion.cpp \
-    TSAPlanarity.cpp
+    TSAPlanarity.cpp \
+    qcustomplot.cpp \
+    energyplotter.cpp
 
 HEADERS  += mainwindow.h \
     graphcanvas.h \
@@ -31,7 +33,9 @@ HEADERS  += mainwindow.h \
     PlanarityApprox.h \
     TSAAttraction.h \
     TSARepulsion.h \
-    TSAPlanarity.h
+    TSAPlanarity.h \
+    qcustomplot.h \
+    energyplotter.h
 
 FORMS    += mainwindow.ui
 
@@ -40,4 +44,4 @@ LIBS += -L"E:/Program Files/Microsoft SDKs/Windows/v7.1/Lib" -lGdi32
 
 INCLUDEPATH += $$PWD/../../OGDF/OGDF/include
 
-DEFINES += OGDF_DEBUG
+DEFINES += OGDF_DEBUG GRAPHDRAWER

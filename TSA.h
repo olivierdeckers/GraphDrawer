@@ -50,6 +50,9 @@
 
 
 #include <ogdf/internal/energybased/EnergyFunction.h>
+#ifdef GRAPHDRAWER
+#include "layoutworker.h"
+#endif
 
 
 namespace ogdf {
@@ -83,7 +86,11 @@ public:
 	List<double> returnEnergyFunctionWeights();
 
 	//! Calls the TSA method for graph \a GA.
-	void call(GraphAttributes &GA);
+#ifdef GRAPHDRAWER
+    void call(GraphAttributes &AG, LayoutWorker *worker);
+#else
+    void call(GraphAttributes &AG);
+#endif
 
 private:
 	//! The default starting temperature.

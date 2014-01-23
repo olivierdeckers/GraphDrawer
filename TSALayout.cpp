@@ -64,7 +64,6 @@ struct IterationsNonPositive : InputValueInvalid { };
 
 struct TemperatureNonPositive : InputValueInvalid { };
 
-
 TSALayout::TSALayout()
 {
 	m_repulsionWeight = DEFAULT_REPULSION_WEIGHT;
@@ -77,6 +76,14 @@ TSALayout::TSALayout()
 	m_crossings = false;
 	m_quality = DEFAULT_TSA_QUALITY;
 }
+
+#ifdef GRAPHDRAWER
+void TSALayout::setWorker(LayoutWorker * worker)
+{
+    this->worker = worker;
+}
+
+#endif
 
 
 void TSALayout::fixSettings(SettingsParameter sp)
@@ -183,7 +190,11 @@ void TSALayout::call(GraphAttributes &AG)
     //dh.setStartTemperature(m_startTemperature);
 	dh.setStartTemperature(m_startTemperature);
 	dh.setQuality(m_quality);
-	dh.call(AG);
+#ifdef GRAPHDRAWER
+    dh.call(AG, worker);
+#else
+    dh.call(AG);
+#endif
 }
 
 } // namespace ogdf

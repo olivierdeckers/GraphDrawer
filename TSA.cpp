@@ -286,7 +286,11 @@ namespace ogdf {
 	//this is the main optimization routine with the loop that lowers the temperature
 	//and the disk radius geometrically until the temperature is zero. For each
 	//temperature, a certain number of new positions for a random vertex are tried
-	void TSA::call(GraphAttributes &AG)
+#ifdef GRAPHDRAWER
+    void TSA::call(GraphAttributes &AG, LayoutWorker * worker)
+#else
+    void TSA::call(GraphAttributes &AG)
+#endif
 	{
 		initParameters();
 
@@ -357,6 +361,9 @@ namespace ogdf {
 
 				m_diskRadius = computeDiskRadius(m_temperature);
 
+#ifdef GRAPHDRAWER
+                worker->energyInfo(m_energy, m_temperature);
+#endif
 				/*cout << "temperature: " << m_temperature << endl;
 				cout << "diskradius: " << m_diskRadius << endl;
 				cout << "energy: " << m_energy << endl;

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <ogdf/basic/Graph.h>
 #include <ogdf/basic/GraphAttributes.h>
+#include "energyplotter.h"
 
 namespace Ui {
 class MainWindow;
@@ -25,7 +26,7 @@ private slots:
 
     void on_layoutButton_clicked();
 
-    void on_pushButton_2_clicked();
+    void on_randomLayoutButton_clicked();
 
     void layoutFinished(QString timingResult);
 
@@ -38,6 +39,7 @@ private:
     ogdf::Graph *m_G;
     ogdf::GraphAttributes *m_GA;
     QHash<QString, QString> *graphs;
+    EnergyPlotter *plotter;
 };
 
 #endif // MAINWINDOW_H

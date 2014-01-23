@@ -12,8 +12,11 @@ public:
     explicit LayoutWorker(ogdf::LayoutModule *layout, ogdf::GraphAttributes *GA);
     //~LayoutWorker();
 
+    void energyInfo(double energy, double temperature);
+
 signals:
     void finished(QString timingResult);
+    void energyInfoAvailable(double energy, double temperature);
 
 public slots:
     void run();

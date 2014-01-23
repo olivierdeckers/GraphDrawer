@@ -30,6 +30,8 @@ MainWindow::MainWindow(QWidget *parent) :
     graphs->insert("60 nodes", "E:\\Users\\olivier\\Documents\\My Dropbox\\Thesis\\graphs\\60.gml");
     graphs->insert("K4", "E:\\Users\\olivier\\Documents\\My Dropbox\\Thesis\\graphs\\K4.gml");
     ui->graphFileInput->addItems(graphs->keys());
+
+    plotter = new EnergyPlotter(ui->plotWidget);
 }
 
 MainWindow::~MainWindow()
@@ -37,6 +39,7 @@ MainWindow::~MainWindow()
     delete ui;
     delete m_GA;
     delete m_G;
+    delete plotter;
 }
 
 void MainWindow::loadGraph(const string filename) {
@@ -77,9 +80,6 @@ void MainWindow::layoutGraph()
         dLayout->setSpeed(ogdf::DavidsonHarelLayout::sppFast);
         dLayout->fixSettings(ogdf::DavidsonHarelLayout::spPlanar);
         dLayout->setPreferredEdgeLengthMultiplier(ui->edgeLengthInput->value());
-//        dLayout->setAttractionWeight(ui->attractionWeight->value());
-//        dLayout->setRepulsionWeight(ui->repulsionWeight->value());
-//        dLayout->setPlanarityWeight(ui->planarityInput->value());
         layout = dLayout;
     }
     else if(layoutName.compare("FR") == 0) {
@@ -99,6 +99,7 @@ void MainWindow::layoutGraph()
     LayoutWorker *worker = new LayoutWorker(layout, m_GA);
     connect(thread, SIGNAL(started()), worker, SLOT(run()));
     connect(worker, SIGNAL(finished(QString)), this, SLOT(layoutFinished(QString)));
+    connect(worker, SIGNAL(energyInfoAvailable(double,double)), plotter, SLOT(energyInfoAvailable(double,double)));
     worker->moveToThread(thread);
     thread->start();
 }
@@ -121,7 +122,7 @@ void MainWindow::on_layoutButton_clicked()
     ui->graphCanvas->repaint();
 }
 
-void MainWindow::on_pushButton_2_clicked()
+void MainWindow::on_randomLayoutButton_clicked()
 {
     ogdf::node v;
     forall_nodes(v, *m_G) {

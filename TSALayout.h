@@ -45,6 +45,9 @@
 
 #include <ogdf/module/LayoutModule.h>
 #include "TSA.h"
+#ifdef GRAPHDRAWER
+#include "layoutworker.h"
+#endif
 
 
 namespace ogdf {
@@ -56,12 +59,16 @@ public:
 	enum SettingsParameter {spStandard, spRepulse, spPlanar}; //tuning of costs
 
 	//! Creates an instance of TSA layout.
-	TSALayout();
+    TSALayout();
 
 	~TSALayout(){}
 
+#ifdef GRAPHDRAWER
+    void setWorker(LayoutWorker *worker);
+#endif
+
 	//! Calls the layout algorithm for graph attributes \a GA.
-	void call(GraphAttributes &GA);
+    void call(GraphAttributes &GA);
 
 	//! Fixes the cost values to special configurations.
 	void fixSettings(SettingsParameter sp);
@@ -109,7 +116,7 @@ public:
 	int getStartTemperature() const {return m_startTemperature;}
 
 private:
-    double TSALayout::calculatePreferredEdgeLength(const GraphAttributes &G, const double multiplier) const;
+    double calculatePreferredEdgeLength(const GraphAttributes &G, const double multiplier) const;
 
 	double m_repulsionWeight;   //!< The weight for repulsion energy.
 	double m_attractionWeight;  //!< The weight for attraction energy.
@@ -120,6 +127,10 @@ private:
 	double m_prefEdgeLength;    //!< Preferred edge length (abs value), only used if > 0
 	bool m_crossings;           //!< Should crossings be computed?
 	double m_quality;
+
+#ifdef GRAPHDRAWER
+    LayoutWorker * worker;
+#endif
 };
 
 }
