@@ -109,6 +109,8 @@ public:
 	int getStartTemperature() const {return m_startTemperature;}
 
 private:
+    double TSALayout::calculatePreferredEdgeLength(const GraphAttributes &G, const double multiplier) const;
+
 	double m_repulsionWeight;   //!< The weight for repulsion energy.
 	double m_attractionWeight;  //!< The weight for attraction energy.
 	double m_nodeOverlapWeight; //!< The weight for node overlap energy.

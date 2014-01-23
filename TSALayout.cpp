@@ -39,10 +39,11 @@
  ***************************************************************/
 
 #include "TSALayout.h"
-#include <ogdf/internal/energybased/Repulsion.h>
-#include <ogdf/internal/energybased/Attraction.h>
+#include "TSARepulsion.h"
+#include "TSAAttraction.h"
 #include <ogdf/internal/energybased/Overlap.h>
 #include "PlanarityApprox.h"
+#include "TSAPlanarity.h"
 #include <ogdf/internal/energybased/PlanarityGrid.h>
 
 
@@ -140,6 +141,17 @@ void TSALayout::setStartTemperature (int w)
 	else m_startTemperature = w;
 }
 
+double TSALayout::calculatePreferredEdgeLength(const GraphAttributes &AG, const double multiplier) const {
+    double lengthSum(0.0);
+    node v;
+    forall_nodes(v,AG.constGraph()) {
+        lengthSum += AG.width(v);
+        lengthSum += AG.height(v);
+    }
+    lengthSum /= (2*AG.constGraph().numberOfNodes());
+    // lengthSum is now the average of all lengths and widths
+    return multiplier * lengthSum;
+}
 
 //this sets the parameters of the class TSA, adds the energy functions and
 //starts the optimization process
@@ -148,23 +160,18 @@ void TSALayout::call(GraphAttributes &AG)
 	// all edges straight-line
 	AG.clearAllBends();
 
+    double preferredEdgeLength =
+            (DIsGreater(m_prefEdgeLength, 0.0)) ? m_prefEdgeLength : calculatePreferredEdgeLength(AG, m_multiplier);
+
 	TSA dh;
-	Repulsion rep(AG);
-	Attraction atr(AG);
+    TSARepulsion rep(AG, preferredEdgeLength);
+    TSAAttraction atr(AG, preferredEdgeLength);
 	Overlap over(AG);
-    PlanarityApprox plan(AG);
+    //PlanarityApprox plan(AG);
+    TSAPlanarity plan(AG);
 	//PlanarityGrid plan(AG);
 	//PlanarityGrid2 plan(AG);
 	//NodeIntersection ni(AG);
-
-	// Either use a fixed value...
-	if (DIsGreater(m_prefEdgeLength, 0.0))
-	{
-		atr.setPreferredEdgelength(m_prefEdgeLength);
-	}
-	// ...or set it depending on vertex sizes
-	else atr.reinitializeEdgeLength(m_multiplier);
-
 
 	dh.addEnergyFunction(&rep,m_repulsionWeight);
 	dh.addEnergyFunction(&atr,m_attractionWeight);
@@ -173,8 +180,7 @@ void TSALayout::call(GraphAttributes &AG)
 	//dh.addEnergyFunction(&ni,2000.0);
 
 	//dh.setNumberOfIterations(m_numberOfIterations);
-	//dh.setStartTemperature(m_startTemperature);
-	const Graph& G = AG.constGraph();
+    //dh.setStartTemperature(m_startTemperature);
 	dh.setStartTemperature(m_startTemperature);
 	dh.setQuality(m_quality);
 	dh.call(AG);

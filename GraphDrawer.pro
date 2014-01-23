@@ -19,6 +19,8 @@ SOURCES += main.cpp\
     TSA.cpp \
     TSALayout.cpp \
     PlanarityApprox.cpp \
+    TSAAttraction.cpp \
+    TSARepulsion.cpp \
     TSAPlanarity.cpp
 
 HEADERS  += mainwindow.h \
@@ -27,6 +29,8 @@ HEADERS  += mainwindow.h \
     TSA.h \
     TSALayout.h \
     PlanarityApprox.h \
+    TSAAttraction.h \
+    TSARepulsion.h \
     TSAPlanarity.h
 
 FORMS    += mainwindow.ui
