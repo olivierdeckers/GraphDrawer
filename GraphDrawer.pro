@@ -18,16 +18,16 @@ SOURCES += main.cpp\
     layoutworker.cpp \
     TSA.cpp \
     TSALayout.cpp \
-    Planarity.cpp \
-    PlanarityApprox.cpp
+    PlanarityApprox.cpp \
+    TSAPlanarity.cpp
 
 HEADERS  += mainwindow.h \
     graphcanvas.h \
     layoutworker.h \
     TSA.h \
     TSALayout.h \
-    Planarity.h \
-    PlanarityApprox.h
+    PlanarityApprox.h \
+    TSAPlanarity.h
 
 FORMS    += mainwindow.ui
 

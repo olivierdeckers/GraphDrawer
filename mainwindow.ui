@@ -203,7 +203,7 @@
            <item row="2" column="1">
             <widget class="QSpinBox" name="attractionWeight">
              <property name="minimum">
-              <number>0</number>
+              <number>1</number>
              </property>
              <property name="maximum">
               <number>10000</number>

@@ -47,8 +47,8 @@
 #pragma once
 #endif
 
-#ifndef OGDF_PLANARITY_H
-#define OGDF_PLANARITY_H
+#ifndef OGDF_TSAPLANARITY_H
+#define OGDF_TSAPLANARITY_H
 
 
 #include <ogdf/internal/energybased/EnergyFunction.h>
@@ -58,12 +58,12 @@
 namespace ogdf {
 
 
-class Planarity: public EnergyFunction {
+class TSAPlanarity: public EnergyFunction {
 public:
 	//! Initializes data structures to speed up later computations.
-	Planarity(GraphAttributes &AG);
+    TSAPlanarity(GraphAttributes &AG);
 
-	~Planarity();
+    ~TSAPlanarity();
 
 	//! Computes energy of initial layout and stores it in \a m_energy.
 	void computeEnergy();

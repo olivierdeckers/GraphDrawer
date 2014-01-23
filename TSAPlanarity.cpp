@@ -40,11 +40,11 @@
  * \see  http://www.gnu.org/copyleft/gpl.html
  ***************************************************************/
 
-#include "Planarity.h"
+#include "TSAPlanarity.h"
 
 namespace ogdf {
 
-	Planarity::~Planarity()
+    TSAPlanarity::~TSAPlanarity()
 	{
 		delete m_edgeNums;
 		delete m_crossingMatrix;
@@ -52,7 +52,7 @@ namespace ogdf {
 
 
 	// intializes number of edges and allocates memory for  crossingMatrix
-	Planarity::Planarity(GraphAttributes &AG):
+    TSAPlanarity::TSAPlanarity(GraphAttributes &AG):
 	EnergyFunction("Planarity",AG)
 	{
 		m_edgeNums = OGDF_NEW EdgeArray<int>(m_G,0);
@@ -70,7 +70,7 @@ namespace ogdf {
 
 
 	// computes energy of layout, stores it and sets the crossingMatrix
-	void Planarity::computeEnergy()
+    void TSAPlanarity::computeEnergy()
 	{
 		int e_num = m_nonSelfLoops.size();
 		double energySum = 0;
@@ -94,7 +94,7 @@ namespace ogdf {
 
 
 	// tests if two edges cross
-	bool Planarity::intersect(const edge e1, const edge e2, double &energy) const
+    bool TSAPlanarity::intersect(const edge e1, const edge e2, double &energy) const
 	{
 		node v1s = e1->source();
 		node v1t = e1->target();
@@ -110,7 +110,7 @@ namespace ogdf {
 
 
 	// tests if two lines given by four points cross
-	bool Planarity::lowLevelIntersect(
+    bool TSAPlanarity::lowLevelIntersect(
 		const DPoint &e1s,
 		const DPoint &e1t,
 		const DPoint &e2s,
@@ -125,7 +125,7 @@ namespace ogdf {
 			double length = l1.length()/2.0;
 			double interDist = min(t1.distance(dummy), s1.distance(dummy));
 
-			energy = interDist / length;
+            energy = 0.5 + 0.5/length*interDist;
 		}
 		else {
 			energy = 0;
@@ -136,7 +136,7 @@ namespace ogdf {
 
 	// computes the energy if the node returned by testNode() is moved
 	// to position testPos().
-	void Planarity::compCandEnergy()
+    void TSAPlanarity::compCandEnergy()
 	{
 		node v = testNode();
 		m_candidateEnergy = energy();
@@ -157,7 +157,7 @@ namespace ogdf {
 				f = *it;
 				node s2 = f->source();
 				node t2 = f->target();
-				if(s2 != s && s2 != t && t2 != s && t2 != t) {
+                if(s2 != s && s2 != t && t2 != s && t2 != t) { //TODO: van beide edges laten afhangen hoe slecht de crossing is ipv enkel 1
 					double intersectEnergy = 0;
 					bool cross = lowLevelIntersect(p1,p2,currentPos(s2),currentPos(t2), intersectEnergy);
 					int f_num = (*m_edgeNums)[f];
@@ -179,7 +179,7 @@ namespace ogdf {
 
 
 	// this functions sets the crossingMatrix according to candidateCrossings
-	void Planarity::internalCandidateTaken() {
+    void TSAPlanarity::internalCandidateTaken() {
 		ListIterator<ChangedCrossing> it;
 		for(it = m_crossingChanges.begin(); it.valid(); ++ it) {
 			ChangedCrossing cc = *(it);
@@ -189,7 +189,7 @@ namespace ogdf {
 
 
 #ifdef OGDF_DEBUG
-void Planarity::printInternalData() const {
+void TSAPlanarity::printInternalData() const {
 	cout << "\nCrossing Matrix:";
 	int e_num = m_nonSelfLoops.size();
 	for(int i = 1; i < e_num; i++) {

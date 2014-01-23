@@ -47,8 +47,8 @@
 #pragma once
 #endif
 
-#ifndef OGDF_PLANARITY_H
-#define OGDF_PLANARITY_H
+#ifndef OGDF_PLANARITYAPPROX_H
+#define OGDF_PLANARITYAPPROX_H
 
 
 #include <ogdf/internal/energybased/EnergyFunction.h>

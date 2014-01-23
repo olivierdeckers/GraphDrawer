@@ -133,7 +133,7 @@ namespace ogdf {
 			double length = l1.length()/2.0;
 			double interDist = min(t1.distance(dummy), s1.distance(dummy));
 
-			energy = interDist / length;
+            energy = 0.5 + 0.5/length*interDist;
 		}
 		else {
 			energy = 0;
