@@ -26,10 +26,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->graphCanvas->setGraph(*m_GA, *m_G);
 
     graphs = new QHash<QString, QString>();
-    graphs->insert("20 nodes", "E:\\Users\\olivier\\Documents\\My Dropbox\\Thesis\\graphs\\20.gml");
-    graphs->insert("60 nodes", "E:\\Users\\olivier\\Documents\\My Dropbox\\Thesis\\graphs\\60.gml");
-    graphs->insert("K4", "E:\\Users\\olivier\\Documents\\My Dropbox\\Thesis\\graphs\\K4.gml");
-    ui->graphFileInput->addItems(graphs->keys());
+    graphs->insert("20 nodes", "graphs/20.gml");
+    graphs->insert("60 nodes", "graphs/60.gml");
+    graphs->insert("K4", "graphs/K4.gml");
+    graphs->insert("rose", "graphs/rose.gml");
+    graphs->insert("cube", "graphs/cube.gml");
+    graphs->insert("grid", "graphs/grid.gml");
+    graphs->insert("tree", "graphs/tree.gml");
+    QList<QString> keys = graphs->keys();
+    qSort(keys);
+    ui->graphFileInput->addItems(keys);
 
     plotter = new EnergyPlotter(ui->plotWidget);
 }
@@ -111,13 +117,15 @@ void MainWindow::layoutGraph()
 
 void MainWindow::on_loadGraph_clicked()
 {
-    QString filename = QFileDialog::getOpenFileName(this, tr("Open graph"), "E:\\Users\\olivier\\Documents\\My Dropbox\\Thesis\\graphs\\", tr("*.gml"));
-    loadGraph(filename.toStdString().c_str());
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open graph"), "graphs/", tr("*.gml"));
+    if(filename.length() > 0) {
+        loadGraph(filename.toStdString().c_str());
+    }
 }
 
 void MainWindow::on_graphFileInput_currentIndexChanged(const QString &index)
 {
-    QString filename = graphs->value(index);
+    QString filename = QCoreApplication::applicationDirPath() + "/../../GraphDrawer/" + graphs->value(index);
     loadGraph(filename.toStdString().c_str());
 }
 
