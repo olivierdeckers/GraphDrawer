@@ -177,6 +177,11 @@ namespace ogdf {
 				}
 			}
 		}
+
+        if(m_candidateEnergy < 0) {
+            OGDF_ASSERT(m_candidateEnergy > -1e-6);
+            m_candidateEnergy = 0;
+        }
 	}
 
 
