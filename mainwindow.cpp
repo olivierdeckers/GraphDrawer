@@ -55,7 +55,7 @@ void MainWindow::loadGraph(const string filename) {
         m_GA->height(v) = 10;
     }
 
-    ui->graphCanvas->repaint();
+    ui->graphCanvas->update();
 }
 
 void MainWindow::layoutGraph()
@@ -99,7 +99,8 @@ void MainWindow::layoutGraph()
     LayoutWorker *worker = new LayoutWorker(layout, m_GA);
     connect(thread, SIGNAL(started()), worker, SLOT(run()));
     connect(worker, SIGNAL(finished(QString)), this, SLOT(layoutFinished(QString)));
-    connect(worker, SIGNAL(energyInfoAvailable(double,double)), plotter, SLOT(energyInfoAvailable(double,double)));
+    connect(worker, SIGNAL(energyInfoAvailable(double,double)), plotter, SLOT(energyInfoAvailable(double,double)), Qt::QueuedConnection);
+    connect(worker, SIGNAL(energyInfoAvailable(double,double)), ui->graphCanvas, SLOT(update()), Qt::QueuedConnection);
     worker->moveToThread(thread);
     thread->start();
 }
@@ -119,7 +120,7 @@ void MainWindow::on_graphFileInput_currentIndexChanged(const QString &index)
 void MainWindow::on_layoutButton_clicked()
 {
     layoutGraph();
-    ui->graphCanvas->repaint();
+    ui->graphCanvas->update();
 }
 
 void MainWindow::on_randomLayoutButton_clicked()
@@ -130,7 +131,7 @@ void MainWindow::on_randomLayoutButton_clicked()
         m_GA->y(v) = rand() % 1024;
     }
 
-    ui->graphCanvas->repaint();
+    ui->graphCanvas->update();
 }
 
 void MainWindow::layoutFinished(QString timingResult) {

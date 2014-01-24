@@ -93,7 +93,7 @@ void GraphCanvas::paintEvent(QPaintEvent *)
     /*QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(100);*/
-    update();
+    //update();
 }
 
 void GraphCanvas::setGraph(ogdf::GraphAttributes &GA, ogdf::Graph &G)

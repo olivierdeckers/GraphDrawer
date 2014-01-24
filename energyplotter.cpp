@@ -6,9 +6,14 @@ EnergyPlotter::EnergyPlotter(QCustomPlot *plotter) : QObject()
     iteration = 0;
 
     plotter->xAxis->setLabel("Iteration");
+    plotter->xAxis->setRangeLower(0);
     plotter->yAxis->setLabel("Energy");
+    plotter->yAxis->setRangeLower(0);
     plotter->yAxis2->setLabel("Temperature");
     plotter->yAxis2->setVisible(true);
+    plotter->yAxis2->setRangeLower(0);
+    plotter->yAxis2->setRangeUpper(0);
+    plotter->yAxis2->setScaleType(QCPAxis::stLogarithmic);
     plotter->legend->setVisible(true);
 
     plotter->addGraph(plotter->xAxis, plotter->yAxis);
@@ -18,6 +23,11 @@ EnergyPlotter::EnergyPlotter(QCustomPlot *plotter) : QObject()
     plotter->graph(0)->setName("Energy");
     plotter->graph(1)->setName("Temperature");
     plotter->graph(1)->setPen(QPen(Qt::red));
+
+    plotter->setNoAntialiasingOnDrag(true);
+
+    plotter->setInteraction(QCP::iRangeZoom, true);
+    plotter->setInteraction(QCP::iRangeDrag, true);
 }
 
 void EnergyPlotter::energyInfoAvailable(double energy, double temperature)
@@ -25,7 +35,9 @@ void EnergyPlotter::energyInfoAvailable(double energy, double temperature)
     iteration++;
     plotter->graph(0)->addData(iteration, energy);
     plotter->graph(1)->addData(iteration, temperature);
-    plotter->graph(0)->rescaleAxes();
-    plotter->graph(1)->rescaleAxes(true);
-    plotter->replot();
+    plotter->yAxis->setRangeUpper(std::max(plotter->yAxis->range().upper, energy));
+    plotter->yAxis2->setRangeUpper(std::max(plotter->yAxis2->range().upper, temperature));
+    plotter->xAxis->setRangeUpper(iteration);
+    if(iteration%1000 == 0)
+        plotter->replot();
 }
