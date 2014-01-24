@@ -123,7 +123,9 @@ namespace ogdf {
 		bool intersect = l1.intersection(l2,dummy);
 		if(intersect) {
 			double length = l1.length()/2.0;
-			double interDist = min(t1.distance(dummy), s1.distance(dummy));
+            double interDist1 = min(t1.distance(dummy), s1.distance(dummy));
+            double interDist2 = min(t2.distance(dummy), s2.distance(dummy));
+            double interDist = max(interDist1, interDist2);
 
             energy = 0.5 + 0.5/length*interDist;
 		}
@@ -159,7 +161,7 @@ namespace ogdf {
 				node t2 = f->target();
                 if(s2 != s && s2 != t && t2 != s && t2 != t) { //TODO: van beide edges laten afhangen hoe slecht de crossing is ipv enkel 1
 					double intersectEnergy = 0;
-					bool cross = lowLevelIntersect(p1,p2,currentPos(s2),currentPos(t2), intersectEnergy);
+                    lowLevelIntersect(p1,p2,currentPos(s2),currentPos(t2), intersectEnergy);
 					int f_num = (*m_edgeNums)[f];
 					double priorIntersectEnergy = (*m_crossingMatrix)(min(e_num,f_num),max(e_num,f_num));
 					
