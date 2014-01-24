@@ -98,9 +98,13 @@ void MainWindow::layoutGraph()
     QThread *thread = new QThread;
     LayoutWorker *worker = new LayoutWorker(layout, m_GA);
     connect(thread, SIGNAL(started()), worker, SLOT(run()));
+
     connect(worker, SIGNAL(finished(QString)), this, SLOT(layoutFinished(QString)));
+    connect(worker, SIGNAL(finished(QString)), ui->graphCanvas, SLOT(update()), Qt::QueuedConnection);
+
     connect(worker, SIGNAL(energyInfoAvailable(double,double)), plotter, SLOT(energyInfoAvailable(double,double)), Qt::QueuedConnection);
     connect(worker, SIGNAL(energyInfoAvailable(double,double)), ui->graphCanvas, SLOT(update()), Qt::QueuedConnection);
+
     worker->moveToThread(thread);
     thread->start();
 }
