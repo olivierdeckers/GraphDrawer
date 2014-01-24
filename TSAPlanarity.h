@@ -68,7 +68,7 @@ public:
 	//! Computes energy of initial layout and stores it in \a m_energy.
 	void computeEnergy();
 
-private:
+protected:
 	struct ChangedCrossing {
 		int edgeNum1;
 		int edgeNum2;

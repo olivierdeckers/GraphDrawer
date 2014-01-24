@@ -46,100 +46,19 @@
 namespace ogdf {
 
     PlanarityApprox::~PlanarityApprox()
-	{
-		delete m_edgeNums;
-		delete m_crossingMatrix;
+    {
+        TSAPlanarity::~TSAPlanarity();
         delete m_closeNeighbours;
 	}
 
 
 	// intializes number of edges and allocates memory for  crossingMatrix
-    PlanarityApprox::PlanarityApprox(GraphAttributes &AG):
-	EnergyFunction("Planarity",AG)
+    PlanarityApprox::PlanarityApprox(GraphAttributes &GA):
+    TSAPlanarity(GA)
 	{
-		m_edgeNums = OGDF_NEW EdgeArray<int>(m_G,0);
-
-		m_G.allEdges(m_nonSelfLoops);
-		ListIterator<edge> it, itSucc;
-		for(it = m_nonSelfLoops.begin(); it.valid(); it = itSucc) {
-			itSucc = it.succ();
-			if((*it)->isSelfLoop()) m_nonSelfLoops.del(it);
-		}
-
-		int e_num = 1;
-		for(it = m_nonSelfLoops.begin(); it.valid(); ++it) (*m_edgeNums)[*it] = e_num ++;
-		e_num --;
-
-		m_crossingMatrix = new Array2D<double> (1,e_num,1,e_num);
-
         m_closeNeighbours = OGDF_NEW EdgeArray<List<edge>*>(m_G);
         calculateCloseNeighbours();
-	}
-
-
-	// computes energy of layout, stores it and sets the crossingMatrix
-    void PlanarityApprox::computeEnergy()
-	{
-		int e_num = m_nonSelfLoops.size();
-		double energySum = 0;
-		Array<edge> numEdge(1,e_num);
-		edge e;
-		ListIterator<edge> it;
-
-		for(it = m_nonSelfLoops.begin(); it.valid(); ++it)
-			numEdge[(*m_edgeNums)[*it]] = *it;
-		for(int i = 1; i < e_num; i++) {
-			e = numEdge[i];
-			for(int j = i+1; j <= e_num ; j++) {
-				double energy = 0;
-				bool cross = intersect(e,numEdge[j], energy);
-				(*m_crossingMatrix)(i,j) = cross ? energy : 0;
-				if(cross) energySum += energy;
-			}
-		}
-		m_energy = energySum;
-	}
-
-
-	// tests if two edges cross
-    bool PlanarityApprox::intersect(const edge e1, const edge e2, double &energy) const
-	{
-		node v1s = e1->source();
-		node v1t = e1->target();
-		node v2s = e2->source();
-		node v2t = e2->target();
-
-		bool cross = false;
-		DPoint inter;
-		if(v1s != v2s && v1s != v2t && v1t != v2s && v1t != v2t)
-			cross = lowLevelIntersect(currentPos(v1s),currentPos(v1t), currentPos(v2s),currentPos(v2t), energy);
-		return cross;
-	}
-
-
-	// tests if two lines given by four points cross
-    bool PlanarityApprox::lowLevelIntersect(
-		const DPoint &e1s,
-		const DPoint &e1t,
-		const DPoint &e2s,
-		const DPoint &e2t,
-		double &energy) const
-	{
-		DPoint s1(e1s),t1(e1t),s2(e2s),t2(e2t);
-		DLine l1(s1,t1), l2(s2,t2);
-		DPoint dummy;
-		bool intersect = l1.intersection(l2,dummy);
-		if(intersect) {
-			double length = l1.length()/2.0;
-			double interDist = min(t1.distance(dummy), s1.distance(dummy));
-
-            energy = 0.5 + 0.5/length*interDist;
-		}
-		else {
-			energy = 0;
-		}
-		return intersect;
-	}
+    }
 
 
 	// computes the energy if the node returned by testNode() is moved
@@ -183,16 +102,7 @@ namespace ogdf {
 				}
 			}
 		}
-	}
-
-	// this functions sets the crossingMatrix according to candidateCrossings
-    void PlanarityApprox::internalCandidateTaken() {
-		ListIterator<ChangedCrossing> it;
-		for(it = m_crossingChanges.begin(); it.valid(); ++ it) {
-			ChangedCrossing cc = *(it);
-			(*m_crossingMatrix)(cc.edgeNum1,cc.edgeNum2) = cc.crossEnergy;
-		}
-	}
+    }
 
     void PlanarityApprox::calculateCloseNeighbours() {
         List<edge> edges;
@@ -232,23 +142,8 @@ namespace ogdf {
 
 #ifdef OGDF_DEBUG
 void PlanarityApprox::printInternalData() const {
-	cout << "\nCrossing Matrix:";
-	int e_num = m_nonSelfLoops.size();
-	for(int i = 1; i < e_num; i++) {
-		cout << "\n Edge " << i << " crosses: ";
-		for(int j = i+1; j <= e_num; j++)
-			if((*m_crossingMatrix)(i,j)) cout << j << " ";
-	}
-	cout << "\nChanged crossings:";
-	if(testNode() == NULL) cout << " None.";
-	else {
-		ListConstIterator<ChangedCrossing> it;
-		for(it = m_crossingChanges.begin(); it.valid(); ++it) {
-			ChangedCrossing cc = *(it);
-			cout << " (" << cc.edgeNum1 << "," << cc.edgeNum2 << ")" << cc.crossEnergy;
-		}
-    }
-
+    TSAPlanarity::printInternalData();
+    cout << "m_closeNeighbours: " << endl;
     edge edge;
     forall_edges(edge, m_G) {
         cout << edge << ": " << (*m_closeNeighbours)[edge]->size() << endl;
