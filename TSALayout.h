@@ -58,6 +58,8 @@ public:
 	//! Easy way to set fixed costs
 	enum SettingsParameter {spStandard, spRepulse, spPlanar}; //tuning of costs
 
+    enum AccelerationStructure {grid, approximation, none};
+
 	//! Creates an instance of TSA layout.
     TSALayout();
 
@@ -66,6 +68,8 @@ public:
 #ifdef GRAPHDRAWER
     void setWorker(LayoutWorker *worker);
 #endif
+
+    void setAccelerationStructureParameter(AccelerationStructure as);
 
 	//! Calls the layout algorithm for graph attributes \a GA.
     void call(GraphAttributes &GA);
@@ -127,6 +131,7 @@ private:
 	double m_prefEdgeLength;    //!< Preferred edge length (abs value), only used if > 0
 	bool m_crossings;           //!< Should crossings be computed?
 	double m_quality;
+    AccelerationStructure m_accStruct;
 
 #ifdef GRAPHDRAWER
     LayoutWorker * worker;

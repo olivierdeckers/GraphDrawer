@@ -58,7 +58,7 @@
 namespace ogdf {
 
 
-class PlanarityApprox: TSAPlanarity {
+class PlanarityApprox: public TSAPlanarity {
 public:
 	//! Initializes data structures to speed up later computations.
     PlanarityApprox(GraphAttributes &GA);

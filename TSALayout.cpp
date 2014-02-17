@@ -75,6 +75,7 @@ TSALayout::TSALayout()
 	m_prefEdgeLength = 0.0;
 	m_crossings = false;
 	m_quality = DEFAULT_TSA_QUALITY;
+    m_accStruct = AccelerationStructure::none;
 }
 
 #ifdef GRAPHDRAWER
@@ -107,6 +108,11 @@ void TSALayout::fixSettings(SettingsParameter sp)
 	setNodeOverlapWeight(o);
 	setPlanarityWeight(p);
 }//fixSettings
+
+void TSALayout::setAccelerationStructureParameter(AccelerationStructure as)
+{
+    this->m_accStruct = as;
+}
 
 void TSALayout::setQuality(double quality)
 {
@@ -173,18 +179,26 @@ void TSALayout::call(GraphAttributes &AG)
 	TSA dh;
     TSARepulsion rep(AG, preferredEdgeLength);
     TSAAttraction atr(AG, preferredEdgeLength);
-	Overlap over(AG);
-    //PlanarityApprox plan(AG);
-    TSAPlanarity plan(AG);
-	//PlanarityGrid plan(AG);
-	//PlanarityGrid2 plan(AG);
+    Overlap over(AG);
 	//NodeIntersection ni(AG);
 
 	dh.addEnergyFunction(&rep,m_repulsionWeight);
 	dh.addEnergyFunction(&atr,m_attractionWeight);
 	dh.addEnergyFunction(&over,m_nodeOverlapWeight);
-	if (m_crossings) dh.addEnergyFunction(&plan,m_planarityWeight);
-	//dh.addEnergyFunction(&ni,2000.0);
+
+    if (m_crossings) {
+        switch(m_accStruct) {
+        case AccelerationStructure::none:
+            dh.addEnergyFunction(&TSAPlanarity(AG), m_planarityWeight);
+            break;
+        case AccelerationStructure::approximation:
+            dh.addEnergyFunction(&PlanarityApprox(AG), m_planarityWeight);
+            break;
+        case AccelerationStructure::grid:
+            dh.addEnergyFunction(&PlanarityGrid(AG), m_planarityWeight);
+            break;
+        }
+    }
 
 	//dh.setNumberOfIterations(m_numberOfIterations);
     //dh.setStartTemperature(m_startTemperature);
