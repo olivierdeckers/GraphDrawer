@@ -41,3 +41,10 @@ void EnergyPlotter::energyInfoAvailable(double energy, double temperature)
     if(iteration%1000 == 0)
         plotter->replot();
 }
+
+void EnergyPlotter::clear()
+{
+    iteration = 0;
+    plotter->graph(0)->clearData();
+    plotter->graph(1)->clearData();
+}

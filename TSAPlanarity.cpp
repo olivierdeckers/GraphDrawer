@@ -159,7 +159,7 @@ namespace ogdf {
 				f = *it;
 				node s2 = f->source();
 				node t2 = f->target();
-                if(s2 != s && s2 != t && t2 != s && t2 != t) { //TODO: van beide edges laten afhangen hoe slecht de crossing is ipv enkel 1
+                if(s2 != s && s2 != t && t2 != s && t2 != t) {
 					double intersectEnergy = 0;
                     lowLevelIntersect(p1,p2,currentPos(s2),currentPos(t2), intersectEnergy);
 					int f_num = (*m_edgeNums)[f];

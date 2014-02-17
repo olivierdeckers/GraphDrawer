@@ -133,6 +133,8 @@ void MainWindow::on_layoutButton_clicked()
 {
     layoutGraph();
     ui->graphCanvas->update();
+
+    plotter->clear();
 }
 
 void MainWindow::on_randomLayoutButton_clicked()
@@ -144,6 +146,8 @@ void MainWindow::on_randomLayoutButton_clicked()
     }
 
     ui->graphCanvas->update();
+
+    plotter->clear();
 }
 
 void MainWindow::layoutFinished(QString timingResult) {

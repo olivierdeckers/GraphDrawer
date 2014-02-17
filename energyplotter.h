@@ -10,6 +10,8 @@ class EnergyPlotter : public QObject
 public:
     EnergyPlotter(QCustomPlot * plot);
 
+    void clear();
+
 signals:
 
 public slots:
