@@ -134,7 +134,7 @@ private:
     AccelerationStructure m_accStruct;
 
 #ifdef GRAPHDRAWER
-    LayoutWorker * worker;
+    LayoutWorker *worker;
 #endif
 };
 

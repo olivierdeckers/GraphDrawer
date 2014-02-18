@@ -79,6 +79,18 @@ void MainWindow::layoutGraph()
         tLayout->setRepulsionWeight(ui->repulsionWeight->value());
         tLayout->setPlanarityWeight(ui->planarityInput->value());
         tLayout->setQuality(ui->qualityInput->value());
+        switch(ui->accStructBox->currentIndex()) {
+        case 0:
+            tLayout->setAccelerationStructureParameter(ogdf::TSALayout::AccelerationStructure::none);
+            break;
+        case 1:
+            tLayout->setAccelerationStructureParameter(ogdf::TSALayout::AccelerationStructure::grid);
+            break;
+        case 2:
+            tLayout->setAccelerationStructureParameter(ogdf::TSALayout::AccelerationStructure::approximation);
+            break;
+        }
+
         layout = tLayout;
     }
     else if(layoutName.compare("DH") == 0) {

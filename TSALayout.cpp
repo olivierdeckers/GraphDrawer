@@ -76,6 +76,7 @@ TSALayout::TSALayout()
 	m_crossings = false;
 	m_quality = DEFAULT_TSA_QUALITY;
     m_accStruct = AccelerationStructure::none;
+    worker = NULL;
 }
 
 #ifdef GRAPHDRAWER
@@ -180,6 +181,7 @@ void TSALayout::call(GraphAttributes &AG)
     TSARepulsion rep(AG, preferredEdgeLength);
     TSAAttraction atr(AG, preferredEdgeLength);
     Overlap over(AG);
+    EnergyFunction *planarity;
 	//NodeIntersection ni(AG);
 
 	dh.addEnergyFunction(&rep,m_repulsionWeight);
@@ -189,15 +191,19 @@ void TSALayout::call(GraphAttributes &AG)
     if (m_crossings) {
         switch(m_accStruct) {
         case AccelerationStructure::none:
-            dh.addEnergyFunction(&TSAPlanarity(AG), m_planarityWeight);
+            planarity = new TSAPlanarity(AG);
+            cout << "regular" << endl;
             break;
         case AccelerationStructure::approximation:
-            dh.addEnergyFunction(&PlanarityApprox(AG), m_planarityWeight);
+            planarity = new PlanarityApprox(AG);
+            cout << "approx" << endl;
             break;
         case AccelerationStructure::grid:
-            dh.addEnergyFunction(&PlanarityGrid(AG), m_planarityWeight);
+            planarity = new PlanarityGrid(AG);
+            cout << "grid" << endl;
             break;
         }
+        dh.addEnergyFunction(planarity, m_planarityWeight);
     }
 
 	//dh.setNumberOfIterations(m_numberOfIterations);
@@ -209,6 +215,8 @@ void TSALayout::call(GraphAttributes &AG)
 #else
     dh.call(AG);
 #endif
+
+    delete planarity;
 }
 
 } // namespace ogdf

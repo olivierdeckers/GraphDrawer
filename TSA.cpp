@@ -362,7 +362,8 @@ namespace ogdf {
 				m_diskRadius = computeDiskRadius(m_temperature);
 
 #ifdef GRAPHDRAWER
-                worker->energyInfo(m_energy, m_temperature);
+                if(worker != NULL)
+                    worker->energyInfo(m_energy, m_temperature);
 #endif
 				/*cout << "temperature: " << m_temperature << endl;
 				cout << "diskradius: " << m_diskRadius << endl;

@@ -27,7 +27,7 @@
    <property name="minimumSize">
     <size>
      <width>250</width>
-     <height>372</height>
+     <height>398</height>
     </size>
    </property>
    <property name="floating">
@@ -145,21 +145,21 @@
           </property>
          </widget>
         </item>
-        <item row="7" column="0">
+        <item row="8" column="0">
          <widget class="QLabel" name="label_8">
           <property name="text">
            <string>Layout duration</string>
           </property>
          </widget>
         </item>
-        <item row="7" column="1">
+        <item row="8" column="1">
          <widget class="QLabel" name="layoutDuration">
           <property name="text">
            <string/>
           </property>
          </widget>
         </item>
-        <item row="6" column="0" colspan="2">
+        <item row="7" column="0" colspan="2">
          <widget class="QGroupBox" name="groupBox">
           <property name="title">
            <string>Quality function weights</string>
@@ -231,6 +231,32 @@
         </item>
         <item row="0" column="1">
          <widget class="QComboBox" name="graphFileInput"/>
+        </item>
+        <item row="6" column="1">
+         <widget class="QComboBox" name="accStructBox">
+          <item>
+           <property name="text">
+            <string>None</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Grid</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Approximation</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>Acceleration</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
