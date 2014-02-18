@@ -47,7 +47,6 @@ namespace ogdf {
 
     PlanarityApprox::~PlanarityApprox()
     {
-        TSAPlanarity::~TSAPlanarity();
         delete m_closeNeighbours;
 	}
 
@@ -135,8 +134,6 @@ namespace ogdf {
                 }
             }
         }
-
-        printInternalData();
     }
 
 
