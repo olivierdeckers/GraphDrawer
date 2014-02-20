@@ -23,7 +23,9 @@ SOURCES += main.cpp\
     TSARepulsion.cpp \
     TSAPlanarity.cpp \
     qcustomplot.cpp \
-    energyplotter.cpp
+    energyplotter.cpp \
+    accstructcomparison.cpp \
+    tsaplanaritygrid.cpp
 
 HEADERS  += mainwindow.h \
     graphcanvas.h \
@@ -35,9 +37,12 @@ HEADERS  += mainwindow.h \
     TSARepulsion.h \
     TSAPlanarity.h \
     qcustomplot.h \
-    energyplotter.h
+    energyplotter.h \
+    accstructcomparison.h \
+    tsaplanaritygrid.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    accstructcomparison.ui
 
 LIBS += -L$$PWD/../../OGDF/OGDF/Win32/Debug -lOGDF
 LIBS += -L"E:/Program Files/Microsoft SDKs/Windows/v7.1/Lib" -lGdi32

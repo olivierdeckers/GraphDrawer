@@ -44,7 +44,7 @@
 #include <ogdf/internal/energybased/Overlap.h>
 #include "PlanarityApprox.h"
 #include "TSAPlanarity.h"
-#include <ogdf/internal/energybased/PlanarityGrid.h>
+#include "tsaplanaritygrid.h"
 
 
 #define DEFAULT_REPULSION_WEIGHT 1e6
@@ -199,7 +199,7 @@ void TSALayout::call(GraphAttributes &AG)
             cout << "approx" << endl;
             break;
         case AccelerationStructure::grid:
-            planarity = new PlanarityGrid(AG);
+            planarity = new TSAPlanarityGrid(AG);
             cout << "grid" << endl;
             break;
         }
