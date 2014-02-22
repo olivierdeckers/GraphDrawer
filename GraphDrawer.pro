@@ -44,9 +44,16 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     accstructcomparison.ui
 
+win32 {
 LIBS += -L$$PWD/../../OGDF/OGDF/Win32/Debug -lOGDF
 LIBS += -L"E:/Program Files/Microsoft SDKs/Windows/v7.1/Lib" -lGdi32
 
 INCLUDEPATH += $$PWD/../../OGDF/OGDF/include
+}
+unix {
+LIBS += -L$$PWD/../OGDF/_debug -lOGDF
+INCLUDEPATH += $$PWD/../OGDF
 
+QMAKE_CXXFLAGS += -std=c++11
+}
 DEFINES += OGDF_DEBUG GRAPHDRAWER

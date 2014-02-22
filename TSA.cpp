@@ -110,9 +110,9 @@ namespace ogdf {
 		m_energy += F->energy();
 	}
 
-    List<string> TSA::returnEnergyFunctionNames()
+    List<String> TSA::returnEnergyFunctionNames()
 	{
-        List<string> names;
+        List<String> names;
 		ListIterator<EnergyFunction*> it;
 		for(it = m_energyFunctions.begin(); it.valid(); it = it.succ())
 			names.pushBack((*it)->getName());

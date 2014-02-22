@@ -31,7 +31,7 @@ private slots:
     void layoutFinished(QString timingResult);
 
 private:
-    void loadGraph(const string filename);
+    void loadGraph(const std::string filename);
     void layoutGraph();
     void drawGraph();
 

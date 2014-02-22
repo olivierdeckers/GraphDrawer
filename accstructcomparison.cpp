@@ -20,12 +20,12 @@ AccStructComparison::~AccStructComparison()
     delete ui;
 }
 
-void loadGraph(const string filename, ogdf::Graph &G, ogdf::GraphAttributes &GA)
+void loadGraph(const std::string filename, ogdf::Graph &G, ogdf::GraphAttributes &GA)
 {
     ogdf::GmlParser parser = ogdf::GmlParser(filename.c_str());
     parser.read(G, GA);
 
-    GA.setDirected(false);
+    //GA.setDirected(false);
 
     ogdf::node v;
     forall_nodes(v, G) {

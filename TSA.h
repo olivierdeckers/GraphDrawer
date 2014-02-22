@@ -80,7 +80,7 @@ public:
 	void addEnergyFunction(EnergyFunction *F, double weight);
 
 	//! Returns a list of the names of the energy functions.
-    List<string> returnEnergyFunctionNames();
+    List<String> returnEnergyFunctionNames();
 
 	//! Returns a list of the weights of the energy functions.
 	List<double> returnEnergyFunctionWeights();

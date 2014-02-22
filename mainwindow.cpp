@@ -48,12 +48,12 @@ MainWindow::~MainWindow()
     delete plotter;
 }
 
-void MainWindow::loadGraph(const string filename) {
+void MainWindow::loadGraph(const std::string filename) {
     //ogdf::GraphIO::readGML(*m_GA, *m_G, filename);
     ogdf::GmlParser parser = ogdf::GmlParser(filename.c_str());
     parser.read(*m_G, *m_GA);
 
-    m_GA->setDirected(false);
+    //m_GA->setDirected(false);
 
     ogdf::node v;
     forall_nodes(v, *m_G) {
@@ -137,7 +137,7 @@ void MainWindow::on_loadGraph_clicked()
 
 void MainWindow::on_graphFileInput_currentIndexChanged(const QString &index)
 {
-    QString filename = QCoreApplication::applicationDirPath() + "/../../GraphDrawer/" + graphs->value(index);
+    QString filename = QCoreApplication::applicationDirPath() + "/../GraphDrawer/" + graphs->value(index);
     loadGraph(filename.toStdString().c_str());
 }
 
