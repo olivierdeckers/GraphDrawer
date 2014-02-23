@@ -54,8 +54,7 @@
 
 
 #include <ogdf/internal/energybased/EnergyFunction.h>
-#include <ogdf/internal/energybased/UniformGrid.h>
-
+#include "tsauniformgrid.h"
 
 namespace ogdf {
 
@@ -76,8 +75,8 @@ private:
         virtual void printInternalData() const;
 #endif
     const GraphAttributes &m_layout; //The current layout
-    UniformGrid *m_currentGrid; //stores grid for current layout
-    UniformGrid *m_candidateGrid; //stores grid for candidate layout
+    TSAUniformGrid *m_currentGrid; //stores grid for current layout
+    TSAUniformGrid *m_candidateGrid; //stores grid for candidate layout
 }; // class Planarity
 
 

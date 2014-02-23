@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     qcustomplot.cpp \
     energyplotter.cpp \
     accstructcomparison.cpp \
-    tsaplanaritygrid.cpp
+    tsaplanaritygrid.cpp \
+    tsauniformgrid.cpp
 
 HEADERS  += mainwindow.h \
     graphcanvas.h \
@@ -39,7 +40,8 @@ HEADERS  += mainwindow.h \
     qcustomplot.h \
     energyplotter.h \
     accstructcomparison.h \
-    tsaplanaritygrid.h
+    tsaplanaritygrid.h \
+    tsauniformgrid.h
 
 FORMS    += mainwindow.ui \
     accstructcomparison.ui
