@@ -122,12 +122,12 @@ namespace ogdf {
 		DPoint dummy;
 		bool intersect = l1.intersection(l2,dummy);
 		if(intersect) {
-			double length = l1.length()/2.0;
+            /*double length = l1.length()/2.0;
             double interDist1 = min(t1.distance(dummy), s1.distance(dummy));
             double interDist2 = min(t2.distance(dummy), s2.distance(dummy));
-            double interDist = max(interDist1, interDist2);
+            double interDist = max(interDist1, interDist2);*/
 
-            energy = 0.5 + 0.5/length*interDist;
+            energy = 1;//energy = 0.5 + 0.5/length*interDist;
 		}
 		else {
 			energy = 0;
