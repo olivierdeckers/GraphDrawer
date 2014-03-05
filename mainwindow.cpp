@@ -53,8 +53,6 @@ void MainWindow::loadGraph(const std::string filename) {
     ogdf::GmlParser parser = ogdf::GmlParser(filename.c_str());
     parser.read(*m_G, *m_GA);
 
-    //m_GA->setDirected(false);
-
     ogdf::node v;
     forall_nodes(v, *m_G) {
         m_GA->width(v) = 10;

@@ -61,7 +61,7 @@ namespace ogdf {
     TSAPlanarityGrid::TSAPlanarityGrid(GraphAttributes &AG):
     EnergyFunction("PlanarityGrid",AG), m_layout(AG)
     {
-        m_currentGrid = new UniformGrid(AG);
+        m_currentGrid = new TSAUniformGrid(AG);
         m_candidateGrid = NULL;
     }
 
@@ -82,9 +82,9 @@ namespace ogdf {
         node v = testNode();
         const DPoint& newPos = testPos();
         if(m_currentGrid->newGridNecessary(v,newPos))
-            m_candidateGrid = new UniformGrid(m_layout,v,newPos);
+            m_candidateGrid = new TSAUniformGrid(m_layout,v,newPos);
         else
-            m_candidateGrid = new UniformGrid(*m_currentGrid,v,newPos);
+            m_candidateGrid = new TSAUniformGrid(*m_currentGrid,v,newPos);
         cout << *m_candidateGrid;
 
         m_candidateEnergy = m_candidateGrid->numberOfCrossings();
