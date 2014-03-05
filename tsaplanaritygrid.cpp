@@ -79,24 +79,32 @@ namespace ogdf {
     {
         if(m_candidateGrid != NULL)
             delete m_candidateGrid;
+
         node v = testNode();
         const DPoint& newPos = testPos();
-        if(m_currentGrid->newGridNecessary(v,newPos))
+
+        /*if(m_currentGrid->newGridNecessary(v,newPos))
             m_candidateGrid = new TSAUniformGrid(m_layout,v,newPos);
         else
-            m_candidateGrid = new TSAUniformGrid(*m_currentGrid,v,newPos);
-        cout << *m_candidateGrid;
+            m_candidateGrid = new TSAUniformGrid(*m_currentGrid,v,newPos);*/
 
-        m_candidateEnergy = m_candidateGrid->numberOfCrossings();
+        m_candidateEnergy = m_currentGrid->calculateCandidateEnergy(v, newPos);
 
     }
 
 
     // this functions sets the currentGrid to the candidateGrid
     void TSAPlanarityGrid::internalCandidateTaken() {
-        delete m_currentGrid;
-        m_currentGrid = m_candidateGrid;
-        m_candidateGrid = NULL;
+        //delete m_currentGrid;
+        node v = testNode();
+        const DPoint& newPos = testPos();
+        if(m_currentGrid->newGridNecessary(v, newPos)) {
+            m_currentGrid = new TSAUniformGrid(m_layout, v, newPos);
+        }
+        else {
+            m_currentGrid->updateNodePosition(v, newPos);
+        }
+        //m_candidateGrid = NULL;
     }
 
 

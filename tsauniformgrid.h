@@ -85,6 +85,9 @@ namespace ogdf {
             return resize;
         }
 
+        void updateNodePosition(const node v, const DPoint& newPos);
+        int calculateCandidateEnergy(const node v, const DPoint& newPos) const;
+
     private:
         void ModifiedBresenham(const IPoint &, const IPoint &, SList<IPoint> &) const;
         //This takes two DPoints with and computes a list of points
@@ -128,7 +131,7 @@ namespace ogdf {
             const edge,
             const node,
             const DPoint&,
-            const IPoint&);
+            const IPoint&) const;
 
 #ifdef OGDF_DEBUG
         void markCells(SList<IPoint> &, Array2D<bool> &) const;
