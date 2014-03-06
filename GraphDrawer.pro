@@ -12,39 +12,39 @@ TARGET = GraphDrawer
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    graphcanvas.cpp \
-    layoutworker.cpp \
-    TSA.cpp \
-    TSALayout.cpp \
-    PlanarityApprox.cpp \
-    TSAAttraction.cpp \
-    TSARepulsion.cpp \
-    TSAPlanarity.cpp \
-    qcustomplot.cpp \
-    energyplotter.cpp \
-    accstructcomparison.cpp \
-    tsaplanaritygrid.cpp \
-    tsauniformgrid.cpp
+SOURCES += gui/main.cpp\
+        gui/mainwindow.cpp \
+    gui/graphcanvas.cpp \
+    gui/layoutworker.cpp \
+    gui/qcustomplot.cpp \
+    gui/energyplotter.cpp \
+    ogdf/TSA.cpp \
+    ogdf/TSALayout.cpp \
+    ogdf/PlanarityApprox.cpp \
+    ogdf/TSAAttraction.cpp \
+    ogdf/TSARepulsion.cpp \
+    ogdf/TSAPlanarity.cpp \
+    gui/accstructcomparison.cpp \
+    ogdf/tsaplanaritygrid.cpp \
+    ogdf/tsauniformgrid.cpp
 
-HEADERS  += mainwindow.h \
-    graphcanvas.h \
-    layoutworker.h \
-    TSA.h \
-    TSALayout.h \
-    PlanarityApprox.h \
-    TSAAttraction.h \
-    TSARepulsion.h \
-    TSAPlanarity.h \
-    qcustomplot.h \
-    energyplotter.h \
-    accstructcomparison.h \
-    tsaplanaritygrid.h \
-    tsauniformgrid.h
+HEADERS  += gui/mainwindow.h \
+    gui/graphcanvas.h \
+    gui/layoutworker.h \
+    ogdf/TSA.h \
+    ogdf/TSALayout.h \
+    ogdf/PlanarityApprox.h \
+    ogdf/TSAAttraction.h \
+    ogdf/TSARepulsion.h \
+    ogdf/TSAPlanarity.h \
+    gui/qcustomplot.h \
+    gui/energyplotter.h \
+    gui/accstructcomparison.h \
+    ogdf/tsaplanaritygrid.h \
+    ogdf/tsauniformgrid.h
 
-FORMS    += mainwindow.ui \
-    accstructcomparison.ui
+FORMS    += gui/mainwindow.ui \
+    gui/accstructcomparison.ui
 
 win32 {
 LIBS += -L$$PWD/../../OGDF/OGDF/Win32/Debug -lOGDF

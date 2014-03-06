@@ -44,9 +44,9 @@
 
 
 #include <ogdf/module/LayoutModule.h>
-#include "TSA.h"
+#include "ogdf/TSA.h"
 #ifdef GRAPHDRAWER
-#include "layoutworker.h"
+#include "gui/layoutworker.h"
 #endif
 
 

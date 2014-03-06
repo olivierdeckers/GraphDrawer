@@ -2,9 +2,9 @@
 #define ACCSTRUCTCOMPARISON_H
 
 #include <QWidget>
-#include "TSAPlanarity.h"
-#include "TSAAttraction.h"
-#include "TSARepulsion.h"
+#include "ogdf/TSAPlanarity.h"
+#include "ogdf/TSAAttraction.h"
+#include "ogdf/TSARepulsion.h"
 
 namespace Ui {
 class AccStructComparison;

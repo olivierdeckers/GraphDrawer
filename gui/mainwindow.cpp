@@ -1,9 +1,9 @@
-#include "mainwindow.h"
+#include "gui/mainwindow.h"
 #include "ui_mainwindow.h"
-#include "layoutworker.h"
+#include "gui/layoutworker.h"
 #include <ogdf/fileformats/GmlParser.h>
 //#include <ogdf/fileformats/GraphIO.h>
-#include "TSALayout.h"
+#include "ogdf/TSALayout.h"
 #include <ogdf/energybased/DavidsonHarelLayout.h>
 #include <ogdf/energybased/FMMMLayout.h>
 #include <ogdf/energybased/SpringEmbedderFR.h>

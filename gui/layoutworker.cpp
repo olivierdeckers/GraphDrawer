@@ -1,5 +1,5 @@
-#include "layoutworker.h"
-#include "TSALayout.h"
+#include "gui/layoutworker.h"
+#include "ogdf/TSALayout.h"
 #include <QTime>
 
 LayoutWorker::LayoutWorker(ogdf::LayoutModule *layout, ogdf::GraphAttributes *GA)
