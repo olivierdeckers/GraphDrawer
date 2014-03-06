@@ -135,7 +135,7 @@ void MainWindow::on_loadGraph_clicked()
 
 void MainWindow::on_graphFileInput_currentIndexChanged(const QString &index)
 {
-    QString filename = QCoreApplication::applicationDirPath() + "/../GraphDrawer/" + graphs->value(index);
+    QString filename = QCoreApplication::applicationDirPath() + "/../GraphDrawer/GraphDrawer/" + graphs->value(index);
     loadGraph(filename.toStdString().c_str());
 }
 
