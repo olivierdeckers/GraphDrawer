@@ -76,7 +76,9 @@ TSALayout::TSALayout()
 	m_crossings = false;
 	m_quality = DEFAULT_TSA_QUALITY;
     m_accStruct = AccelerationStructure::none;
+#ifdef GRAPHDRAWER
     worker = NULL;
+#endif
 }
 
 #ifdef GRAPHDRAWER

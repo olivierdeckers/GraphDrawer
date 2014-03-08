@@ -25,7 +25,7 @@ protected:
            ogdf:: GraphAttributes::edgeGraphics );
 
         ogdf::node a = m_G->newNode();
-        ogdf::node b = m_G->newNode();
+        b = m_G->newNode();
         ogdf::node c = m_G->newNode();
         ogdf::node d = m_G->newNode();
         m_G->newEdge(a, b);
@@ -47,6 +47,7 @@ protected:
 
     ogdf::Graph* m_G;
     ogdf::GraphAttributes* m_GA;
+    ogdf::node b;
 
     void setNodePos(ogdf::node n, double x, double y) {
         m_GA->x(n) = x;
@@ -54,18 +55,41 @@ protected:
     }
 };
 
-TEST_F(TSAUniformGridTest, InitialGridCorrectness) {
-    ogdf::TSAUniformGrid grid = ogdf::TSAUniformGrid(*m_GA);
+TEST_F(TSAUniformGridTest, GridCorrectness) {
+    ogdf::TSAUniformGrid* grid = new ogdf::TSAUniformGrid(*m_GA);
+    EXPECT_EQ(1, grid->numberOfCrossings()) << "Grid correctly detects one crossing";
 
-    ogdf::TSAPlanarity *planarity = new ogdf::TSAPlanarity(*m_GA);
-    planarity->computeEnergy();
+    const ogdf::DPoint newPos = ogdf::DPoint(0.1, 0.7);
+    EXPECT_EQ(0, grid->calculateCandidateEnergy(b, newPos)) << "Grid calculates correct candidate energy";
 
-    ogdf::UniformGrid originalGrid = ogdf::UniformGrid(*m_GA);
-    EXPECT_EQ(1, planarity->energy()) << "Planarity correctly detects one crossing";
-    EXPECT_EQ(1, grid.numberOfCrossings()) << "Grid correctly detects one crossing";
-    EXPECT_EQ(1, originalGrid.numberOfCrossings()) << "Original Grid correctly detects one crossing";
+    EXPECT_EQ(1, grid->numberOfCrossings()) << "Grid maintains energy while candidate is not accepted";
 
+    EXPECT_EQ(false, grid->newGridNecessary(b, newPos)) << "No new grid is necessary";
+
+    grid->updateNodePosition(b, newPos);
+    EXPECT_EQ(0, grid->numberOfCrossings()) << "Grid correctly updates energy when candidate is accepted";
+
+    delete grid;
 }
+
+TEST_F(TSAUniformGridTest, GridCorrectnessNewGridNecessary) {
+    ogdf::TSAUniformGrid* grid = new ogdf::TSAUniformGrid(*m_GA);
+    EXPECT_EQ(1, grid->numberOfCrossings()) << "Grid correctly detects one crossing";
+
+    const ogdf::DPoint newPos = ogdf::DPoint(2,1.5);
+    EXPECT_EQ(0, grid->calculateCandidateEnergy(b, newPos)) << "Grid calculates correct candidate energy";
+
+    EXPECT_EQ(true, grid->newGridNecessary(b, newPos)) << "A new grid is necessary";
+
+    EXPECT_EQ(1, grid->numberOfCrossings()) << "Grid maintains energy while candidate is not accepted";
+
+    delete grid;
+    grid = new ogdf::TSAUniformGrid(*m_GA, b, newPos);
+    EXPECT_EQ(0, grid->numberOfCrossings()) << "Grid correctly updates energy when candidate is accepted";
+
+    delete grid;
+}
+
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
