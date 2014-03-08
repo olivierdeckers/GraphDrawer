@@ -2,11 +2,14 @@
 
 #include "../GraphDrawer/ogdf/tsauniformgrid.h"
 #include "../GraphDrawer/ogdf/TSAPlanarity.h"
+#include "../GraphDrawer/ogdf/tsaplanaritygrid.h"
 
 #include <ogdf/basic/Graph.h>
 #include <ogdf/basic/GraphAttributes.h>
 #include <ogdf/fileformats/GmlParser.h>
 #include <ogdf/internal/energybased/UniformGrid.h>
+
+#define randf() (static_cast <float> (rand()) / static_cast <float> (RAND_MAX))
 
 class TSAUniformGridTest : public ::testing::Test {
 protected:
@@ -89,6 +92,107 @@ TEST_F(TSAUniformGridTest, GridCorrectnessNewGridNecessary) {
 
     delete grid;
 }
+
+TEST_F(TSAUniformGridTest, GridCorrectnessPlanarityGrid) {
+    unsigned int seed = std::time(NULL);
+    srand(seed);
+    cout << "seed: " << seed << endl;
+
+    ogdf::Graph* G = new ogdf::Graph();
+    ogdf::GraphAttributes* GA = new ogdf::GraphAttributes(*G, ogdf::GraphAttributes::nodeGraphics | ogdf::GraphAttributes::edgeGraphics);
+
+    ogdf::node nodes [20];
+    for(int i=0; i<20; i++) {
+        nodes[i] = G->newNode();
+        GA->x(nodes[i]) = randf();
+        GA->y(nodes[i]) = randf();
+    }
+    int nbEdges = rand() % 50 + 50;
+    for(int i=0; i<nbEdges; i++) {
+        int a = rand() % 20;
+        int b = rand() % 20;
+        G->newEdge(nodes[a], nodes[b]);
+    }
+
+    ogdf::TSAPlanarityGrid* grid = new ogdf::TSAPlanarityGrid(*GA);
+    ogdf::TSAPlanarity* planarity = new ogdf::TSAPlanarity(*GA);
+    grid->computeEnergy();
+    planarity->computeEnergy();
+
+    EXPECT_EQ(planarity->energy(), grid->energy()) << "Grid computes same initial energy";
+
+    for(int i=0; i<10; i++) {
+        int n = rand() % 20;
+        ogdf::DPoint newPos = ogdf::DPoint(randf(), randf());
+
+        double planCandEnergy = planarity->computeCandidateEnergy(nodes[n], newPos);
+        double gridCandEnergy = grid->computeCandidateEnergy(nodes[n], newPos);
+        EXPECT_EQ(planCandEnergy, gridCandEnergy) << "Grid computes same candidate energy";
+
+        if(randf() < 0.5) {
+            planarity->candidateTaken();
+            grid->candidateTaken();
+        }
+
+        EXPECT_EQ(planarity->energy(), grid->energy());
+    }
+
+    delete grid;
+    delete planarity;
+    delete G;
+    delete GA;
+}
+
+TEST_F(TSAUniformGridTest, GridCorrectnessRandomGraph) {
+    unsigned int seed = std::time(NULL);
+    srand(seed);
+    cout << "seed: " << seed << endl;
+
+    ogdf::Graph* G = new ogdf::Graph();
+    ogdf::GraphAttributes* GA = new ogdf::GraphAttributes(*G, ogdf::GraphAttributes::nodeGraphics | ogdf::GraphAttributes::edgeGraphics);
+
+    ogdf::node nodes [20];
+    for(int i=0; i<20; i++) {
+        nodes[i] = G->newNode();
+        GA->x(nodes[i]) = randf();
+        GA->y(nodes[i]) = randf();
+    }
+    int nbEdges = rand() % 50 + 50;
+    for(int i=0; i<nbEdges; i++) {
+        int a = rand() % 20;
+        int b = rand() % 20;
+        G->newEdge(nodes[a], nodes[b]);
+    }
+
+    ogdf::TSAUniformGrid* grid = new ogdf::TSAUniformGrid(*GA);
+    ogdf::TSAPlanarity* planarity = new ogdf::TSAPlanarity(*GA);
+    planarity->computeEnergy();
+
+    EXPECT_EQ(planarity->energy(), grid->numberOfCrossings()) << "Grid computes same initial energy";
+
+    for(int i=0; i<10; i++) {
+        int n = rand() % 20;
+        ogdf::DPoint newPos = ogdf::DPoint(randf(), randf());
+
+        double planCandEnergy = planarity->computeCandidateEnergy(nodes[n], newPos);
+        double gridCandEnergy = grid->calculateCandidateEnergy(nodes[n], newPos);
+        EXPECT_EQ(planCandEnergy, gridCandEnergy) << "Grid computes same candidate energy";
+
+        if(randf() < 0.5) {
+            planarity->candidateTaken();
+            grid->updateNodePosition(nodes[n], newPos);
+        }
+
+        EXPECT_EQ(planarity->energy(), grid->numberOfCrossings());
+    }
+
+    delete grid;
+    delete planarity;
+    delete G;
+    delete GA;
+}
+
+
 
 
 int main(int argc, char **argv) {

@@ -77,7 +77,8 @@ private:
 #endif
     const GraphAttributes &m_layout; //The current layout
     TSAUniformGrid *m_currentGrid; //stores grid for current layout
-    TSAUniformGrid *m_candidateGrid; //stores grid for candidate layout
+    node candidateNode;
+    DPoint candidatePos;
 }; // class Planarity
 
 
