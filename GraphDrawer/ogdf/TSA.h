@@ -51,7 +51,7 @@
 
 #include <ogdf/internal/energybased/EnergyFunction.h>
 #ifdef GRAPHDRAWER
-#include "layoutworker.h"
+#include "gui/layoutworker.h"
 #endif
 
 

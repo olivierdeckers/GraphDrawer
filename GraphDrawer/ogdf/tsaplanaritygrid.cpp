@@ -52,17 +52,17 @@ namespace ogdf {
     TSAPlanarityGrid::~TSAPlanarityGrid()
     {
         delete m_currentGrid;
-        if(m_candidateGrid != NULL)
-            delete m_candidateGrid;
     }
 
 
     // intialize m_currentLayout and m_candidateLayout
     TSAPlanarityGrid::TSAPlanarityGrid(GraphAttributes &AG):
-    EnergyFunction("PlanarityGrid",AG), m_layout(AG)
+    EnergyFunction("PlanarityGrid",AG),
+      m_layout(AG),
+      candidateNode(NULL),
+      candidatePos()
     {
         m_currentGrid = new TSAUniformGrid(AG);
-        m_candidateGrid = NULL;
     }
 
 
@@ -77,36 +77,28 @@ namespace ogdf {
     // to position testPos().
     void TSAPlanarityGrid::compCandEnergy()
     {
-        if(m_candidateGrid != NULL)
-            delete m_candidateGrid;
-        node v = testNode();
-        const DPoint& newPos = testPos();
-        if(m_currentGrid->newGridNecessary(v,newPos))
-            m_candidateGrid = new TSAUniformGrid(m_layout,v,newPos);
-        else
-            m_candidateGrid = new TSAUniformGrid(*m_currentGrid,v,newPos);
-        cout << *m_candidateGrid;
+        candidateNode = testNode();
+        candidatePos = testPos();
 
-        m_candidateEnergy = m_candidateGrid->numberOfCrossings();
-
+        m_candidateEnergy = m_currentGrid->calculateCandidateEnergy(candidateNode, candidatePos);
     }
 
 
     // this functions sets the currentGrid to the candidateGrid
     void TSAPlanarityGrid::internalCandidateTaken() {
-        delete m_currentGrid;
-        m_currentGrid = m_candidateGrid;
-        m_candidateGrid = NULL;
+        if(m_currentGrid->newGridNecessary(candidateNode, candidatePos)) {
+            m_currentGrid = new TSAUniformGrid(m_layout, candidateNode, candidatePos);
+        }
+        else {
+            m_currentGrid->updateNodePosition(candidateNode, candidatePos);
+        }
+        m_energy = m_currentGrid->numberOfCrossings();
     }
 
 
 #ifdef OGDF_DEBUG
 void TSAPlanarityGrid::printInternalData() const {
     cout << "\nCurrent grid: " << *m_currentGrid;
-    cout << "\nCandidate grid: ";
-    if(m_candidateGrid != NULL)
-        cout << *m_candidateGrid;
-    else cout << "empty.";
 }
 #endif
 

@@ -1,9 +1,9 @@
-#include "mainwindow.h"
+#include "gui/mainwindow.h"
 #include "ui_mainwindow.h"
-#include "layoutworker.h"
+#include "gui/layoutworker.h"
 #include <ogdf/fileformats/GmlParser.h>
 //#include <ogdf/fileformats/GraphIO.h>
-#include "TSALayout.h"
+#include "ogdf/TSALayout.h"
 #include <ogdf/energybased/DavidsonHarelLayout.h>
 #include <ogdf/energybased/FMMMLayout.h>
 #include <ogdf/energybased/SpringEmbedderFR.h>
@@ -52,8 +52,6 @@ void MainWindow::loadGraph(const std::string filename) {
     //ogdf::GraphIO::readGML(*m_GA, *m_G, filename);
     ogdf::GmlParser parser = ogdf::GmlParser(filename.c_str());
     parser.read(*m_G, *m_GA);
-
-    //m_GA->setDirected(false);
 
     ogdf::node v;
     forall_nodes(v, *m_G) {
@@ -137,7 +135,7 @@ void MainWindow::on_loadGraph_clicked()
 
 void MainWindow::on_graphFileInput_currentIndexChanged(const QString &index)
 {
-    QString filename = QCoreApplication::applicationDirPath() + "/../GraphDrawer/" + graphs->value(index);
+    QString filename = QCoreApplication::applicationDirPath() + "/../GraphDrawer/GraphDrawer/" + graphs->value(index);
     loadGraph(filename.toStdString().c_str());
 }
 

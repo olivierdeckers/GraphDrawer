@@ -1,6 +1,6 @@
 #include "accstructcomparison.h"
 #include "ui_accstructcomparison.h"
-#include "TSALayout.h"
+#include "ogdf/TSALayout.h"
 #include <ogdf/basic/Graph.h>
 #include <ogdf/fileformats/GmlParser.h>
 

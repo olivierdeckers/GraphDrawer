@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1200</width>
-    <height>720</height>
+    <height>773</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,8 +26,8 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>250</width>
-     <height>398</height>
+     <width>328</width>
+     <height>472</height>
     </size>
    </property>
    <property name="floating">
@@ -311,13 +311,13 @@
   <customwidget>
    <class>GraphCanvas</class>
    <extends>QWidget</extends>
-   <header>graphcanvas.h</header>
+   <header>gui/graphcanvas.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>QCustomPlot</class>
    <extends>QWidget</extends>
-   <header>qcustomplot.h</header>
+   <header>gui/qcustomplot.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -54,7 +54,12 @@
 
 
 #include <ogdf/internal/energybased/EnergyFunction.h>
+<<<<<<< HEAD:tsaplanaritygrid.h
 #include "tsauniformgrid.h"
+=======
+#include <ogdf/tsauniformgrid.h>
+
+>>>>>>> 1340221a73b418c1f779b2e2f1c9891658b92d0a:GraphDrawer/ogdf/tsaplanaritygrid.h
 
 namespace ogdf {
 
@@ -76,7 +81,12 @@ private:
 #endif
     const GraphAttributes &m_layout; //The current layout
     TSAUniformGrid *m_currentGrid; //stores grid for current layout
+<<<<<<< HEAD:tsaplanaritygrid.h
     TSAUniformGrid *m_candidateGrid; //stores grid for candidate layout
+=======
+    node candidateNode;
+    DPoint candidatePos;
+>>>>>>> 1340221a73b418c1f779b2e2f1c9891658b92d0a:GraphDrawer/ogdf/tsaplanaritygrid.h
 }; // class Planarity
 
 
