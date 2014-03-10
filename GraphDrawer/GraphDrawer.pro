@@ -26,7 +26,8 @@ SOURCES += gui/main.cpp\
     ogdf/TSAPlanarity.cpp \
     gui/accstructcomparison.cpp \
     ogdf/tsaplanaritygrid.cpp \
-    ogdf/tsauniformgrid.cpp
+    ogdf/tsauniformgrid.cpp \
+    ogdf/tsaangularresolution.cpp
 
 HEADERS  += gui/mainwindow.h \
     gui/graphcanvas.h \
@@ -41,7 +42,8 @@ HEADERS  += gui/mainwindow.h \
     gui/energyplotter.h \
     gui/accstructcomparison.h \
     ogdf/tsaplanaritygrid.h \
-    ogdf/tsauniformgrid.h
+    ogdf/tsauniformgrid.h \
+    ogdf/tsaangularresolution.h
 
 FORMS    += gui/mainwindow.ui \
     gui/accstructcomparison.ui
