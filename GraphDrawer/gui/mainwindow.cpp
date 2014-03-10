@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     graphs->insert("cube", "graphs/cube.gml");
     graphs->insert("grid", "graphs/grid.gml");
     graphs->insert("tree", "graphs/tree.gml");
+    graphs->insert("fb", "graphs/fb.gml");
     QList<QString> keys = graphs->keys();
     qSort(keys);
     ui->graphFileInput->addItems(keys);
