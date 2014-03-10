@@ -114,29 +114,39 @@ TEST_F(TSAUniformGridTest, GridCorrectnessPlanarityGrid) {
         G->newEdge(nodes[a], nodes[b]);
     }
 
-    ogdf::TSAPlanarityGrid* grid = new ogdf::TSAPlanarityGrid(*GA);
+    ogdf::TSAUniformGrid* grid = new ogdf::TSAUniformGrid(*GA);
+    ogdf::TSAPlanarityGrid* planarityGrid = new ogdf::TSAPlanarityGrid(*GA, &grid);
     ogdf::TSAPlanarity* planarity = new ogdf::TSAPlanarity(*GA);
-    grid->computeEnergy();
+    planarityGrid->computeEnergy();
     planarity->computeEnergy();
 
-    EXPECT_EQ(planarity->energy(), grid->energy()) << "Grid computes same initial energy";
+    EXPECT_EQ(planarity->energy(), planarityGrid->energy()) << "Grid computes same initial energy";
 
     for(int i=0; i<10; i++) {
         int n = rand() % 20;
         ogdf::DPoint newPos = ogdf::DPoint(randf(), randf());
 
         double planCandEnergy = planarity->computeCandidateEnergy(nodes[n], newPos);
-        double gridCandEnergy = grid->computeCandidateEnergy(nodes[n], newPos);
+        double gridCandEnergy = planarityGrid->computeCandidateEnergy(nodes[n], newPos);
         EXPECT_EQ(planCandEnergy, gridCandEnergy) << "Grid computes same candidate energy";
 
         if(randf() < 0.5) {
             planarity->candidateTaken();
-            grid->candidateTaken();
+            planarityGrid->candidateTaken();
+
+            if(grid->newGridNecessary(nodes[n], newPos)) {
+                delete grid;
+                grid = new ogdf::TSAUniformGrid(*GA, nodes[n], newPos);
+            }
+            else {
+                grid->updateNodePosition(nodes[n], newPos);
+            }
         }
 
-        EXPECT_EQ(planarity->energy(), grid->energy());
+        EXPECT_EQ(planarity->energy(), planarityGrid->energy());
     }
 
+    delete planarityGrid;
     delete grid;
     delete planarity;
     delete G;
