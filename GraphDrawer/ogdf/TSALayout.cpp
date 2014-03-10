@@ -190,6 +190,8 @@ void TSALayout::call(GraphAttributes &AG)
 	dh.addEnergyFunction(&atr,m_attractionWeight);
 	dh.addEnergyFunction(&over,m_nodeOverlapWeight);
 
+    TSAUniformGrid *grid = new TSAUniformGrid(AG);
+
     if (m_crossings) {
         switch(m_accStruct) {
         case AccelerationStructure::none:
@@ -201,7 +203,7 @@ void TSALayout::call(GraphAttributes &AG)
             cout << "approx" << endl;
             break;
         case AccelerationStructure::grid:
-            planarity = new TSAPlanarityGrid(AG);
+            planarity = new TSAPlanarityGrid(AG, &grid);
             cout << "grid" << endl;
             break;
         }
@@ -213,12 +215,13 @@ void TSALayout::call(GraphAttributes &AG)
 	dh.setStartTemperature(m_startTemperature);
 	dh.setQuality(m_quality);
 #ifdef GRAPHDRAWER
-    dh.call(AG, worker);
+    dh.call(AG, &grid, worker);
 #else
-    dh.call(AG);
+    dh.call(AG, &grid);
 #endif
 
     delete planarity;
+    delete grid;
 }
 
 } // namespace ogdf

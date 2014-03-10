@@ -62,7 +62,7 @@ namespace ogdf {
 class TSAPlanarityGrid: public EnergyFunction {
 public:
     //initializes data structures to speed up later computations
-    TSAPlanarityGrid(GraphAttributes &AG);
+    TSAPlanarityGrid(GraphAttributes &AG, TSAUniformGrid **grid);
     ~TSAPlanarityGrid();
     // computes energy of initial layout and stores it in m_energy
     void computeEnergy();
@@ -75,9 +75,7 @@ private:
         virtual void printInternalData() const;
 #endif
     const GraphAttributes &m_layout; //The current layout
-    TSAUniformGrid *m_currentGrid; //stores grid for current layout
-    node candidateNode;
-    DPoint candidatePos;
+    TSAUniformGrid **m_currentGrid; //stores grid for current layout
 }; // class Planarity
 
 

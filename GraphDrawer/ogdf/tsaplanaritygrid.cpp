@@ -51,54 +51,32 @@ namespace ogdf {
 
     TSAPlanarityGrid::~TSAPlanarityGrid()
     {
-        delete m_currentGrid;
     }
 
-
-    // intialize m_currentLayout and m_candidateLayout
-    TSAPlanarityGrid::TSAPlanarityGrid(GraphAttributes &AG):
+    TSAPlanarityGrid::TSAPlanarityGrid(GraphAttributes &AG, TSAUniformGrid **grid):
     EnergyFunction("PlanarityGrid",AG),
-      m_layout(AG),
-      candidateNode(NULL),
-      candidatePos()
+      m_layout(AG)
     {
-        m_currentGrid = new TSAUniformGrid(AG);
+        m_currentGrid = grid;
     }
 
-
-    // computes energy of layout, stores it and sets the crossingMatrix
     void TSAPlanarityGrid::computeEnergy()
     {
-        m_energy = m_currentGrid->numberOfCrossings();
+        m_energy = (*m_currentGrid)->numberOfCrossings();
     }
 
-
-    // computes the energy if the node returned by testNode() is moved
-    // to position testPos().
     void TSAPlanarityGrid::compCandEnergy()
     {
-        candidateNode = testNode();
-        candidatePos = testPos();
-
-        m_candidateEnergy = m_currentGrid->calculateCandidateEnergy(candidateNode, candidatePos);
+        m_candidateEnergy = (*m_currentGrid)->calculateCandidateEnergy(testNode(), testPos());
     }
 
-
-    // this functions sets the currentGrid to the candidateGrid
     void TSAPlanarityGrid::internalCandidateTaken() {
-        if(m_currentGrid->newGridNecessary(candidateNode, candidatePos)) {
-            m_currentGrid = new TSAUniformGrid(m_layout, candidateNode, candidatePos);
-        }
-        else {
-            m_currentGrid->updateNodePosition(candidateNode, candidatePos);
-        }
-        m_energy = m_currentGrid->numberOfCrossings();
     }
 
 
 #ifdef OGDF_DEBUG
 void TSAPlanarityGrid::printInternalData() const {
-    cout << "\nCurrent grid: " << *m_currentGrid;
+    cout << "\nCurrent grid: " << **m_currentGrid;
 }
 #endif
 

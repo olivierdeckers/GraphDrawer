@@ -75,7 +75,7 @@ namespace ogdf {
 		m_energy = 0.0;
 		//m_numberOfIterations = 0; //is set in member function
 
-		unsigned int t = (unsigned) time(NULL);
+        unsigned int t = (unsigned) time(NULL);
 		cout << "seed: " << t << endl;
 		srand(t);
 		//srand((unsigned int) 1385114936);
@@ -287,12 +287,14 @@ namespace ogdf {
 	//and the disk radius geometrically until the temperature is zero. For each
 	//temperature, a certain number of new positions for a random vertex are tried
 #ifdef GRAPHDRAWER
-    void TSA::call(GraphAttributes &AG, LayoutWorker * worker)
+    void TSA::call(GraphAttributes &AG, TSAUniformGrid **gridp, LayoutWorker * worker)
 #else
-    void TSA::call(GraphAttributes &AG)
+    void TSA::call(GraphAttributes &AG, TSAUniformGrid **gridp)
 #endif
 	{
 		initParameters();
+
+        TSAUniformGrid* grid = *gridp;
 
 		time_t start = time(NULL);
 
@@ -344,6 +346,14 @@ namespace ogdf {
 					AG.x(v) = newPos.m_x;
 					AG.y(v) = newPos.m_y;
                     m_energy = newEnergy;
+
+                    if(grid->newGridNecessary(v, newPos)) {
+                        delete grid;
+                        *(gridp) = new TSAUniformGrid(AG, v, newPos);
+                    }
+                    else {
+                        grid->updateNodePosition(v, newPos);
+                    }
 
                     if(costDiff < -1e-4)
                         iterationsSinceLastChange = 0;
