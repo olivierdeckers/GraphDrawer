@@ -22,7 +22,16 @@ protected:
     //! Changes internal data if candidate is taken.
     void internalCandidateTaken();
 
-    NodeArray<double> *m_nodeResolutions;
+    NodeArray<double> m_nodeEnergy;
+
+    struct NodeEnergyChange {
+        node v;
+        double angRes;
+    };
+    List<NodeEnergyChange> m_candidateNodeEnergy;
+
+private:
+    double computeAngularResolution(node v, node movedNode, DPoint& newPos) const;
 };
 
 }
