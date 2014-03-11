@@ -14,6 +14,10 @@ public:
     //! Computes energy of initial layout and stores it in \a m_energy.
     void computeEnergy();
 
+#ifdef OGDF_DEBUG
+    void printInternalData() const;
+#endif
+
 protected:
 
     //! Computes energy of candidate.

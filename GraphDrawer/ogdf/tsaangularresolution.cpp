@@ -90,4 +90,10 @@ void TSAAngularResolution::internalCandidateTaken()
     }
 }
 
+#ifdef OGDF_DEBUG
+void TSAAngularResolution::printInternalData() const
+{
+}
+#endif
+
 }

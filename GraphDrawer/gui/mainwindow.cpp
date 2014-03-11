@@ -77,6 +77,7 @@ void MainWindow::layoutGraph()
         tLayout->setAttractionWeight(ui->attractionWeight->value());
         tLayout->setRepulsionWeight(ui->repulsionWeight->value());
         tLayout->setPlanarityWeight(ui->planarityInput->value());
+        tLayout->setAngularResolutionWeight(ui->angResWeight->value());
         tLayout->setQuality(ui->qualityInput->value());
         switch(ui->accStructBox->currentIndex()) {
         case 0:

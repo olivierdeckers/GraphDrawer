@@ -45,11 +45,13 @@
 #include "PlanarityApprox.h"
 #include "TSAPlanarity.h"
 #include "tsaplanaritygrid.h"
+#include "tsaangularresolution.h"
 
 
 #define DEFAULT_REPULSION_WEIGHT 1e6
 #define DEFAULT_ATTRACTION_WEIGHT 1e2
 #define DEFAULT_OVERLAP_WEIGHT 100
+#define DEFAULT_ANGRES_WEIGHT 100
 #define DEFAULT_PLANARITY_WEIGHT 500
 #define DEFAULT_START_TEMPERATURE 500
 #define DEFAULT_TSA_QUALITY 10
@@ -70,6 +72,7 @@ TSALayout::TSALayout()
 	m_attractionWeight = DEFAULT_ATTRACTION_WEIGHT;
 	m_nodeOverlapWeight = DEFAULT_OVERLAP_WEIGHT;
 	m_planarityWeight = DEFAULT_PLANARITY_WEIGHT;
+    m_angResWeight = DEFAULT_ANGRES_WEIGHT;
 	m_startTemperature = DEFAULT_START_TEMPERATURE;
 	m_multiplier = 2.0;
 	m_prefEdgeLength = 0.0;
@@ -110,6 +113,7 @@ void TSALayout::fixSettings(SettingsParameter sp)
 	setAttractionWeight(a);
 	setNodeOverlapWeight(o);
 	setPlanarityWeight(p);
+    setAngularResolutionWeight(DEFAULT_ANGRES_WEIGHT);
 }//fixSettings
 
 void TSALayout::setAccelerationStructureParameter(AccelerationStructure as)
@@ -140,7 +144,13 @@ void TSALayout::setAttractionWeight(double w)
 void TSALayout::setNodeOverlapWeight(double w)
 {
 	if(w < 0) throw WeightLessThanZeroException();
-	else m_nodeOverlapWeight = w;
+    else m_nodeOverlapWeight = w;
+}
+
+void TSALayout::setAngularResolutionWeight(double w)
+{
+    if(w<0) throw WeightLessThanZeroException();
+    else m_angResWeight = w;
 }
 
 
@@ -179,16 +189,18 @@ void TSALayout::call(GraphAttributes &AG)
     double preferredEdgeLength =
             (DIsGreater(m_prefEdgeLength, 0.0)) ? m_prefEdgeLength : calculatePreferredEdgeLength(AG, m_multiplier);
 
-	TSA dh;
+    TSA tsa;
     TSARepulsion rep(AG, preferredEdgeLength);
     TSAAttraction atr(AG, preferredEdgeLength);
     Overlap over(AG);
     EnergyFunction *planarity;
+    TSAAngularResolution angRes(AG);
 	//NodeIntersection ni(AG);
 
-	dh.addEnergyFunction(&rep,m_repulsionWeight);
-	dh.addEnergyFunction(&atr,m_attractionWeight);
-	dh.addEnergyFunction(&over,m_nodeOverlapWeight);
+    tsa.addEnergyFunction(&rep,m_repulsionWeight);
+    tsa.addEnergyFunction(&atr,m_attractionWeight);
+    tsa.addEnergyFunction(&over,m_nodeOverlapWeight);
+    tsa.addEnergyFunction(&angRes,m_angResWeight);
 
     TSAUniformGrid *grid = new TSAUniformGrid(AG);
 
@@ -207,15 +219,15 @@ void TSALayout::call(GraphAttributes &AG)
             cout << "grid" << endl;
             break;
         }
-        dh.addEnergyFunction(planarity, m_planarityWeight);
+        tsa.addEnergyFunction(planarity, m_planarityWeight);
     }
 
 	//dh.setNumberOfIterations(m_numberOfIterations);
     //dh.setStartTemperature(m_startTemperature);
-	dh.setStartTemperature(m_startTemperature);
-	dh.setQuality(m_quality);
+    tsa.setStartTemperature(m_startTemperature);
+    tsa.setQuality(m_quality);
 #ifdef GRAPHDRAWER
-    dh.call(AG, &grid, worker);
+    tsa.call(AG, &grid, worker);
 #else
     dh.call(AG, &grid);
 #endif

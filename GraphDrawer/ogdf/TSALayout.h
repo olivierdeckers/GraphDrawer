@@ -107,6 +107,10 @@ public:
 	//! Returns the weight for the energy function \a NodeOverlap.
 	double getNodeOverlapWeight() const {return m_nodeOverlapWeight;}
 
+    void setAngularResolutionWeight(double);
+
+    double getAngularResolutionWeight() const {return m_angResWeight;}
+
 	//! Sets the weight for the energy function \a Planarity.
 	void setPlanarityWeight(double);
 
@@ -125,6 +129,7 @@ private:
 	double m_repulsionWeight;   //!< The weight for repulsion energy.
 	double m_attractionWeight;  //!< The weight for attraction energy.
 	double m_nodeOverlapWeight; //!< The weight for node overlap energy.
+    double m_angResWeight;
 	double m_planarityWeight;   //!< The weight for edge crossing energy.
 	int m_startTemperature;     //!< The temperature at the start of the optimization.
 	double m_multiplier;        //!< edge length multiplier
