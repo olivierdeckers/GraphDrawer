@@ -13,7 +13,8 @@ SOURCES += tsauniformgridtest.cpp \
     ../GraphDrawer/ogdf/TSALayout.cpp \
     ../GraphDrawer/ogdf/TSAAttraction.cpp \
     ../GraphDrawer/ogdf/TSA.cpp \
-    ../GraphDrawer/ogdf/PlanarityApprox.cpp
+    ../GraphDrawer/ogdf/PlanarityApprox.cpp \
+    ../GraphDrawer/ogdf/tsaangularresolution.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 unix {
@@ -32,4 +33,5 @@ HEADERS += \
     ../GraphDrawer/ogdf/TSALayout.h \
     ../GraphDrawer/ogdf/TSAAttraction.h \
     ../GraphDrawer/ogdf/TSA.h \
-    ../GraphDrawer/ogdf/PlanarityApprox.h
+    ../GraphDrawer/ogdf/PlanarityApprox.h \
+    ../GraphDrawer/ogdf/tsaangularresolution.h

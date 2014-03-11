@@ -3,6 +3,7 @@
 #include "../GraphDrawer/ogdf/tsauniformgrid.h"
 #include "../GraphDrawer/ogdf/TSAPlanarity.h"
 #include "../GraphDrawer/ogdf/tsaplanaritygrid.h"
+#include "../GraphDrawer/ogdf/tsaangularresolution.h"
 
 #include <ogdf/basic/Graph.h>
 #include <ogdf/basic/GraphAttributes.h>
@@ -39,7 +40,7 @@ protected:
         m_G->newEdge(a, c);
 
         setNodePos(a, 0, 0);
-        setNodePos(b, 0.7, 0.1);
+        setNodePos(b, 1, 0);
         setNodePos(c, 1, 1);
         setNodePos(d, 0, 1);
     }
@@ -200,6 +201,45 @@ TEST_F(TSAUniformGridTest, GridCorrectnessRandomGraph) {
     delete planarity;
     delete G;
     delete GA;
+}
+
+TEST_F(TSAUniformGridTest, AngRestInitialCorrectness) {
+    ogdf::TSAAngularResolution *angres = new ogdf::TSAAngularResolution(*m_GA);
+    angres->computeEnergy();
+    double idealAngle = 2*M_PI/3.0;
+    EXPECT_DOUBLE_EQ((idealAngle-M_PI/4.0)/idealAngle * 4, angres->energy());
+
+    m_GA->x(b) = 0.5;
+    m_GA->y(b) = 0.5;
+
+    angres->computeEnergy();
+    EXPECT_DOUBLE_EQ((idealAngle-M_PI/4.0)/idealAngle + (idealAngle-M_PI/2.0)/idealAngle + 2, angres->energy());
+}
+
+TEST_F(TSAUniformGridTest, AngRestCandidateEnergyCorrectness) {
+    ogdf::TSAAngularResolution *angres = new ogdf::TSAAngularResolution(*m_GA);
+    angres->computeEnergy();
+    double idealAngle = 2*M_PI/3.0;
+
+    ogdf::DPoint newPos = ogdf::DPoint(0.5, 0.5);
+    double candEnergy = angres->computeCandidateEnergy(b, newPos);
+    EXPECT_DOUBLE_EQ((idealAngle-M_PI/4.0)/idealAngle + (idealAngle-M_PI/2.0)/idealAngle + 2, candEnergy) << "Candidate energy is correct";
+
+    EXPECT_DOUBLE_EQ((idealAngle-M_PI/4.0)/idealAngle * 4, angres->energy()) << "Energy should not be updated yet";
+
+    m_GA->x(b) = 0.5;
+    m_GA->y(b) = 0.5;
+    angres->candidateTaken();
+    EXPECT_DOUBLE_EQ((idealAngle-M_PI/4.0)/idealAngle + (idealAngle-M_PI/2.0)/idealAngle + 2, angres->energy()) << "Updated energy is correct";
+
+    newPos = ogdf::DPoint(1, 0);
+    candEnergy = angres->computeCandidateEnergy(b, newPos);
+    EXPECT_DOUBLE_EQ((idealAngle-M_PI/4.0)/idealAngle * 4, candEnergy) << "Candidate energy is correct (2)";
+
+    m_GA->x(b) = 1;
+    m_GA->y(b) = 0;
+    angres->candidateTaken();
+    EXPECT_DOUBLE_EQ((idealAngle-M_PI/4.0)/idealAngle * 4, angres->energy()) << "Updated energy is correct (2)";
 }
 
 

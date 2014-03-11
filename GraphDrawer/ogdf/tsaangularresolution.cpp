@@ -65,6 +65,7 @@ double TSAAngularResolution::computeAngularResolution(node v, node movedNode, DP
         node opposite = e->opposite(v);
         DPoint pos2 = (opposite == movedNode) ? newPos : currentPos(opposite);
         angles[i] = atan2(pos2.m_y - pos.m_y, pos2.m_x - pos.m_x);
+        i++;
     }
 
     std::sort(angles, angles + degree);
@@ -75,7 +76,9 @@ double TSAAngularResolution::computeAngularResolution(node v, node movedNode, DP
     }
     minAngle = min(minAngle, angles[0] + 2*M_PI - angles[degree-1]);
 
-    return 2*M_PI / (double) degree - minAngle;
+    double idealAngle = 2*M_PI / (double) degree;
+
+    return (idealAngle - minAngle) / idealAngle;
 }
 
 void TSAAngularResolution::internalCandidateTaken()
