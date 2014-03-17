@@ -70,9 +70,9 @@ void AccStructComparison::performLayouting()
     m_attraction = new ogdf::TSAAttraction(GA, 50);
     m_planarity = new ogdf::TSAPlanarity(GA);
 
-    for ( int accInt = ogdf::TSALayout::AccelerationStructure::grid; accInt <= ogdf::TSALayout::AccelerationStructure::none; accInt++ )
+    for ( int accInt = ogdf::TSALayout::AccelerationStructureType::grid; accInt <= ogdf::TSALayout::AccelerationStructureType::none; accInt++ )
     {
-       ogdf::TSALayout::AccelerationStructure accStruct = static_cast<ogdf::TSALayout::AccelerationStructure>(accInt);
+       ogdf::TSALayout::AccelerationStructureType accStruct = static_cast<ogdf::TSALayout::AccelerationStructureType>(accInt);
         layout.setAccelerationStructureParameter(accStruct);
         double meanRepulsionEnergy = 0;
         double meanAttractionEnergy = 0;

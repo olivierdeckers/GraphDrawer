@@ -52,6 +52,7 @@
 #ifndef OGDF_TSAUNIFORMGRID_H
 #define OGDF_TSAUNIFORMGRID_H
 
+#include<ogdf/AccelerationStructure.h>
 #include<ogdf/basic/geometry.h>
 #include<ogdf/basic/SList.h>
 #include<ogdf/basic/Array2D.h>
@@ -63,7 +64,7 @@
 namespace ogdf {
 
 
-    class TSAUniformGrid{
+    class TSAUniformGrid : public AccelerationStructure{
     public:
         TSAUniformGrid(const GraphAttributes &);
         //This constructor takes an GraphAttributes and computes a grid for the given
@@ -72,21 +73,10 @@ namespace ogdf {
         //This constructor gets the current layout, the node that may be
         //moved and its new position and computes the data for the
         //modified layout.
-        TSAUniformGrid(const TSAUniformGrid &, const node, const DPoint&);
-        //Takes a UniformGrid and produces a new grid for the updated layout
-        int numberOfCrossings() const {return m_crossNum;}
-        bool newGridNecessary(const node v, const DPoint& p) {
-            bool resize = false;
-            IntersectionRectangle ir;
-            computeGridGeometry(v,p,ir);
-            double l = max(ir.width(),ir.height());
-            l/=m_edgeMultiplier*(m_graph).numberOfEdges();
-            if(l <= m_CellSize/2.0 || l >= m_CellSize*2.0) resize = true;
-            return resize;
-        }
 
-        void updateNodePosition(const node v, const DPoint& newPos);
-        int calculateCandidateEnergy(const node v, const DPoint& newPos) const;
+        virtual void updateNodePosition(const node v, const DPoint& newPos);
+        virtual void possibleCrossingEdges(const DPoint& sPos, const DPoint& tPos, List<edge>& result) const;
+        virtual void nearNodes(const DPoint &pos, const double maxDist, List<node>& nodes) const;
 
     private:
         void ModifiedBresenham(const IPoint &, const IPoint &, SList<IPoint> &) const;
@@ -117,21 +107,20 @@ namespace ogdf {
             if(d < INT_MIN || d > INT_MAX) return false;
             return true;
         }
-        //computes the crossings of the given edges for the given layout
-        //with the node moved to the position given as argument
-        void computeCrossings(const List<edge>&, const node, const DPoint&);
+
+        bool newGridNecessary(const node v, const DPoint& p) {
+            bool resize = false;
+            IntersectionRectangle ir;
+            computeGridGeometry(v,p,ir);
+            double l = max(ir.width(),ir.height());
+            l/=m_edgeMultiplier*(m_graph).numberOfEdges();
+            if(l <= m_CellSize/2.0 || l >= m_CellSize*2.0) resize = true;
+            return resize;
+        }
+
         //computes the geometry of the grid if the node is moved
         //to the position given by the point
         void computeGridGeometry(const node, const DPoint&, IntersectionRectangle&) const;
-        //Checks if two edges cross inside the given cell.
-        //The node and the point are the moved node and its
-        //new position
-        bool crossingTest(
-            const edge,
-            const edge,
-            const node,
-            const DPoint&,
-            const IPoint&) const;
 
 #ifdef OGDF_DEBUG
         void markCells(SList<IPoint> &, Array2D<bool> &) const;
@@ -141,7 +130,6 @@ namespace ogdf {
         void checkBresenham(IPoint, IPoint) const;
         bool intervalIntersect(double,double,double,double) const;
         friend ostream& operator<<(ostream &,const TSAUniformGrid&);
-        int m_crossingTests;
         int m_maxEdgesPerCell;
         double m_time;
 #endif
@@ -149,14 +137,11 @@ namespace ogdf {
         const Graph &m_graph;
         HashArray2D<int,int,List<edge> > m_grid; //stores for each grid cell
         //the Array of edges that cross that cell
-        EdgeArray<List<edge> > m_crossings; //stores for each edge the edges
-        //its crossings in the current layout
         EdgeArray<List<IPoint> > m_cells; //Contains for each edge the
         //list of cells it crosses
         double m_CellSize; //Sidelength of one cell
         const static double m_epsilon; //tolerance fo double computation
         const static double m_edgeMultiplier; //this controls the gridsize
-        int m_crossNum; //number of crossings
 
         TSAUniformGrid& operator=(const TSAUniformGrid& ug);
     };

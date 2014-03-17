@@ -39,13 +39,13 @@
  ***************************************************************/
 
 #include "TSALayout.h"
-#include "TSARepulsion.h"
-#include "TSAAttraction.h"
+#include <ogdf/TSARepulsion.h>
+#include <ogdf/TSAAttraction.h>
 #include <ogdf/internal/energybased/Overlap.h>
-#include "PlanarityApprox.h"
-#include "TSAPlanarity.h"
-#include "tsaplanaritygrid.h"
-#include "tsaangularresolution.h"
+#include <ogdf/PlanarityApprox.h>
+#include <ogdf/TSAPlanarityGrid.h>
+#include <ogdf/TSAPlanarity.h>
+#include <ogdf/TSAAngularResolution.h>
 
 
 #define DEFAULT_REPULSION_WEIGHT 1e6
@@ -78,7 +78,7 @@ TSALayout::TSALayout()
 	m_prefEdgeLength = 0.0;
 	m_crossings = false;
 	m_quality = DEFAULT_TSA_QUALITY;
-    m_accStruct = AccelerationStructure::none;
+    m_accStruct = AccelerationStructureType::none;
 #ifdef GRAPHDRAWER
     worker = NULL;
 #endif
@@ -116,7 +116,7 @@ void TSALayout::fixSettings(SettingsParameter sp)
     setAngularResolutionWeight(DEFAULT_ANGRES_WEIGHT);
 }//fixSettings
 
-void TSALayout::setAccelerationStructureParameter(AccelerationStructure as)
+void TSALayout::setAccelerationStructureParameter(AccelerationStructureType as)
 {
     this->m_accStruct = as;
 }
@@ -202,19 +202,19 @@ void TSALayout::call(GraphAttributes &AG)
     tsa.addEnergyFunction(&over,m_nodeOverlapWeight);
     tsa.addEnergyFunction(&angRes,m_angResWeight);
 
-    TSAUniformGrid *grid = new TSAUniformGrid(AG);
+    AccelerationStructure *grid = new TSAUniformGrid(AG);
 
     if (m_crossings) {
         switch(m_accStruct) {
-        case AccelerationStructure::none:
+        case AccelerationStructureType::none:
             planarity = new TSAPlanarity(AG);
             cout << "regular" << endl;
             break;
-        case AccelerationStructure::approximation:
+        case AccelerationStructureType::approximation:
             planarity = new PlanarityApprox(AG);
             cout << "approx" << endl;
             break;
-        case AccelerationStructure::grid:
+        case AccelerationStructureType::grid:
             planarity = new TSAPlanarityGrid(AG, &grid);
             cout << "grid" << endl;
             break;

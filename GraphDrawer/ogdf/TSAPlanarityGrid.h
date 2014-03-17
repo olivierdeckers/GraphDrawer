@@ -62,7 +62,7 @@ namespace ogdf {
 class TSAPlanarityGrid: public EnergyFunction {
 public:
     //initializes data structures to speed up later computations
-    TSAPlanarityGrid(GraphAttributes &AG, TSAUniformGrid **grid);
+    TSAPlanarityGrid(GraphAttributes &AG, AccelerationStructure **accStruct);
     ~TSAPlanarityGrid();
     // computes energy of initial layout and stores it in m_energy
     void computeEnergy();
@@ -71,12 +71,24 @@ private:
     void compCandEnergy();
     // changes internal data if candidate is taken
     void internalCandidateTaken();
-#ifdef OGDF_DEBUG
-        virtual void printInternalData() const;
-#endif
+
+    void computeCrossings(const List<edge>& toInsert,
+                          const node moved,
+                          const DPoint& newPos);
+
+    bool crossingTest(const edge e1,
+                      const edge e2,
+                      const node moved,
+                      const DPoint &newPos) const;
+
     const GraphAttributes &m_layout; //The current layout
-    TSAUniformGrid **m_currentGrid; //stores grid for current layout
-}; // class Planarity
+    AccelerationStructure **m_accStruct; //stores grid for current layout
+    EdgeArray<List<edge>> m_crossings;
+
+#ifdef OGDF_DEBUG
+    virtual void printInternalData() const {}
+#endif
+};
 
 
 }// namespace ogdf

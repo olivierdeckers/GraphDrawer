@@ -45,6 +45,7 @@
 
 #include <ogdf/module/LayoutModule.h>
 #include "ogdf/TSA.h"
+#include <ogdf/AccelerationStructure.h>
 #ifdef GRAPHDRAWER
 #include "gui/layoutworker.h"
 #endif
@@ -58,7 +59,7 @@ public:
 	//! Easy way to set fixed costs
 	enum SettingsParameter {spStandard, spRepulse, spPlanar}; //tuning of costs
 
-    enum AccelerationStructure {grid, approximation, none};
+    enum AccelerationStructureType {grid, approximation, none};
 
 	//! Creates an instance of TSA layout.
     TSALayout();
@@ -69,7 +70,7 @@ public:
     void setWorker(LayoutWorker *worker);
 #endif
 
-    void setAccelerationStructureParameter(AccelerationStructure as);
+    void setAccelerationStructureParameter(AccelerationStructureType as);
 
 	//! Calls the layout algorithm for graph attributes \a GA.
     void call(GraphAttributes &GA);
@@ -136,7 +137,7 @@ private:
 	double m_prefEdgeLength;    //!< Preferred edge length (abs value), only used if > 0
 	bool m_crossings;           //!< Should crossings be computed?
 	double m_quality;
-    AccelerationStructure m_accStruct;
+    AccelerationStructureType m_accStruct;
 
 #ifdef GRAPHDRAWER
     LayoutWorker *worker;

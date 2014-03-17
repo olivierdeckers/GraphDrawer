@@ -6,15 +6,15 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += tsauniformgridtest.cpp \
-    ../GraphDrawer/ogdf/tsauniformgrid.cpp \
+    ../GraphDrawer/ogdf/TSAUniformGrid.cpp \
     ../GraphDrawer/ogdf/TSARepulsion.cpp \
-    ../GraphDrawer/ogdf/tsaplanaritygrid.cpp \
+    ../GraphDrawer/ogdf/TSAPlanarityGrid.cpp \
     ../GraphDrawer/ogdf/TSAPlanarity.cpp \
     ../GraphDrawer/ogdf/TSALayout.cpp \
     ../GraphDrawer/ogdf/TSAAttraction.cpp \
     ../GraphDrawer/ogdf/TSA.cpp \
     ../GraphDrawer/ogdf/PlanarityApprox.cpp \
-    ../GraphDrawer/ogdf/tsaangularresolution.cpp
+    ../GraphDrawer/ogdf/TSAAngularResolution.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 unix {
@@ -26,12 +26,12 @@ QMAKE_CXXFLAGS += -std=c++11
 }
 
 HEADERS += \
-    ../GraphDrawer/ogdf/tsauniformgrid.h \
+    ../GraphDrawer/ogdf/TSAUniformGrid.h \
     ../GraphDrawer/ogdf/TSARepulsion.h \
-    ../GraphDrawer/ogdf/tsaplanaritygrid.h \
+    ../GraphDrawer/ogdf/TSAPlanarityGrid.h \
     ../GraphDrawer/ogdf/TSAPlanarity.h \
     ../GraphDrawer/ogdf/TSALayout.h \
     ../GraphDrawer/ogdf/TSAAttraction.h \
     ../GraphDrawer/ogdf/TSA.h \
     ../GraphDrawer/ogdf/PlanarityApprox.h \
-    ../GraphDrawer/ogdf/tsaangularresolution.h
+    ../GraphDrawer/ogdf/TSAAngularResolution.h

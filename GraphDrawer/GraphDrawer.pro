@@ -30,7 +30,8 @@ SOURCES += gui/main.cpp\
     ogdf/RemoveCrossing.cpp \
     ogdf/TSAAngularResolution.cpp \
     ogdf/TSAPlanarityGrid.cpp \
-    ogdf/TSAUniformGrid.cpp
+    ogdf/TSAUniformGrid.cpp \
+    ogdf/AccelerationStructure.cpp
 
 HEADERS  += gui/mainwindow.h \
     gui/graphcanvas.h \
@@ -49,7 +50,8 @@ HEADERS  += gui/mainwindow.h \
     ogdf/RemoveCrossing.h \
     ogdf/TSAAngularResolution.h \
     ogdf/TSAPlanarityGrid.h \
-    ogdf/TSAUniformGrid.h
+    ogdf/TSAUniformGrid.h \
+    ogdf/AccelerationStructure.h
 
 FORMS    += gui/mainwindow.ui \
     gui/accstructcomparison.ui

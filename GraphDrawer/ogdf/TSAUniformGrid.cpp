@@ -245,16 +245,13 @@ namespace ogdf {
 TSAUniformGrid::TSAUniformGrid(const GraphAttributes &AG) :
     m_layout(AG),
     m_graph(AG.constGraph()),
-    m_crossings(m_graph),
     m_cells(m_graph),
-    m_CellSize(0.0),
-    m_crossNum(0)
+    m_CellSize(0.0)
 {
     //cout<<"New grid \n";
     node v = m_graph.firstNode();
     DPoint pos(m_layout.x(v),m_layout.y(v));
 #ifdef OGDF_DEBUG
-    m_crossingTests = 0;
     m_maxEdgesPerCell = 0;
     usedTime(m_time);
 #endif
@@ -264,7 +261,7 @@ TSAUniformGrid::TSAUniformGrid(const GraphAttributes &AG) :
     m_CellSize = maxLength/(m_edgeMultiplier*(m_graph).numberOfEdges());
     List<edge> L;
     m_graph.allEdges(L);
-    computeCrossings(L,v,pos);
+    //TODO fill m_grid
 #ifdef OGDF_DEBUG
     m_time = usedTime(m_time);
 #endif
@@ -279,13 +276,10 @@ TSAUniformGrid::TSAUniformGrid(
 :
     m_layout(AG),
     m_graph(AG.constGraph()),
-    m_crossings(m_graph),
     m_cells(m_graph),
-    m_CellSize(0.0),
-    m_crossNum(0)
+    m_CellSize(0.0)
 {
 #ifdef OGDF_DEBUG
-    m_crossingTests = 0;
     m_maxEdgesPerCell = 0;
     usedTime(m_time);
 #endif
@@ -295,71 +289,7 @@ TSAUniformGrid::TSAUniformGrid(
     m_CellSize = maxLength/(m_edgeMultiplier*(m_graph).numberOfEdges());
     List<edge> L;
     m_graph.allEdges(L);
-    computeCrossings(L,v,newPos);
-#ifdef OGDF_DEBUG
-    m_time = usedTime(m_time);
-#endif
-}
-
-//constructor for computing an updated grid for a given grid where one
-//vertex is moved to a new position
-TSAUniformGrid::TSAUniformGrid(
-    const TSAUniformGrid &ug,
-    const node v,
-    const DPoint& newPos) :
-    m_layout(ug.m_layout),
-    m_graph(ug.m_graph),
-    m_grid(ug.m_grid),
-    m_crossings(ug.m_crossings),
-    m_cells(ug.m_cells),
-    m_CellSize(ug.m_CellSize),
-    m_crossNum(ug.m_crossNum)
-{
-    //constructorcounter++;
-#ifdef OGDF_DEBUG
-    m_crossingTests = 0;
-    m_maxEdgesPerCell = 0;
-    usedTime(m_time);
-    IntersectionRectangle ir;
-    computeGridGeometry(v,newPos,ir);
-    double l = max(ir.width(),ir.height());
-    l/=(m_graph.numberOfEdges()*m_edgeMultiplier);
-    OGDF_ASSERT(l > 0.5*m_CellSize && l < 2.0*m_CellSize);
-#endif
-    //compute the list of edge incident to v
-    List<edge> incident;
-    m_graph.adjEdges(v,incident);
-    //set the crossings of all these edges to zero, update the global crossing
-    //number, remove them from their cells. Note that we cannot insert the edge
-    //with its new position into the grid in the same loop because we may get
-    //crossings with other edges incident to v
-    ListIterator<edge> it1;
-    for(it1 = incident.begin(); it1.valid(); ++it1) {
-        edge& e = *it1;
-        //we clear the list of crossings of e and delete e from the
-        //crossings lists of all the edges it crosses
-        List<edge>& c = m_crossings[e];
-        while(!c.empty()) {
-            edge crossed = c.popFrontRet();
-            List<edge>& cl = m_crossings[crossed];
-            ListIterator<edge> it2 = cl.begin();
-            while(*it2 != e) ++it2;
-            cl.del(it2);
-            m_crossNum--;
-        }
-        List<IPoint>& cells = m_cells[e];
-        //delete e from all its cells
-        while(!cells.empty()) {
-            IPoint p = cells.popFrontRet();
-            List<edge>& eList = m_grid(p.m_x,p.m_y);
-            ListIterator<edge> it2 = eList.begin();
-            while(*it2 != e) ++it2;
-            eList.del(it2);
-        }
-    }// at this point, all the data structures look as if the edges in the
-    //list incident where not present. Now we reinsert the edges into the
-    //grid with their new positions and update the crossings
-    computeCrossings(incident,v,newPos);
+    //TODo fill m_grid
 #ifdef OGDF_DEBUG
     m_time = usedTime(m_time);
 #endif
@@ -367,88 +297,91 @@ TSAUniformGrid::TSAUniformGrid(
 
 void TSAUniformGrid::updateNodePosition(const node v, const DPoint &newPos)
 {
-    //compute the list of edge incident to v
-    List<edge> incident;
-    m_graph.adjEdges(v,incident);
-    //set the crossings of all these edges to zero, update the global crossing
-    //number, remove them from their cells. Note that we cannot insert the edge
-    //with its new position into the grid in the same loop because we may get
-    //crossings with other edges incident to v
-    ListIterator<edge> it1;
-    for(it1 = incident.begin(); it1.valid(); ++it1) {
-        edge& e = *it1;
-        //we clear the list of crossings of e and delete e from the
-        //crossings lists of all the edges it crosses
-        List<edge>& c = m_crossings[e];
-        while(!c.empty()) {
-            edge crossed = c.popFrontRet();
-            List<edge>& cl = m_crossings[crossed];
-            ListIterator<edge> it2 = cl.begin();
-            while(*it2 != e) ++it2;
-            cl.del(it2);
-            m_crossNum--;
-        }
-        List<IPoint>& cells = m_cells[e];
-        //delete e from all its cells
-        while(!cells.empty()) {
-            IPoint p = cells.popFrontRet();
-            List<edge>& eList = m_grid(p.m_x,p.m_y);
-            ListIterator<edge> it2 = eList.begin();
-            while(*it2 != e) ++it2;
-            eList.del(it2);
-        }
-    }// at this point, all the data structures look as if the edges in the
-    //list incident where not present. Now we reinsert the edges into the
-    //grid with their new positions and update the crossings
-    computeCrossings(incident,v,newPos);
-}
+    if(newGridNecessary(v, newPos)) {
+        m_cells = EdgeArray<List<IPoint>>(m_graph);
 
-int TSAUniformGrid::calculateCandidateEnergy(const node v, const DPoint &newPos) const
-{
-    int crossings = m_crossNum;
-
-    List<edge> incident;
-    m_graph.adjEdges(v,incident);
-
-    ListIterator<edge> it1;
-    for(it1 = incident.begin(); it1.valid(); ++it1) {
-        edge& e = *it1;
-
-        crossings -= m_crossings[e].size();
+        IntersectionRectangle ir;
+        computeGridGeometry(v,newPos,ir);
+        double maxLength = max(ir.height(),ir.width());
+        m_CellSize = maxLength/(m_edgeMultiplier*(m_graph).numberOfEdges());
+        List<edge> L;
+        m_graph.allEdges(L);
+        //TODO fill m_grid
     }
+    else {
+        //compute the list of edge incident to v
+        List<edge> incident;
+        m_graph.adjEdges(v,incident);
 
-    //now we compute all the remaining data of the class in one loop
-    //going through all edges and storing them in the grid.
-    ListConstIterator<edge> it;
-    for(it = incident.begin(); it.valid(); ++it) {
-        const edge& e = *it;
-        SList<IPoint> crossedCells;
-        DPoint sPos,tPos;
-        const node& s = e->source();
-        if(s != v) sPos = DPoint(m_layout.x(s),m_layout.y(s));
-        else sPos = newPos;
-        const node& t = e->target();
-        if(t != v) tPos = DPoint(m_layout.x(t),m_layout.y(t));
-        else tPos = newPos;
-        DoubleModifiedBresenham(sPos,tPos,crossedCells);
+        ListIterator<edge> it1;
+        for(it1 = incident.begin(); it1.valid(); ++it1) {
+            edge& e = *it1;
+            List<IPoint>& cells = m_cells[e];
+            //delete e from all its cells
+            while(!cells.empty()) {
+                IPoint p = cells.popFrontRet();
+                List<edge>& eList = m_grid(p.m_x,p.m_y);
+                ListIterator<edge> it2 = eList.begin();
+                while(*it2 != e) ++it2;
+                eList.del(it2);
+            }
+        }
 
-        SListConstIterator<IPoint> it1;
-        for(it1 = crossedCells.begin(); it1.valid(); ++it1) {
-            const IPoint& p = *it1;
+        //now we compute all the remaining data of the class in one loop
+        //going through all edges and storing them in the grid.
+        ListConstIterator<edge> it;
+        for(it = incident.begin(); it.valid(); ++it) {
+            const edge& e = *it;
+            SList<IPoint> crossedCells;
+            DPoint sPos,tPos;
+            const node& s = e->source();
+            if(s != v) sPos = DPoint(m_layout.x(s),m_layout.y(s));
+            else sPos = newPos;
+            const node& t = e->target();
+            if(t != v) tPos = DPoint(m_layout.x(t),m_layout.y(t));
+            else tPos = newPos;
+            DoubleModifiedBresenham(sPos,tPos,crossedCells);
+            SListConstIterator<IPoint> it1;
+            for(it1 = crossedCells.begin(); it1.valid(); ++it1) {
+                const IPoint& p = *it1;
+                (m_cells[e]).pushBack(p);
+                List<edge>& edgeList = m_grid(p.m_x,p.m_y);
 
-            List<edge> edgeList = m_grid(p.m_x,p.m_y);
-            if(!edgeList.empty()) { //there are already edges in that list
-                ListConstIterator<edge> it2;
-                for(it2 = edgeList.begin(); it2.valid(); ++it2) {
-                    if(crossingTest(e,*it2,v,newPos,p)) { //two edges cross in p
-                        ++crossings;
-                    }
-                }
+                //now we insert the new edge into the list and store the position
+                //returned by pushBack in the corresponding list of m_storedIn
+                edgeList.pushBack(e);
+#ifdef OGDF_DEBUG
+                if(m_maxEdgesPerCell < edgeList.size())
+                    m_maxEdgesPerCell = edgeList.size();
+#endif
             }
         }
     }
+}
 
-    return crossings;
+void TSAUniformGrid::possibleCrossingEdges(const DPoint &sPos, const DPoint &tPos, List<edge> &result) const
+{
+    SList<IPoint> crossedCells;
+    DoubleModifiedBresenham(sPos, tPos, crossedCells);
+
+    Hashing<edge,bool> edgesEncountered;
+    SListConstIterator<IPoint> it;
+    for(it = crossedCells.begin(); it.valid(); it++) {
+        IPoint p = *it;
+        List<edge> edges = m_grid(p.m_x, p.m_y);
+        ListIterator<edge> it2;
+        for(it2 = edges.begin(); it2.valid(); it2++) {
+            if(!edgesEncountered.member(*it2)) {
+                edgesEncountered.insert(*it2, true);
+                result.pushBack(*it2);
+            }
+        }
+    }
+}
+
+void TSAUniformGrid::nearNodes(const DPoint &pos, const double maxDist, List<node> &nodes) const
+{
+    //TODO
 }
 
 void TSAUniformGrid::computeGridGeometry(
@@ -479,98 +412,7 @@ void TSAUniformGrid::computeGridGeometry(
 }
 
 
-void TSAUniformGrid::computeCrossings(
-    const List<edge>& toInsert,
-    const node moved,
-    const DPoint& newPos)
-{
-    //now we compute all the remaining data of the class in one loop
-    //going through all edges and storing them in the grid.
-    ListConstIterator<edge> it;
-    for(it = toInsert.begin(); it.valid(); ++it) {
-        const edge& e = *it;
-        SList<IPoint> crossedCells;
-        DPoint sPos,tPos;
-        const node& s = e->source();
-        if(s != moved) sPos = DPoint(m_layout.x(s),m_layout.y(s));
-        else sPos = newPos;
-        const node& t = e->target();
-        if(t != moved) tPos = DPoint(m_layout.x(t),m_layout.y(t));
-        else tPos = newPos;
-        DoubleModifiedBresenham(sPos,tPos,crossedCells);
-        SListConstIterator<IPoint> it1;
-        for(it1 = crossedCells.begin(); it1.valid(); ++it1) {
-            const IPoint& p = *it1;
-            (m_cells[e]).pushBack(p);
-            List<edge>& edgeList = m_grid(p.m_x,p.m_y);
-            if(!edgeList.empty()) { //there are already edges in that list
-                ListConstIterator<edge> it2;
-                OGDF_ASSERT(!edgeList.empty());
-                for(it2 = edgeList.begin(); it2.valid(); ++it2) {
-                    if(crossingTest(e,*it2,moved,newPos,p)) { //two edges cross in p
-                        ++m_crossNum;
-                        m_crossings[e].pushBack(*it2);
-                        m_crossings[*it2].pushBack(e);
-                    }
-                }
-            }
-            //now we insert the new edge into the list and store the position
-            //returned by pushBack in the corresponding list of m_storedIn
-            edgeList.pushBack(e);
-#ifdef OGDF_DEBUG
-            if(m_maxEdgesPerCell < edgeList.size())
-                m_maxEdgesPerCell = edgeList.size();
-#endif
-        }
-    }
-#ifdef OGDF_DEBUG
-    int SumCros = 0;
-    edge e;
-    forall_edges(e,m_graph) SumCros += m_crossings[e].size();
-    OGDF_ASSERT((SumCros >> 1) == m_crossNum);
-#endif
-}
 
-
-//returns true if both edges are not adjacent and cross inside the given cell
-bool TSAUniformGrid::crossingTest(
-    const edge e1,
-    const edge e2,
-    const node moved,
-    const DPoint& newPos,
-    const IPoint& cell) const
-{
-    bool crosses = false;
-    node s1 = e1->source(), t1 = e1->target();
-    node s2 = e2->source(), t2 = e2->target();
-    if(s1 != s2 && s1 != t2 && t1 != s2 && t1 != t2) {//not adjacent
-        double xLeft = cell.m_x*m_CellSize;
-        double xRight = (cell.m_x+1)*m_CellSize;
-        double xBottom = cell.m_y*m_CellSize;
-        double xTop = (cell.m_y+1)*m_CellSize;
-        DPoint ps1,pt1,ps2,pt2;
-        if(s1 != moved) ps1 = DPoint(m_layout.x(s1),m_layout.y(s1));
-        else ps1 = newPos;
-        if(t1 != moved) pt1 = DPoint(m_layout.x(t1),m_layout.y(t1));
-        else pt1 = newPos;
-        if(s2 != moved) ps2 = DPoint(m_layout.x(s2),m_layout.y(s2));
-        else ps2 = newPos;
-        if(t2 != moved) pt2 = DPoint(m_layout.x(t2),m_layout.y(t2));
-        else pt2 = newPos;
-        DLine l1(ps1,pt1),l2(ps2,pt2);
-        DPoint crossPoint;
-#ifdef OGDF_DEBUG
-        //m_crossingTests++;
-#endif
-        if(l1.intersection(l2,crossPoint)) {
-            if(crossPoint.m_x >= xLeft && crossPoint.m_x < xRight &&
-                crossPoint.m_y >= xBottom && crossPoint.m_y < xTop) {
-                crosses = true;
-            }
-        }
-    }
-    return crosses;
-}
 
 #ifdef OGDF_DEBUG
 
@@ -802,9 +644,7 @@ ostream &operator<<(ostream &out, const TSAUniformGrid &ug)
     out << "\nGrid Size: " << ug.m_CellSize;
     out << "\nEpsilon: " << ug.m_epsilon;
     out << "\nEdge Multiplier: " << ug.m_edgeMultiplier;
-    out << "\nCrossing number: " << ug.m_crossNum;
 #ifdef OGDF_DEBUG
-    out << "\nCrossing tests: " << ug.m_crossingTests;
     out << "\nMax edges per cell: " << ug.m_maxEdgesPerCell;
     out << "\nConstruction time: " << ug.m_time;
     IntersectionRectangle ir;

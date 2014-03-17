@@ -50,7 +50,7 @@
 
 
 #include <ogdf/internal/energybased/EnergyFunction.h>
-#include <ogdf/tsauniformgrid.h>
+#include <ogdf/TSAUniformGrid.h>
 #ifdef GRAPHDRAWER
 #include "gui/layoutworker.h"
 #endif
@@ -88,9 +88,9 @@ public:
 
 	//! Calls the TSA method for graph \a GA.
 #ifdef GRAPHDRAWER
-    void call(GraphAttributes &AG, TSAUniformGrid **grid, LayoutWorker *worker);
+    void call(GraphAttributes &AG, AccelerationStructure **grid, LayoutWorker *worker);
 #else
-    void call(GraphAttributes &AG, TSAUniformGrid **grid);
+    void call(GraphAttributes &AG, AccelerationStructure **grid);
 #endif
 
 private:

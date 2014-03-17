@@ -81,13 +81,13 @@ void MainWindow::layoutGraph()
         tLayout->setQuality(ui->qualityInput->value());
         switch(ui->accStructBox->currentIndex()) {
         case 0:
-            tLayout->setAccelerationStructureParameter(ogdf::TSALayout::AccelerationStructure::none);
+            tLayout->setAccelerationStructureParameter(ogdf::TSALayout::AccelerationStructureType::none);
             break;
         case 1:
-            tLayout->setAccelerationStructureParameter(ogdf::TSALayout::AccelerationStructure::grid);
+            tLayout->setAccelerationStructureParameter(ogdf::TSALayout::AccelerationStructureType::grid);
             break;
         case 2:
-            tLayout->setAccelerationStructureParameter(ogdf::TSALayout::AccelerationStructure::approximation);
+            tLayout->setAccelerationStructureParameter(ogdf::TSALayout::AccelerationStructureType::approximation);
             break;
         }
 
