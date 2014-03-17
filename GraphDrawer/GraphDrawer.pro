@@ -25,9 +25,12 @@ SOURCES += gui/main.cpp\
     ogdf/TSARepulsion.cpp \
     ogdf/TSAPlanarity.cpp \
     gui/accstructcomparison.cpp \
-    ogdf/tsaplanaritygrid.cpp \
-    ogdf/tsauniformgrid.cpp \
-    ogdf/tsaangularresolution.cpp
+    ogdf/NeighbourhoodStructure.cpp \
+    ogdf/RandomMove.cpp \
+    ogdf/RemoveCrossing.cpp \
+    ogdf/TSAAngularResolution.cpp \
+    ogdf/TSAPlanarityGrid.cpp \
+    ogdf/TSAUniformGrid.cpp
 
 HEADERS  += gui/mainwindow.h \
     gui/graphcanvas.h \
@@ -41,9 +44,12 @@ HEADERS  += gui/mainwindow.h \
     gui/qcustomplot.h \
     gui/energyplotter.h \
     gui/accstructcomparison.h \
-    ogdf/tsaplanaritygrid.h \
-    ogdf/tsauniformgrid.h \
-    ogdf/tsaangularresolution.h
+    ogdf/NeighbourhoodStructure.h \
+    ogdf/RandomMove.h \
+    ogdf/RemoveCrossing.h \
+    ogdf/TSAAngularResolution.h \
+    ogdf/TSAPlanarityGrid.h \
+    ogdf/TSAUniformGrid.h
 
 FORMS    += gui/mainwindow.ui \
     gui/accstructcomparison.ui

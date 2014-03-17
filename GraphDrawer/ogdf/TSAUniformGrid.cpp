@@ -40,7 +40,7 @@
  * \see  http://www.gnu.org/copyleft/gpl.html
  ***************************************************************/
 
-#include<ogdf/tsauniformgrid.h>
+#include<ogdf/TSAUniformGrid.h>
 #include<float.h>
 
 namespace ogdf {

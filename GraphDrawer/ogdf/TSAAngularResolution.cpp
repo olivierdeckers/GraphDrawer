@@ -1,4 +1,4 @@
-#include "tsaangularresolution.h"
+#include "TSAAngularResolution.h"
 
 namespace ogdf {
 

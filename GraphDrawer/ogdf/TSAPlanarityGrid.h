@@ -54,7 +54,7 @@
 
 
 #include <ogdf/internal/energybased/EnergyFunction.h>
-#include <ogdf/tsauniformgrid.h>
+#include <ogdf/TSAUniformGrid.h>
 
 namespace ogdf {
 

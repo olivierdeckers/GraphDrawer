@@ -229,7 +229,7 @@ void TSALayout::call(GraphAttributes &AG)
 #ifdef GRAPHDRAWER
     tsa.call(AG, &grid, worker);
 #else
-    dh.call(AG, &grid);
+    tsa.call(AG, &grid);
 #endif
 
     delete planarity;

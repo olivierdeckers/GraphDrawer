@@ -45,7 +45,7 @@
  ***************************************************************/
 
 
-#include "tsaplanaritygrid.h"
+#include "TSAPlanarityGrid.h"
 
 namespace ogdf {
 
