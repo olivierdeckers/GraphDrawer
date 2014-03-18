@@ -259,9 +259,8 @@ TSAUniformGrid::TSAUniformGrid(const GraphAttributes &AG) :
     computeGridGeometry(v,pos,ir);
     double maxLength = max(ir.height(),ir.width());
     m_CellSize = maxLength/(m_edgeMultiplier*(m_graph).numberOfEdges());
-    List<edge> L;
-    m_graph.allEdges(L);
-    //TODO fill m_grid
+
+    initGrid();
 #ifdef OGDF_DEBUG
     m_time = usedTime(m_time);
 #endif
@@ -287,9 +286,8 @@ TSAUniformGrid::TSAUniformGrid(
     computeGridGeometry(v,newPos,ir);
     double maxLength = max(ir.height(),ir.width());
     m_CellSize = maxLength/(m_edgeMultiplier*(m_graph).numberOfEdges());
-    List<edge> L;
-    m_graph.allEdges(L);
-    //TODo fill m_grid
+
+    initGrid();
 #ifdef OGDF_DEBUG
     m_time = usedTime(m_time);
 #endif
@@ -304,9 +302,8 @@ void TSAUniformGrid::updateNodePosition(const node v, const DPoint &newPos)
         computeGridGeometry(v,newPos,ir);
         double maxLength = max(ir.height(),ir.width());
         m_CellSize = maxLength/(m_edgeMultiplier*(m_graph).numberOfEdges());
-        List<edge> L;
-        m_graph.allEdges(L);
-        //TODO fill m_grid
+
+        initGrid();
     }
     else {
         //compute the list of edge incident to v
@@ -411,7 +408,30 @@ void TSAUniformGrid::computeGridGeometry(
     ir = IntersectionRectangle(MinX,MinY,MaxX,MaxY);
 }
 
+void TSAUniformGrid::initGrid()
+{
+    List<edge> edges;
+    m_graph.allEdges(edges);
 
+    ListConstIterator<edge> it;
+    for(it = edges.begin(); it.valid(); ++it) {
+        const edge& e = *it;
+        SList<IPoint> crossedCells;
+        DPoint sPos,tPos;
+        const node& s = e->source();
+        sPos = DPoint(m_layout.x(s),m_layout.y(s));
+        const node& t = e->target();
+        tPos = DPoint(m_layout.x(t),m_layout.y(t));
+        DoubleModifiedBresenham(sPos,tPos,crossedCells);
+        SListConstIterator<IPoint> it1;
+        for(it1 = crossedCells.begin(); it1.valid(); ++it1) {
+            const IPoint& p = *it1;
+            (m_cells[e]).pushBack(p);
+            List<edge>& edgeList = m_grid(p.m_x,p.m_y);
+            edgeList.pushBack(e);
+        }
+    }
+}
 
 
 #ifdef OGDF_DEBUG

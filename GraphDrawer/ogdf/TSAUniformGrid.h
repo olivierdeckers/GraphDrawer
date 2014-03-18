@@ -122,6 +122,8 @@ namespace ogdf {
         //to the position given by the point
         void computeGridGeometry(const node, const DPoint&, IntersectionRectangle&) const;
 
+        void initGrid();
+
 #ifdef OGDF_DEBUG
         void markCells(SList<IPoint> &, Array2D<bool> &) const;
         bool crossesCell(IPoint, IPoint, const IPoint &) const;
