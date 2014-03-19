@@ -47,23 +47,24 @@ namespace ogdf {
     TSAPlanarity::~TSAPlanarity()
 	{
 		delete m_edgeNums;
-		delete m_crossingMatrix;
+        delete m_crossingMatrix;
 	}
 
 
 	// intializes number of edges and allocates memory for  crossingMatrix
-    TSAPlanarity::TSAPlanarity(GraphAttributes &AG):
-	EnergyFunction("Planarity",AG)
+    TSAPlanarity::TSAPlanarity(GraphAttributes &AG, AccelerationStructure *accStruct):
+    EnergyFunction("Planarity",AG),
+      m_accStruct(accStruct)
 	{
-		m_edgeNums = OGDF_NEW EdgeArray<int>(m_G,0);
-		m_G.allEdges(m_nonSelfLoops);
+        m_edgeNums = OGDF_NEW EdgeArray<int>(m_G,0);
+        m_G.allEdges(m_nonSelfLoops);
 		ListIterator<edge> it, itSucc;
-		for(it = m_nonSelfLoops.begin(); it.valid(); it = itSucc) {
+        for(it = m_nonSelfLoops.begin(); it.valid(); it = itSucc) {
 			itSucc = it.succ();
-			if((*it)->isSelfLoop()) m_nonSelfLoops.del(it);
+            if((*it)->isSelfLoop()) m_nonSelfLoops.del(it);
 		}
 		int e_num = 1;
-		for(it = m_nonSelfLoops.begin(); it.valid(); ++it) (*m_edgeNums)[*it] = e_num ++;
+        for(it = m_nonSelfLoops.begin(); it.valid(); ++it) (*m_edgeNums)[*it] = e_num ++;
 		e_num --;
 		m_crossingMatrix = new Array2D<double> (1,e_num,1,e_num);
 	}
@@ -72,20 +73,26 @@ namespace ogdf {
 	// computes energy of layout, stores it and sets the crossingMatrix
     void TSAPlanarity::computeEnergy()
 	{
-		int e_num = m_nonSelfLoops.size();
+        //int e_num = m_nonSelfLoops.size();
 		double energySum = 0;
-		Array<edge> numEdge(1,e_num);
-		edge e;
-		ListIterator<edge> it;
+        //Array<edge> numEdge(1,e_num);
+        //edge e;
+        //ListIterator<edge> it;
 
-		for(it = m_nonSelfLoops.begin(); it.valid(); ++it)
-			numEdge[(*m_edgeNums)[*it]] = *it;
-		for(int i = 1; i < e_num; i++) {
-			e = numEdge[i];
-			for(int j = i+1; j <= e_num ; j++) {
+        //for(it = m_nonSelfLoops.begin(); it.valid(); ++it)
+        //	numEdge[(*m_edgeNums)[*it]] = *it;
+
+        ListIterator<edge> it;
+        for(it = m_nonSelfLoops.begin(); it.valid(); it++) {
+            edge e = *it;
+            List<edge> possibleCrossings;
+            m_accStruct->possibleCrossingEdges(currentPos(e->source()), currentPos(e->target()), possibleCrossings);
+            for(ListIterator<edge> it2 = possibleCrossings.begin(); it2.valid(); it2++) {
 				double energy = 0;
-				bool cross = intersect(e,numEdge[j], energy);
-				(*m_crossingMatrix)(i,j) = cross ? energy : 0;
+                bool cross = intersect(*it,*it2, energy);
+                int i = (*m_edgeNums)[e];
+                int j = (*m_edgeNums)[*it2];
+                (*m_crossingMatrix)(i,j) = cross ? energy : 0;
 				if(cross) energySum += energy;
 			}
 		}
@@ -156,7 +163,9 @@ namespace ogdf {
 			edge f;
 			// now we compute the crossings of all other edges with e
 			ListIterator<edge> it;
-			for(it = m_nonSelfLoops.begin(); it.valid(); ++it) if(*it != e) {
+            List<edge> possibleCrossings;
+            m_accStruct->possibleCrossingEdges(p1, p2, possibleCrossings);
+            for(it = possibleCrossings.begin(); it.valid(); ++it) if(*it != e) {
 				f = *it;
 				node s2 = f->source();
 				node t2 = f->target();

@@ -31,7 +31,8 @@ SOURCES += gui/main.cpp\
     ogdf/TSAAngularResolution.cpp \
     ogdf/TSAPlanarityGrid.cpp \
     ogdf/TSAUniformGrid.cpp \
-    ogdf/AccelerationStructure.cpp
+    ogdf/AccelerationStructure.cpp \
+    ogdf/TSANoAcceleration.cpp
 
 HEADERS  += gui/mainwindow.h \
     gui/graphcanvas.h \
@@ -51,7 +52,8 @@ HEADERS  += gui/mainwindow.h \
     ogdf/TSAAngularResolution.h \
     ogdf/TSAPlanarityGrid.h \
     ogdf/TSAUniformGrid.h \
-    ogdf/AccelerationStructure.h
+    ogdf/AccelerationStructure.h \
+    ogdf/TSANoAcceleration.h
 
 FORMS    += gui/mainwindow.ui \
     gui/accstructcomparison.ui

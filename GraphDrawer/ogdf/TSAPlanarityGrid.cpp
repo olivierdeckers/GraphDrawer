@@ -53,7 +53,7 @@ namespace ogdf {
     {
     }
 
-    TSAPlanarityGrid::TSAPlanarityGrid(GraphAttributes &AG, AccelerationStructure **accStruct):
+    TSAPlanarityGrid::TSAPlanarityGrid(GraphAttributes &AG, AccelerationStructure *accStruct):
     EnergyFunction("PlanarityGrid",AG),
       m_layout(AG),
       m_crossings(AG.constGraph())
@@ -100,7 +100,7 @@ namespace ogdf {
             else tPos = newPos;
 
             List<edge> possibleCrossings;
-            (*m_accStruct)->possibleCrossingEdges(sPos, tPos, possibleCrossings);
+            m_accStruct->possibleCrossingEdges(sPos, tPos, possibleCrossings);
 
             ListConstIterator<edge> it2;
             for(it2 = possibleCrossings.begin(); it2.valid(); ++it2) {
@@ -136,7 +136,7 @@ namespace ogdf {
             else tPos = newPos;
 
             List<edge> possibleCrossings;
-            (*m_accStruct)->possibleCrossingEdges(sPos, tPos, possibleCrossings);
+            m_accStruct->possibleCrossingEdges(sPos, tPos, possibleCrossings);
 
             ListConstIterator<edge> it2;
             for(it2 = possibleCrossings.begin(); it2.valid(); ++it2) {

@@ -46,6 +46,7 @@
 #include <ogdf/TSAPlanarityGrid.h>
 #include <ogdf/TSAPlanarity.h>
 #include <ogdf/TSAAngularResolution.h>
+#include <ogdf/TSANoAcceleration.h>
 
 
 #define DEFAULT_REPULSION_WEIGHT 1e6
@@ -202,20 +203,23 @@ void TSALayout::call(GraphAttributes &AG)
     tsa.addEnergyFunction(&over,m_nodeOverlapWeight);
     tsa.addEnergyFunction(&angRes,m_angResWeight);
 
-    AccelerationStructure *grid = new TSAUniformGrid(AG);
+    AccelerationStructure *accStruct;
 
     if (m_crossings) {
         switch(m_accStruct) {
         case AccelerationStructureType::none:
-            planarity = new TSAPlanarity(AG);
+            accStruct = new TSANoAcceleration(AG);
+            planarity = new TSAPlanarity(AG, accStruct);
             cout << "regular" << endl;
             break;
         case AccelerationStructureType::approximation:
-            planarity = new PlanarityApprox(AG);
+            accStruct = new TSANoAcceleration(AG);
+            planarity = new PlanarityApprox(AG, accStruct);
             cout << "approx" << endl;
             break;
         case AccelerationStructureType::grid:
-            planarity = new TSAPlanarityGrid(AG, &grid);
+            accStruct = new TSAUniformGrid(AG);
+            planarity = new TSAPlanarityGrid(AG, accStruct);
             cout << "grid" << endl;
             break;
         }
@@ -227,13 +231,13 @@ void TSALayout::call(GraphAttributes &AG)
     tsa.setStartTemperature(m_startTemperature);
     tsa.setQuality(m_quality);
 #ifdef GRAPHDRAWER
-    tsa.call(AG, &grid, worker);
+    tsa.call(AG, accStruct, worker);
 #else
-    tsa.call(AG, &grid);
+    tsa.call(AG, accStruct);
 #endif
 
     delete planarity;
-    delete grid;
+    delete accStruct;
 }
 
 } // namespace ogdf

@@ -52,8 +52,8 @@ namespace ogdf {
 
 
 	// intializes number of edges and allocates memory for  crossingMatrix
-    PlanarityApprox::PlanarityApprox(GraphAttributes &GA):
-    TSAPlanarity(GA)
+    PlanarityApprox::PlanarityApprox(GraphAttributes &GA, AccelerationStructure *accStruct):
+    TSAPlanarity(GA, accStruct)
 	{
         m_closeNeighbours = OGDF_NEW EdgeArray<List<edge>*>(m_G);
         calculateCloseNeighbours();

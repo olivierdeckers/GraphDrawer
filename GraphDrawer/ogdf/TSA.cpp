@@ -287,14 +287,12 @@ namespace ogdf {
 	//and the disk radius geometrically until the temperature is zero. For each
 	//temperature, a certain number of new positions for a random vertex are tried
 #ifdef GRAPHDRAWER
-    void TSA::call(GraphAttributes &AG, AccelerationStructure **gridp, LayoutWorker * worker)
+    void TSA::call(GraphAttributes &AG, AccelerationStructure *grid, LayoutWorker * worker)
 #else
-    void TSA::call(GraphAttributes &AG, AccelerationStructure **gridp)
+    void TSA::call(GraphAttributes &AG, AccelerationStructure *grid)
 #endif
 	{
 		initParameters();
-
-        AccelerationStructure* grid = *gridp;
 
 		time_t start = time(NULL);
 

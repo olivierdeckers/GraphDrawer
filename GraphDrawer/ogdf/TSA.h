@@ -88,9 +88,9 @@ public:
 
 	//! Calls the TSA method for graph \a GA.
 #ifdef GRAPHDRAWER
-    void call(GraphAttributes &AG, AccelerationStructure **grid, LayoutWorker *worker);
+    void call(GraphAttributes &AG, AccelerationStructure *grid, LayoutWorker *worker);
 #else
-    void call(GraphAttributes &AG, AccelerationStructure **grid);
+    void call(GraphAttributes &AG, AccelerationStructure *grid);
 #endif
 
 private:

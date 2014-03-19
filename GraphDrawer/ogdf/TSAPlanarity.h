@@ -53,6 +53,7 @@
 
 #include <ogdf/internal/energybased/EnergyFunction.h>
 #include <ogdf/basic/Array2D.h>
+#include <ogdf/AccelerationStructure.h>
 
 
 namespace ogdf {
@@ -61,7 +62,7 @@ namespace ogdf {
 class TSAPlanarity: public EnergyFunction {
 public:
 	//! Initializes data structures to speed up later computations.
-    TSAPlanarity(GraphAttributes &AG);
+    TSAPlanarity(GraphAttributes &AG, AccelerationStructure *accStruct);
 
     ~TSAPlanarity();
 
@@ -102,9 +103,11 @@ protected:
 	 * stores for all edges incident to the test node
 	 * an array with the crossings that change if the candidate position is chosen
 	 */
-	List<ChangedCrossing> m_crossingChanges;
+    List<ChangedCrossing> m_crossingChanges;
 
-	List<edge> m_nonSelfLoops; //!< list of edges that are not slef loops
+    List<edge> m_nonSelfLoops; //!< list of edges that are not slef loops
+
+    AccelerationStructure *m_accStruct;
 }; // class Planarity
 
 
