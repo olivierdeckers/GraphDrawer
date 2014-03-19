@@ -87,13 +87,15 @@ namespace ogdf {
             edge e = *it;
             List<edge> possibleCrossings;
             m_accStruct->possibleCrossingEdges(currentPos(e->source()), currentPos(e->target()), possibleCrossings);
-            for(ListIterator<edge> it2 = possibleCrossings.begin(); it2.valid(); it2++) {
+            for(ListIterator<edge> it2 = possibleCrossings.begin(); it2.valid(); it2++) if(*it != *it2) {
 				double energy = 0;
                 bool cross = intersect(*it,*it2, energy);
                 int i = (*m_edgeNums)[e];
                 int j = (*m_edgeNums)[*it2];
-                (*m_crossingMatrix)(i,j) = cross ? energy : 0;
-				if(cross) energySum += energy;
+                if(cross && (*m_crossingMatrix)(min(i,j),max(i,j)) == 0) {
+                    (*m_crossingMatrix)(min(i,j),max(i,j)) = energy;
+                    energySum += energy;
+                }
 			}
 		}
 		m_energy = energySum;
@@ -163,7 +165,7 @@ namespace ogdf {
 			edge f;
 			// now we compute the crossings of all other edges with e
 			ListIterator<edge> it;
-            List<edge> possibleCrossings;
+            List<edge> possibleCrossings; //TODO first remove all crossings with other edges, not only those that are in possiblecrossings!
             m_accStruct->possibleCrossingEdges(p1, p2, possibleCrossings);
             for(it = possibleCrossings.begin(); it.valid(); ++it) if(*it != e) {
 				f = *it;

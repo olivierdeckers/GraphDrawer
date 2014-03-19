@@ -5,10 +5,10 @@
 #include <ogdf/fileformats/GmlParser.h>
 #include <ogdf/internal/energybased/UniformGrid.h>
 
-#include <ogdf/TSAPlanarityGrid.h>
 #include <ogdf/TSAPlanarity.h>
 #include <ogdf/TSAAngularResolution.h>
 #include <ogdf/TSAUniformGrid.h>
+#include <ogdf/TSANoAcceleration.h>
 
 #define randf() (static_cast <float> (rand()) / static_cast <float> (RAND_MAX))
 
@@ -61,7 +61,7 @@ protected:
 
 TEST_F(TSAUniformGridTest, GridCorrectness) {
     ogdf::AccelerationStructure* grid = new ogdf::TSAUniformGrid(*m_GA);
-    ogdf::TSAPlanarityGrid* planarity = new ogdf::TSAPlanarityGrid(*m_GA, &grid);
+    ogdf::TSAPlanarity* planarity = new ogdf::TSAPlanarity(*m_GA, grid);
     planarity->computeEnergy();
 
     EXPECT_EQ(1, planarity->energy()) << "Grid correctly detects one crossing";
@@ -83,7 +83,7 @@ TEST_F(TSAUniformGridTest, GridCorrectness) {
 
 TEST_F(TSAUniformGridTest, GridCorrectnessNewGridNecessary) {
     ogdf::AccelerationStructure* grid = new ogdf::TSAUniformGrid(*m_GA);
-    ogdf::TSAPlanarityGrid* planarity = new ogdf::TSAPlanarityGrid(*m_GA, &grid);
+    ogdf::TSAPlanarity* planarity = new ogdf::TSAPlanarity(*m_GA, grid);
     planarity->computeEnergy();
 
     EXPECT_EQ(1, planarity->energy()) << "Grid correctly detects one crossing";
@@ -124,8 +124,9 @@ TEST_F(TSAUniformGridTest, GridCorrectnessPlanarityGrid) {
     }
 
     ogdf::AccelerationStructure* grid = new ogdf::TSAUniformGrid(*GA);
-    ogdf::TSAPlanarityGrid* planarityGrid = new ogdf::TSAPlanarityGrid(*GA, &grid);
-    ogdf::TSAPlanarity* planarity = new ogdf::TSAPlanarity(*GA);
+    ogdf::AccelerationStructure* none = new ogdf::TSANoAcceleration(*GA);
+    ogdf::TSAPlanarity* planarityGrid = new ogdf::TSAPlanarity(*GA, grid);
+    ogdf::TSAPlanarity* planarity = new ogdf::TSAPlanarity(*GA, none);
     planarityGrid->computeEnergy();
     planarity->computeEnergy();
 
@@ -147,11 +148,12 @@ TEST_F(TSAUniformGridTest, GridCorrectnessPlanarityGrid) {
         EXPECT_EQ(planarity->energy(), planarityGrid->energy());
     }
 
-    delete planarityGrid;
-    delete grid;
+    /*delete planarityGrid;
     delete planarity;
+    delete grid;
+    delete none;
     delete G;
-    delete GA;
+    delete GA;*/
 }
 
 TEST_F(TSAUniformGridTest, AngRestInitialCorrectness) {

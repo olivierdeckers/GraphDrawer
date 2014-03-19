@@ -14,7 +14,8 @@ SOURCES += tsauniformgridtest.cpp \
     ../GraphDrawer/ogdf/TSAAttraction.cpp \
     ../GraphDrawer/ogdf/TSA.cpp \
     ../GraphDrawer/ogdf/PlanarityApprox.cpp \
-    ../GraphDrawer/ogdf/TSAAngularResolution.cpp
+    ../GraphDrawer/ogdf/TSAAngularResolution.cpp \
+    ../GraphDrawer/ogdf/TSANoAcceleration.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 unix {
