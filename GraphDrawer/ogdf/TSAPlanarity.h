@@ -93,7 +93,7 @@ protected:
 		 const DPoint&, double&) const;
 
 #ifdef OGDF_DEBUG
-		virtual void printInternalData() const;
+    virtual void printInternalData() const;
 #endif
 
 	EdgeArray<int> *m_edgeNums; //!< Maps an edge to the index used in the crossingsMatrix

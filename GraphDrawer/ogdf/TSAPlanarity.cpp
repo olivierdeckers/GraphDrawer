@@ -85,15 +85,16 @@ namespace ogdf {
         ListIterator<edge> it;
         for(it = m_nonSelfLoops.begin(); it.valid(); it++) {
             edge e = *it;
+            int i = (*m_edgeNums)[e];
+
             List<edge> possibleCrossings;
             m_accStruct->possibleCrossingEdges(currentPos(e->source()), currentPos(e->target()), possibleCrossings);
-            for(ListIterator<edge> it2 = possibleCrossings.begin(); it2.valid(); it2++) if(*it != *it2) {
-				double energy = 0;
-                bool cross = intersect(*it,*it2, energy);
-                int i = (*m_edgeNums)[e];
+            for(ListIterator<edge> it2 = possibleCrossings.begin(); it2.valid(); it2++) {
                 int j = (*m_edgeNums)[*it2];
-                if(cross && (*m_crossingMatrix)(min(i,j),max(i,j)) == 0) {
-                    (*m_crossingMatrix)(min(i,j),max(i,j)) = energy;
+                if(j > i) {
+                    double energy = 0;
+                    intersect(*it,*it2, energy);
+                    (*m_crossingMatrix)(i,j) = energy;
                     energySum += energy;
                 }
 			}
@@ -149,7 +150,7 @@ namespace ogdf {
 	// computes the energy if the node returned by testNode() is moved
 	// to position testPos().
     void TSAPlanarity::compCandEnergy()
-	{
+    {
 		node v = testNode();
 		m_candidateEnergy = energy();
 		edge e;
@@ -161,24 +162,34 @@ namespace ogdf {
 			node t = e->target();
 			DPoint p1 = testPos();
 			DPoint p2 = (s==v)? currentPos(t) : currentPos(s);
-			int e_num = (*m_edgeNums)[e];
-			edge f;
+            int e_num = (*m_edgeNums)[e];
+
+            for(int i=e_num+1; i<=m_nonSelfLoops.size(); i++) {
+                double crossingEnergy = (*m_crossingMatrix)(e_num, i);
+                if(crossingEnergy > 0) {
+                    m_candidateEnergy -= crossingEnergy;
+                    ChangedCrossing cc;
+                    cc.edgeNum1 = e_num;
+                    cc.edgeNum2 = i;
+                    cc.crossEnergy = 0;
+                    m_crossingChanges.pushBack(cc);
+                }
+            }
+
 			// now we compute the crossings of all other edges with e
 			ListIterator<edge> it;
-            List<edge> possibleCrossings; //TODO first remove all crossings with other edges, not only those that are in possiblecrossings!
+            List<edge> possibleCrossings;
             m_accStruct->possibleCrossingEdges(p1, p2, possibleCrossings);
             for(it = possibleCrossings.begin(); it.valid(); ++it) if(*it != e) {
-				f = *it;
+                edge f = *it;
 				node s2 = f->source();
 				node t2 = f->target();
                 if(s2 != s && s2 != t && t2 != s && t2 != t) {
 					double intersectEnergy = 0;
                     lowLevelIntersect(p1,p2,currentPos(s2),currentPos(t2), intersectEnergy);
-					int f_num = (*m_edgeNums)[f];
-					double priorIntersectEnergy = (*m_crossingMatrix)(min(e_num,f_num),max(e_num,f_num));
+                    int f_num = (*m_edgeNums)[f];
 					
-					if(priorIntersectEnergy != intersectEnergy) {
-						m_candidateEnergy -= priorIntersectEnergy; // this intersection was saved
+                    if(intersectEnergy > 0) {
 						m_candidateEnergy += intersectEnergy; // produced a new intersection
 						ChangedCrossing cc;
 						cc.edgeNum1 = min(e_num,f_num);
@@ -203,7 +214,7 @@ namespace ogdf {
 		for(it = m_crossingChanges.begin(); it.valid(); ++ it) {
 			ChangedCrossing cc = *(it);
 			(*m_crossingMatrix)(cc.edgeNum1,cc.edgeNum2) = cc.crossEnergy;
-		}
+        }
 	}
 
 
@@ -225,6 +236,8 @@ void TSAPlanarity::printInternalData() const {
 			cout << " (" << cc.edgeNum1 << "," << cc.edgeNum2 << ")" << cc.crossEnergy;
 		}
 	}
+
+    cout << endl;
 }
 #endif
 

@@ -23,7 +23,7 @@ LIBS += -L$$PWD/../../OGDF/_debug -lOGDF -lgtest -lpthread
 INCLUDEPATH += $$PWD/../../OGDF
 INCLUDEPATH += $$PWD/../GraphDrawer
 
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++11 -DOGDF_DEBUG
 }
 
 HEADERS += \

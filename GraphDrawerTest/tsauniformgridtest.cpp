@@ -81,6 +81,42 @@ TEST_F(TSAUniformGridTest, GridCorrectness) {
     delete planarity;
 }
 
+TEST_F(TSAUniformGridTest, GridCorrectnessMultipleCandidatesEvaluated) {
+    ogdf::AccelerationStructure* grid = new ogdf::TSAUniformGrid(*m_GA);
+    ogdf::TSAPlanarity* planarity = new ogdf::TSAPlanarity(*m_GA, grid);
+    planarity->computeEnergy();
+
+    EXPECT_EQ(1, planarity->energy()) << "Grid correctly detects one crossing";
+
+    ogdf::DPoint newPos = ogdf::DPoint(0.1, 0.7);
+    double candEnergy = planarity->computeCandidateEnergy(b, newPos);
+    EXPECT_EQ(0, candEnergy) << "Grid calculates correct candidate energy";
+
+    EXPECT_EQ(1, planarity->energy()) << "Grid maintains energy while candidate is not accepted";
+
+    newPos = ogdf::DPoint(0.6, 0.4);
+    candEnergy = planarity->computeCandidateEnergy(b, newPos);
+    EXPECT_EQ(1, candEnergy) << "Grid calculates correct candidate energy";
+
+    planarity->candidateTaken();
+    EXPECT_EQ(1, planarity->energy()) << "Grid correctly updates energy when candidate is accepted";
+
+    newPos = ogdf::DPoint(0.6, 0.4);
+    candEnergy = planarity->computeCandidateEnergy(b, newPos);
+    EXPECT_EQ(1, candEnergy) << "Grid calculates correct candidate energy";
+
+    newPos = ogdf::DPoint(0.1, 0.7);
+    candEnergy = planarity->computeCandidateEnergy(b, newPos);
+    EXPECT_EQ(0, candEnergy) << "Grid calculates correct candidate energy";
+
+    planarity->candidateTaken();
+
+    EXPECT_EQ(0, planarity->energy()) << "Grid maintains energy while candidate is not accepted";
+
+    delete grid;
+    delete planarity;
+}
+
 TEST_F(TSAUniformGridTest, GridCorrectnessNewGridNecessary) {
     ogdf::AccelerationStructure* grid = new ogdf::TSAUniformGrid(*m_GA);
     ogdf::TSAPlanarity* planarity = new ogdf::TSAPlanarity(*m_GA, grid);
@@ -110,16 +146,17 @@ TEST_F(TSAUniformGridTest, GridCorrectnessPlanarityGrid) {
     ogdf::Graph* G = new ogdf::Graph();
     ogdf::GraphAttributes* GA = new ogdf::GraphAttributes(*G, ogdf::GraphAttributes::nodeGraphics | ogdf::GraphAttributes::edgeGraphics);
 
-    ogdf::node nodes [20];
-    for(int i=0; i<20; i++) {
+    int numNodes = 4;
+    ogdf::node nodes [numNodes];
+    for(int i=0; i<numNodes; i++) {
         nodes[i] = G->newNode();
         GA->x(nodes[i]) = randf();
         GA->y(nodes[i]) = randf();
     }
-    int nbEdges = rand() % 50 + 50;
+    int nbEdges = 10;
     for(int i=0; i<nbEdges; i++) {
-        int a = rand() % 20;
-        int b = rand() % 20;
+        int a = rand() % numNodes;
+        int b = rand() % numNodes;
         G->newEdge(nodes[a], nodes[b]);
     }
 
@@ -133,7 +170,7 @@ TEST_F(TSAUniformGridTest, GridCorrectnessPlanarityGrid) {
     EXPECT_EQ(planarity->energy(), planarityGrid->energy()) << "Grid computes same initial energy";
 
     for(int i=0; i<10; i++) {
-        int n = rand() % 20;
+        int n = rand() % numNodes;
         ogdf::DPoint newPos = ogdf::DPoint(randf(), randf());
 
         double planCandEnergy = planarity->computeCandidateEnergy(nodes[n], newPos);
@@ -143,17 +180,18 @@ TEST_F(TSAUniformGridTest, GridCorrectnessPlanarityGrid) {
         if(randf() < 0.5) {
             planarity->candidateTaken();
             planarityGrid->candidateTaken();
+            grid->updateNodePosition(nodes[n], newPos);
         }
 
         EXPECT_EQ(planarity->energy(), planarityGrid->energy());
     }
 
-    /*delete planarityGrid;
+    delete planarityGrid;
     delete planarity;
     delete grid;
     delete none;
     delete G;
-    delete GA;*/
+    delete GA;
 }
 
 TEST_F(TSAUniformGridTest, AngRestInitialCorrectness) {
@@ -194,8 +232,6 @@ TEST_F(TSAUniformGridTest, AngRestCandidateEnergyCorrectness) {
     angres->candidateTaken();
     EXPECT_DOUBLE_EQ((idealAngle-M_PI/4.0)/idealAngle * 4, angres->energy()) << "Updated energy is correct (2)";
 }
-
-
 
 
 int main(int argc, char **argv) {

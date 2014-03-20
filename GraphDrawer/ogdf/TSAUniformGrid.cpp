@@ -368,7 +368,7 @@ void TSAUniformGrid::possibleCrossingEdges(const DPoint &sPos, const DPoint &tPo
         List<edge> edges = m_grid(p.m_x, p.m_y);
         ListIterator<edge> it2;
         for(it2 = edges.begin(); it2.valid(); it2++) {
-            if(!edgesEncountered.member(*it2)) {
+            if(!(*it2)->isSelfLoop() && !edgesEncountered.member(*it2)) {
                 edgesEncountered.insert(*it2, true);
                 result.pushBack(*it2);
             }
