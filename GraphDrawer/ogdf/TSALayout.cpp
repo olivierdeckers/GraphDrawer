@@ -43,7 +43,6 @@
 #include <ogdf/TSAAttraction.h>
 #include <ogdf/internal/energybased/Overlap.h>
 #include <ogdf/PlanarityApprox.h>
-#include <ogdf/TSAPlanarityGrid.h>
 #include <ogdf/TSAPlanarity.h>
 #include <ogdf/TSAAngularResolution.h>
 #include <ogdf/TSANoAcceleration.h>
@@ -219,7 +218,7 @@ void TSALayout::call(GraphAttributes &AG)
             break;
         case AccelerationStructureType::grid:
             accStruct = new TSAUniformGrid(AG);
-            planarity = new TSAPlanarityGrid(AG, accStruct);
+            planarity = new TSAPlanarity(AG, accStruct);
             cout << "grid" << endl;
             break;
         }

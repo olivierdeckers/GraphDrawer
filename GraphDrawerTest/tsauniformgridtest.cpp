@@ -4,6 +4,7 @@
 #include <ogdf/basic/GraphAttributes.h>
 #include <ogdf/fileformats/GmlParser.h>
 #include <ogdf/internal/energybased/UniformGrid.h>
+#include <ogdf/fileformats/GmlParser.h>
 
 #include <ogdf/TSAPlanarity.h>
 #include <ogdf/TSAAngularResolution.h>
@@ -146,19 +147,33 @@ TEST_F(TSAUniformGridTest, GridCorrectnessPlanarityGrid) {
     ogdf::Graph* G = new ogdf::Graph();
     ogdf::GraphAttributes* GA = new ogdf::GraphAttributes(*G, ogdf::GraphAttributes::nodeGraphics | ogdf::GraphAttributes::edgeGraphics);
 
-    int numNodes = 4;
+    /*ogdf::GmlParser parser("../GraphDrawer/GraphDrawer/graphs/20.gml");
+    parser.read(*G);
+    int numNodes = 20;
+    ogdf::node nodes [numNodes];
+    ogdf::node n; int i=0;
+    forall_nodes(n, *G) {
+        nodes[i] = n;
+        GA->x(n) = randf();
+        GA->y(n) = randf();
+        i++;
+    }*/
+
+    int numNodes = 20;
     ogdf::node nodes [numNodes];
     for(int i=0; i<numNodes; i++) {
         nodes[i] = G->newNode();
         GA->x(nodes[i]) = randf();
         GA->y(nodes[i]) = randf();
     }
-    int nbEdges = 10;
+    int nbEdges = 50;
     for(int i=0; i<nbEdges; i++) {
         int a = rand() % numNodes;
         int b = rand() % numNodes;
         G->newEdge(nodes[a], nodes[b]);
     }
+
+
 
     ogdf::AccelerationStructure* grid = new ogdf::TSAUniformGrid(*GA);
     ogdf::AccelerationStructure* none = new ogdf::TSANoAcceleration(*GA);
@@ -169,7 +184,7 @@ TEST_F(TSAUniformGridTest, GridCorrectnessPlanarityGrid) {
 
     EXPECT_EQ(planarity->energy(), planarityGrid->energy()) << "Grid computes same initial energy";
 
-    for(int i=0; i<10; i++) {
+    for(int i=0; i<100; i++) {
         int n = rand() % numNodes;
         ogdf::DPoint newPos = ogdf::DPoint(randf(), randf());
 

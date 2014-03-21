@@ -29,7 +29,6 @@ SOURCES += gui/main.cpp\
     ogdf/RandomMove.cpp \
     ogdf/RemoveCrossing.cpp \
     ogdf/TSAAngularResolution.cpp \
-    ogdf/TSAPlanarityGrid.cpp \
     ogdf/TSAUniformGrid.cpp \
     ogdf/AccelerationStructure.cpp \
     ogdf/TSANoAcceleration.cpp
@@ -50,7 +49,6 @@ HEADERS  += gui/mainwindow.h \
     ogdf/RandomMove.h \
     ogdf/RemoveCrossing.h \
     ogdf/TSAAngularResolution.h \
-    ogdf/TSAPlanarityGrid.h \
     ogdf/TSAUniformGrid.h \
     ogdf/AccelerationStructure.h \
     ogdf/TSANoAcceleration.h
