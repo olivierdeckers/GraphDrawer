@@ -8,10 +8,10 @@ namespace ogdf {
 class RemoveCrossing : public NeighbourhoodStructure
 {
 public:
-    RemoveCrossing();
+    RemoveCrossing(GraphAttributes &GA);
     ~RemoveCrossing();
 
-    virtual List<LayoutChange> generateNeighbouringLayout();
+    virtual List<LayoutChange> generateNeighbouringLayout(double temp);
 };
 
 }

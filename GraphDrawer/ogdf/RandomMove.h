@@ -8,10 +8,13 @@ namespace ogdf {
 class RandomMove : public NeighbourhoodStructure
 {
 public:
-    RandomMove();
+    RandomMove(GraphAttributes&);
     ~RandomMove();
 
-    virtual List<LayoutChange> generateNeighbouringLayout();
+    virtual List<LayoutChange> generateNeighbouringLayout(double temp);
+
+private:
+    List<node> m_nonIsolatedNodes;
 };
 
 }

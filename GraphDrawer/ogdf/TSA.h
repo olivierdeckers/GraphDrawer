@@ -50,6 +50,7 @@
 
 
 #include <ogdf/internal/energybased/EnergyFunction.h>
+#include <ogdf/NeighbourhoodStructure.h>
 #include <ogdf/TSAUniformGrid.h>
 #ifdef GRAPHDRAWER
 #include "gui/layoutworker.h"
@@ -72,13 +73,12 @@ public:
 	//! Sets the start temperature to \a startTemp.
 	void setStartTemperature(double startTemp);
 
-	void setQuality(double quality);
-
-	//! Sets the number of iterations for each temperature step to \a steps.
-	//void setNumberOfIterations(int steps);
+    void setQuality(double quality);
 
 	//! Adds an energy function \a F with a certain weight.
 	void addEnergyFunction(EnergyFunction *F, double weight);
+
+    void addNeighbourhoodStructure(NeighbourhoodStructure *ns);
 
 	//! Returns a list of the names of the energy functions.
     List<String> returnEnergyFunctionNames();
@@ -95,29 +95,21 @@ public:
 
 private:
 	//! The default starting temperature.
-	const static double m_startingTemp;
-	//! Per default, the number of iterations per temperature are set as a constant multiple of the number of vertices.
-	//const static int m_iterationMultiplier; //May reintroduce this later for parallellism
+    const static double m_startingTemp;
 	//! The default end temperature
 	const static double m_defaultEndTemperature;
 
 	double m_temperature;          //!< The temperature during the annealing process.
-	double m_diskRadius;        //!< The radius of the disk around the old position of a vertex where the new position will be.
-	double m_energy;            //!< The current energy of the system.
-	//int m_numberOfIterations;   //!< The number of iterations per temperature step.
+    double m_energy;            //!< The current energy of the system.
 	double m_quality;			//!< The quality/runtime tradeoff parameter: higher values means higher quality and higher runtime
 	double m_endTemperature;	//!< The stop condition for temperature
 
 	List<EnergyFunction*> m_energyFunctions; //!< The list of the energy functions.
+    List<NeighbourhoodStructure*> m_neighbourhoodStructures;
 	List<double> m_weightsOfEnergyFunctions; //!< The list of the weights for the energy functions.
-
-	List<node> m_nonIsolatedNodes; //!< The list of nodes with degree greater 0.
 
 	//! Resets the parameters for subsequent runs.
 	void initParameters();
-
-	//! Randomly computes a node and a new position for that node.
-	node computeCandidateLayout(const GraphAttributes &, DPoint &) const;
 
 	//! Tests if new energy value satisfies annealing property (only better if m_fineTune).
 	bool testEnergyValue(double newVal);
@@ -125,17 +117,11 @@ private:
 	//! Computes a random number between zero and one
 	double randNum() const;
 
-	//! Computes the first disk radius as the half the diamter of the enclosing rectangle.
-	//void computeFirstRadius(const GraphAttributes &AG);
-
 	//! Computes the energy of the initial layout and stores it in \a m_energy.
 	void computeInitialEnergy();
 
 	//! Computes positions for the vertices of degree zero.
 	void placeIsolatedNodes(GraphAttributes &AG) const;
-
-	//! Compute an appropriate disk radius based on the temperature
-	double computeDiskRadius(double temperature) const;
 
 	//! Fake assignment operator (dummy to avoid copying)
 	TSA& operator=(const TSA &dh);

@@ -46,6 +46,7 @@
 #include <ogdf/TSAPlanarity.h>
 #include <ogdf/TSAAngularResolution.h>
 #include <ogdf/TSANoAcceleration.h>
+#include <ogdf/RandomMove.h>
 
 
 #define DEFAULT_REPULSION_WEIGHT 1e6
@@ -201,6 +202,9 @@ void TSALayout::call(GraphAttributes &AG)
     tsa.addEnergyFunction(&atr,m_attractionWeight);
     tsa.addEnergyFunction(&over,m_nodeOverlapWeight);
     tsa.addEnergyFunction(&angRes,m_angResWeight);
+
+    RandomMove rm(AG);
+    tsa.addNeighbourhoodStructure(&rm);
 
     AccelerationStructure *accStruct;
 

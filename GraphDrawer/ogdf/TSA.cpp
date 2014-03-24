@@ -70,10 +70,8 @@ namespace ogdf {
 
 	//allow resetting in between subsequent calls
 	void TSA::initParameters()
-	{
-		m_diskRadius = computeDiskRadius(m_temperature);
-		m_energy = 0.0;
-		//m_numberOfIterations = 0; //is set in member function
+    {
+        m_energy = 0.0;
 
         unsigned int t = (unsigned) time(NULL);
 		cout << "seed: " << t << endl;
@@ -109,6 +107,11 @@ namespace ogdf {
 		F->computeEnergy();
 		m_energy += F->energy();
 	}
+
+    void TSA::addNeighbourhoodStructure(NeighbourhoodStructure *ns)
+    {
+        m_neighbourhoodStructures.pushBack(ns);
+    }
 
     List<String> TSA::returnEnergyFunctionNames()
 	{
@@ -154,66 +157,7 @@ namespace ogdf {
 		double val = rand();
 		val /= RAND_MAX;
 		return val;
-	}
-
-	//chooses random vertex and a new random position for it on a circle with radius m_diskRadius
-	//around its previous position
-	node TSA::computeCandidateLayout(
-	const GraphAttributes &AG,
-	DPoint &newPos) const
-	{
-		int randomPos = randomNumber(0,m_nonIsolatedNodes.size()-1);
-		node v = *(m_nonIsolatedNodes.get(randomPos));
-		double oldx = AG.x(v);
-		double oldy = AG.y(v);
-		double randomAngle = randNum() * 2.0 * Math::pi;
-		newPos.m_y = oldy+sin(randomAngle)*m_diskRadius * randNum();
-		newPos.m_x = oldx+cos(randomAngle)*m_diskRadius * randNum();
-		return v;
-	}
-
-	////chooses the initial radius of the disk as half the maximum of width and height of
-	////the initial layout or depending on the value of m_fineTune
-	//void TSA::computeFirstRadius(const GraphAttributes &AG)
-	//{
-	//	const Graph &G = AG.constGraph();
-	//	node v = G.firstNode();
-	//	double minX = AG.x(v);
-	//	double minY = AG.y(v);
-	//	double maxX = minX;
-	//	double maxY = minY;
-	//	forall_nodes(v,G) {
-	//		minX = min(minX,AG.x(v));
-	//		maxX = max(maxX,AG.x(v));
-	//		minY = min(minY,AG.y(v));
-	//		maxY = max(maxY,AG.y(v));
-	//	}
-	//	// compute bounding box of current layout
-	//	// make values nonzero
-	//	double w = maxX-minX+1.0;
-	//	double h = maxY-minY+1.0;
-
-	//	double ratio = h/w;
-
-	//	double W = sqrt(G.numberOfNodes() / ratio);
-
-	//	m_diskRadius = W / 5.0;//allow to move by a significant part of current layout size
-	//	m_diskRadius=max(m_diskRadius,max(maxX-minX,maxY-minY)/5.0);
-
-	//	//TODO: also use node sizes
-	//	/*
-	//	double lengthSum(0.0);
-	//	node v;
-	//	forall_nodes(v,m_G) {
-	//		const IntersectionRectangle &i = shape(v);
-	//		lengthSum += i.width();
-	//		lengthSum += i.width();
-	//		}
-	//		lengthSum /= (2*m_G.numberOfNodes());
-	//		// lengthSum is now the average of all lengths and widths
-	//	*/
-	//	//change the initial radius depending on the settings
-	//}
+    }
 
 	//steps through all energy functions and adds the initial energy computed by each
 	//function for the start layout
@@ -235,24 +179,30 @@ namespace ogdf {
 		double maxX = 0.0;
 		double maxY = 0.0;
 
-		if(!m_nonIsolatedNodes.empty()) {
+        List<node> nonIsolatedNodes;
+        AG.constGraph().allNodes(nonIsolatedNodes);
+
+        if(!nonIsolatedNodes.empty()) {
 			//compute a rectangle that includes all non-isolated vertices
-			node v = m_nonIsolatedNodes.front();
+            node v = nonIsolatedNodes.front();
 			minX = AG.x(v);
 			minY = AG.y(v);
 			maxX = minX;
 			maxY = minY;
 			ListConstIterator<node> it;
-			for(it = m_nonIsolatedNodes.begin(); it.valid(); ++it) {
+            for(it = nonIsolatedNodes.begin(); it.valid(); ++it) {
 				v = *it;
-				double xVal = AG.x(v);
-				double yVal = AG.y(v);
-				double halfHeight = AG.height(v) / 2.0;
-				double halfWidth = AG.width(v) / 2.0;
-				if(xVal - halfWidth < minX) minX = xVal - halfWidth;
-				if(xVal + halfWidth > maxX) maxX = xVal + halfWidth;
-				if(yVal - halfHeight < minY) minY = yVal - halfHeight;
-				if(yVal + halfHeight > maxY) maxY = yVal + halfHeight;
+                if(v->degree() != 0)
+                {
+                    double xVal = AG.x(v);
+                    double yVal = AG.y(v);
+                    double halfHeight = AG.height(v) / 2.0;
+                    double halfWidth = AG.width(v) / 2.0;
+                    if(xVal - halfWidth < minX) minX = xVal - halfWidth;
+                    if(xVal + halfWidth > maxX) maxX = xVal + halfWidth;
+                    if(yVal - halfHeight < minY) minY = yVal - halfHeight;
+                    if(yVal + halfHeight > maxY) maxY = yVal + halfHeight;
+                }
 			}
 		}
 
@@ -298,17 +248,7 @@ namespace ogdf {
 
 		OGDF_ASSERT(!m_energyFunctions.empty());
 
-		const Graph &G = AG.constGraph();
-		//compute the list of vertices with degree greater than zero
-		G.allNodes(m_nonIsolatedNodes);
-		ListIterator<node> it,itSucc;
-		for(it = m_nonIsolatedNodes.begin(); it.valid(); it = itSucc) {
-			itSucc = it.succ();
-			if((*it)->degree() == 0) m_nonIsolatedNodes.del(it);
-		}
-
-
-		if(G.numberOfEdges() > 0) { //else only isolated nodes
+        if(AG.constGraph().numberOfEdges() > 0) { //else only isolated nodes
 			computeInitialEnergy();
 			
 			double totalCostDiff = 0, totalEntropyDiff = 0;
@@ -318,9 +258,11 @@ namespace ogdf {
 			//this is the main optimization loop
             while((m_temperature > m_endTemperature || i < 20) && i < 1e5 /*&& m_diskRadius >= 1*/) {
 
-				DPoint newPos;
-				//choose random vertex and new position for vertex
-				node v = computeCandidateLayout(AG,newPos);
+                List<LayoutChange> layoutChanges = m_neighbourhoodStructures.front()->generateNeighbouringLayout(m_temperature);
+                LayoutChange change = layoutChanges.front();
+
+                node v = change.n;
+                DPoint newPos = change.newPos;
 
 				//compute candidate energy and decide if new layout is chosen
 				ListIterator<EnergyFunction*> it;
@@ -362,8 +304,6 @@ namespace ogdf {
 					m_temperature = m_quality * (totalCostDiff / totalEntropyDiff);
 				}
 
-				m_diskRadius = computeDiskRadius(m_temperature);
-
 #ifdef GRAPHDRAWER
                 if(worker != NULL)
                     worker->energyInfo(m_energy, m_temperature);
@@ -383,13 +323,10 @@ namespace ogdf {
 			cout << "energy: " << std::fixed << m_energy << endl;
 			cout << "iterations: " << std::fixed << i << endl;
 		}
+        //TODO: consider zero degree vertices
 		//if there are zero degree vertices, they are placed using placeIsolatedNodes
-		if(m_nonIsolatedNodes.size() != G.numberOfNodes())
-			placeIsolatedNodes(AG);
+        //if(m_nonIsolatedNodes.size() != G.numberOfNodes())
+        //	placeIsolatedNodes(AG);
 		cout << "Time: " << (time(NULL) - start) << endl;
-	}
-
-	double TSA::computeDiskRadius(double temperature) const {
-		return min(500.0, 1e4 * (temperature - 1e-6)); //TODO enhance
-	}
+    }
 } //namespace

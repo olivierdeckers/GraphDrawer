@@ -8,7 +8,6 @@ CONFIG -= qt
 SOURCES += tsauniformgridtest.cpp \
     ../GraphDrawer/ogdf/TSAUniformGrid.cpp \
     ../GraphDrawer/ogdf/TSARepulsion.cpp \
-    ../GraphDrawer/ogdf/TSAPlanarityGrid.cpp \
     ../GraphDrawer/ogdf/TSAPlanarity.cpp \
     ../GraphDrawer/ogdf/TSALayout.cpp \
     ../GraphDrawer/ogdf/TSAAttraction.cpp \
@@ -29,7 +28,6 @@ QMAKE_CXXFLAGS += -std=c++11 -DOGDF_DEBUG
 HEADERS += \
     ../GraphDrawer/ogdf/TSAUniformGrid.h \
     ../GraphDrawer/ogdf/TSARepulsion.h \
-    ../GraphDrawer/ogdf/TSAPlanarityGrid.h \
     ../GraphDrawer/ogdf/TSAPlanarity.h \
     ../GraphDrawer/ogdf/TSALayout.h \
     ../GraphDrawer/ogdf/TSAAttraction.h \
