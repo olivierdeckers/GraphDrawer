@@ -54,6 +54,7 @@
 #include <ogdf/internal/energybased/EnergyFunction.h>
 #include <ogdf/basic/Array2D.h>
 #include <ogdf/AccelerationStructure.h>
+#include <ogdf/basic/Graph.h>
 
 
 namespace ogdf {
@@ -68,6 +69,13 @@ public:
 
 	//! Computes energy of initial layout and stores it in \a m_energy.
 	void computeEnergy();
+
+    struct Crossing {
+        edge edge1;
+        edge edge2;
+    };
+
+    Crossing getRandomCrossing() const;
 
 protected:
 	struct ChangedCrossing {

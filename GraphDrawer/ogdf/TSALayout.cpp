@@ -47,6 +47,7 @@
 #include <ogdf/TSAAngularResolution.h>
 #include <ogdf/TSANoAcceleration.h>
 #include <ogdf/RandomMove.h>
+#include <ogdf/RemoveCrossing.h>
 
 
 #define DEFAULT_REPULSION_WEIGHT 1e6
@@ -191,46 +192,41 @@ void TSALayout::call(GraphAttributes &AG)
             (DIsGreater(m_prefEdgeLength, 0.0)) ? m_prefEdgeLength : calculatePreferredEdgeLength(AG, m_multiplier);
 
     TSA tsa;
+    AccelerationStructure *accStruct;
+    TSAPlanarity *planarity;
+    switch(m_accStruct) {
+    case AccelerationStructureType::none:
+        accStruct = new TSANoAcceleration(AG);
+        planarity = new TSAPlanarity(AG, accStruct);
+        cout << "regular" << endl;
+        break;
+    case AccelerationStructureType::approximation:
+        accStruct = new TSANoAcceleration(AG);
+        planarity = new PlanarityApprox(AG, accStruct);
+        cout << "approx" << endl;
+        break;
+    case AccelerationStructureType::grid:
+        accStruct = new TSAUniformGrid(AG);
+        planarity = new TSAPlanarity(AG, accStruct);
+        cout << "grid" << endl;
+        break;
+    }
+
     TSARepulsion rep(AG, preferredEdgeLength);
     TSAAttraction atr(AG, preferredEdgeLength);
-    Overlap over(AG);
-    EnergyFunction *planarity;
     TSAAngularResolution angRes(AG);
-	//NodeIntersection ni(AG);
 
     tsa.addEnergyFunction(&rep,m_repulsionWeight);
     tsa.addEnergyFunction(&atr,m_attractionWeight);
-    tsa.addEnergyFunction(&over,m_nodeOverlapWeight);
     tsa.addEnergyFunction(&angRes,m_angResWeight);
+    tsa.addEnergyFunction(planarity, m_planarityWeight);
 
     RandomMove rm(AG);
-    tsa.addNeighbourhoodStructure(&rm);
+    RemoveCrossing rc(AG, *planarity);
+    //tsa.addNeighbourhoodStructure(&rm);
+    tsa.addNeighbourhoodStructure(&rc);
 
-    AccelerationStructure *accStruct;
 
-    if (m_crossings) {
-        switch(m_accStruct) {
-        case AccelerationStructureType::none:
-            accStruct = new TSANoAcceleration(AG);
-            planarity = new TSAPlanarity(AG, accStruct);
-            cout << "regular" << endl;
-            break;
-        case AccelerationStructureType::approximation:
-            accStruct = new TSANoAcceleration(AG);
-            planarity = new PlanarityApprox(AG, accStruct);
-            cout << "approx" << endl;
-            break;
-        case AccelerationStructureType::grid:
-            accStruct = new TSAUniformGrid(AG);
-            planarity = new TSAPlanarity(AG, accStruct);
-            cout << "grid" << endl;
-            break;
-        }
-        tsa.addEnergyFunction(planarity, m_planarityWeight);
-    }
-
-	//dh.setNumberOfIterations(m_numberOfIterations);
-    //dh.setStartTemperature(m_startTemperature);
     tsa.setStartTemperature(m_startTemperature);
     tsa.setQuality(m_quality);
 #ifdef GRAPHDRAWER

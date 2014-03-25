@@ -72,15 +72,8 @@ namespace ogdf {
 
 	// computes energy of layout, stores it and sets the crossingMatrix
     void TSAPlanarity::computeEnergy()
-	{
-        //int e_num = m_nonSelfLoops.size();
-		double energySum = 0;
-        //Array<edge> numEdge(1,e_num);
-        //edge e;
-        //ListIterator<edge> it;
-
-        //for(it = m_nonSelfLoops.begin(); it.valid(); ++it)
-        //	numEdge[(*m_edgeNums)[*it]] = *it;
+    {
+        double energySum = 0;
 
         ListIterator<edge> it;
         for(it = m_nonSelfLoops.begin(); it.valid(); it++) {
@@ -99,8 +92,41 @@ namespace ogdf {
                 }
 			}
 		}
-		m_energy = energySum;
-	}
+        m_energy = energySum;
+    }
+
+    TSAPlanarity::Crossing TSAPlanarity::getRandomCrossing() const
+    {
+        if(m_energy > 0)
+        {
+            List<Crossing> crossings;
+
+            ListConstIterator<edge> it1;
+            for(it1 = m_nonSelfLoops.begin(); it1.valid(); it1++)
+            {
+                ListConstIterator<edge> it2;
+                for(it2 = m_nonSelfLoops.begin(); it2.valid(); it2++)
+                {
+                    int i = (*m_edgeNums)[*it1];
+                    int j = (*m_edgeNums)[*it2];
+                    if((*m_crossingMatrix)(min(i, j), max(i, j)) > 0)
+                    {
+                        Crossing c;
+                        c.edge1 = *it1;
+                        c.edge2 = *it2;
+                        crossings.pushBack(c);
+                    }
+                }
+            }
+
+            int random = randomNumber(0, crossings.size() - 1);
+            return *(crossings.get(random));
+        }
+        else
+        {
+            throw;
+        }
+    }
 
 
 	// tests if two edges cross
