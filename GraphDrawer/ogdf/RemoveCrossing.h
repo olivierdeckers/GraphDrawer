@@ -12,7 +12,7 @@ public:
     RemoveCrossing(GraphAttributes &GA, TSAPlanarity &planarity);
     ~RemoveCrossing();
 
-    virtual List<LayoutChange> generateNeighbouringLayout(double temp);
+    virtual void generateNeighbouringLayout(double temp, List<LayoutChange> &result);
 
 private:
     TSAPlanarity &m_planarity;

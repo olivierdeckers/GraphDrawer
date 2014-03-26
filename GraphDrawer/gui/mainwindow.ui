@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1200</width>
-    <height>773</height>
+    <height>806</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -318,7 +318,7 @@
     <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
    <attribute name="dockWidgetArea">
-    <number>2</number>
+    <number>8</number>
    </attribute>
    <widget class="QCustomPlot" name="plotWidget"/>
   </widget>

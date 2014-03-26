@@ -124,7 +124,7 @@ namespace ogdf {
         }
         else
         {
-            throw;
+            throw "There are no crossings to return";
         }
     }
 

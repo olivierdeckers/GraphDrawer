@@ -14,9 +14,7 @@ RemoveCrossing::~RemoveCrossing()
 
 }
 
-List<LayoutChange> RemoveCrossing::generateNeighbouringLayout(double temp) {
-    List<LayoutChange> result;
-
+void RemoveCrossing::generateNeighbouringLayout(double temp, List<LayoutChange> &result) {
     TSAPlanarity::Crossing c = m_planarity.getRandomCrossing();
 
     DLine e1 = DLine(m_GA.x(c.edge1->source()), m_GA.y(c.edge1->source()), m_GA.x(c.edge1->target()), m_GA.y(c.edge1->target()));
@@ -54,7 +52,6 @@ List<LayoutChange> RemoveCrossing::generateNeighbouringLayout(double temp) {
     lc.n = n;
     lc.newPos = newPos;
     result.pushBack(lc);
-    return result;
 }
 
 }

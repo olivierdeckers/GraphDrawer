@@ -21,7 +21,7 @@ RandomMove::~RandomMove()
 {
 }
 
-List<LayoutChange> RandomMove::generateNeighbouringLayout(double temp)
+void RandomMove::generateNeighbouringLayout(double temp, List<LayoutChange> &result)
 {
     double diskRadius = min(500.0, 1e4 * (temp - 1e-6));
 
@@ -38,10 +38,7 @@ List<LayoutChange> RandomMove::generateNeighbouringLayout(double temp)
     lc.n = v;
     lc.newPos = newPos;
 
-    List<LayoutChange> result;
     result.pushBack(lc);
-
-    return result;
 }
 
 }

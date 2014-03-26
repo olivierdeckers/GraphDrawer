@@ -103,10 +103,13 @@ private:
     double m_energy;            //!< The current energy of the system.
 	double m_quality;			//!< The quality/runtime tradeoff parameter: higher values means higher quality and higher runtime
 	double m_endTemperature;	//!< The stop condition for temperature
+    double m_totalCostDiff;
+    double m_totalEntropyDiff;
 
 	List<EnergyFunction*> m_energyFunctions; //!< The list of the energy functions.
+    List<double> m_weightsOfEnergyFunctions; //!< The list of the weights for the energy functions.
     List<NeighbourhoodStructure*> m_neighbourhoodStructures;
-	List<double> m_weightsOfEnergyFunctions; //!< The list of the weights for the energy functions.
+    List<double> m_neighbourhoodImprovements;
 
 	//! Resets the parameters for subsequent runs.
 	void initParameters();
@@ -122,6 +125,8 @@ private:
 
 	//! Computes positions for the vertices of degree zero.
 	void placeIsolatedNodes(GraphAttributes &AG) const;
+
+    int chooseNeighbourhood() const;
 
 	//! Fake assignment operator (dummy to avoid copying)
 	TSA& operator=(const TSA &dh);

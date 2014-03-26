@@ -223,7 +223,7 @@ void TSALayout::call(GraphAttributes &AG)
 
     RandomMove rm(AG);
     RemoveCrossing rc(AG, *planarity);
-    //tsa.addNeighbourhoodStructure(&rm);
+    tsa.addNeighbourhoodStructure(&rm);
     tsa.addNeighbourhoodStructure(&rc);
 
 

@@ -19,7 +19,7 @@ public:
     NeighbourhoodStructure(GraphAttributes &GA) : m_GA(GA), m_G(GA.constGraph()) {}
 
     virtual ~NeighbourhoodStructure() {}
-    virtual List<LayoutChange> generateNeighbouringLayout(double temp) = 0;
+    virtual void generateNeighbouringLayout(double temp, List<LayoutChange> &result) = 0;
 
 protected:
     GraphAttributes &m_GA;

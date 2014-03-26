@@ -111,6 +111,37 @@ namespace ogdf {
     void TSA::addNeighbourhoodStructure(NeighbourhoodStructure *ns)
     {
         m_neighbourhoodStructures.pushBack(ns);
+        m_neighbourhoodImprovements.pushBack(0.0);
+    }
+
+    int TSA::chooseNeighbourhood() const
+    {
+        if(m_totalCostDiff == 0) {
+            return randomNumber(0, m_neighbourhoodStructures.size() - 1);
+        }
+
+        double r = randNum();
+        double acc = 0;
+        int neighbourhood = 0;
+        ListConstIterator<double> it;
+
+        for(it = m_neighbourhoodImprovements.begin(); it.valid(); it++) {
+            cout << "neighbourhood " << neighbourhood << ": " << *it << endl;
+            neighbourhood ++;
+        }
+        neighbourhood = 0;
+
+        for(it = m_neighbourhoodImprovements.begin(); it.valid(); it++)
+        {
+            acc += (*it) / m_totalCostDiff;
+            OGDF_ASSERT(acc >= 0 && acc <= 1);
+            if (r <= acc) {
+                return neighbourhood;
+            }
+            neighbourhood++;
+        }
+
+        throw;
     }
 
     List<String> TSA::returnEnergyFunctionNames()
@@ -251,14 +282,24 @@ namespace ogdf {
         if(AG.constGraph().numberOfEdges() > 0) { //else only isolated nodes
 			computeInitialEnergy();
 			
-			double totalCostDiff = 0, totalEntropyDiff = 0;
+            m_totalCostDiff = 0;
+            m_totalEntropyDiff = 0;
 			double costDiff;
 			int i = 0;
 			int iterationsSinceLastChange = 0;
 			//this is the main optimization loop
             while((m_temperature > m_endTemperature || i < 20) && i < 1e5 /*&& m_diskRadius >= 1*/) {
+                List<LayoutChange> layoutChanges;
+                int neighbourhood = (i > 1000) ? chooseNeighbourhood() : randomNumber(0, m_neighbourhoodStructures.size() - 1);
 
-                List<LayoutChange> layoutChanges = m_neighbourhoodStructures.front()->generateNeighbouringLayout(m_temperature);
+                try {
+                    (*(m_neighbourhoodStructures.get(neighbourhood)))->generateNeighbouringLayout(m_temperature, layoutChanges);
+                }
+                catch(const char*) { //fall back to randomMove when other structure is not applicable
+                    neighbourhood = 0;
+                    m_neighbourhoodStructures.front()->generateNeighbouringLayout(m_temperature, layoutChanges);
+                }
+                cout << "neighbourhood used: " << neighbourhood << endl;
                 LayoutChange change = layoutChanges.front();
 
                 node v = change.n;
@@ -279,7 +320,8 @@ namespace ogdf {
 				//this tests if the new layout is accepted. If this is the case,
 				//all energy functions are informed that the new layout is accepted
 				if(testEnergyValue(newEnergy)) {
-					totalCostDiff += costDiff;
+                    m_totalCostDiff += costDiff;
+                    (*(m_neighbourhoodImprovements.get(neighbourhood))) += costDiff;
 
 					for(it = m_energyFunctions.begin(); it.valid(); it = it.succ())
 						(*it)->candidateTaken();
@@ -294,14 +336,14 @@ namespace ogdf {
 				}
 
 				if(costDiff > 0) {
-					totalEntropyDiff -= costDiff / m_temperature;
+                    m_totalEntropyDiff -= costDiff / m_temperature;
 				}
 				
-				if(totalCostDiff >= 0 || totalEntropyDiff == 0) {
+                if(m_totalCostDiff >= 0 || m_totalEntropyDiff == 0) {
 					m_temperature = m_startingTemp;
 				}
 				else {
-					m_temperature = m_quality * (totalCostDiff / totalEntropyDiff);
+                    m_temperature = m_quality * (m_totalCostDiff / m_totalEntropyDiff);
 				}
 
 #ifdef GRAPHDRAWER
