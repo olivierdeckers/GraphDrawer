@@ -11,7 +11,7 @@ public:
     RandomMove(GraphAttributes&);
     ~RandomMove();
 
-    virtual void generateNeighbouringLayout(double temp, List<LayoutChange> &result);
+    virtual void generateNeighbouringLayout(double temp, Hashing<node, DPoint> &result);
 
 private:
     List<node> m_nonIsolatedNodes;

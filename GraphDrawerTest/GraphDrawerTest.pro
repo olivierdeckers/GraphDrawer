@@ -17,7 +17,10 @@ SOURCES += tsauniformgridtest.cpp \
     ../GraphDrawer/ogdf/TSANoAcceleration.cpp \
     ../GraphDrawer/ogdf/RemoveCrossing.cpp \
     ../GraphDrawer/ogdf/RandomMove.cpp \
-    ../GraphDrawer/ogdf/NeighbourhoodStructure.cpp
+    ../GraphDrawer/ogdf/NeighbourhoodStructure.cpp \
+    ../GraphDrawer/ogdf/TSAEnergyFunction.cpp \
+    ../GraphDrawer/ogdf/TSANodePairEnergy.cpp \
+    ../GraphDrawer/ogdf/AccelerationStructure.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 unix {
@@ -39,4 +42,8 @@ HEADERS += \
     ../GraphDrawer/ogdf/TSAAngularResolution.h \
     ../GraphDrawer/ogdf/RemoveCrossing.h \
     ../GraphDrawer/ogdf/RandomMove.h \
-    ../GraphDrawer/ogdf/NeighbourhoodStructure.h
+    ../GraphDrawer/ogdf/NeighbourhoodStructure.h \
+    ../GraphDrawer/ogdf/TSAEnergyFunction.h \
+    ../GraphDrawer/ogdf/TSANodePairEnergy.h \
+    ../GraphDrawer/ogdf/TSANoAcceleration.h \
+    ../GraphDrawer/ogdf/AccelerationStructure.h

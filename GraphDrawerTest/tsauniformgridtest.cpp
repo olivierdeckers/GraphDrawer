@@ -2,6 +2,7 @@
 
 #include <ogdf/basic/Graph.h>
 #include <ogdf/basic/GraphAttributes.h>
+#include <ogdf/basic/Hashing.h>
 #include <ogdf/fileformats/GmlParser.h>
 #include <ogdf/internal/energybased/UniformGrid.h>
 #include <ogdf/fileformats/GmlParser.h>
@@ -58,6 +59,13 @@ protected:
         m_GA->x(n) = x;
         m_GA->y(n) = y;
     }
+
+    double computeCandidateEnergy(ogdf::node n, ogdf::DPoint &newPos, ogdf::TSAEnergyFunction *planarity) {
+        ogdf::Hashing<ogdf::node, ogdf::DPoint> layoutChanges;
+        layoutChanges.insert(n, newPos);
+
+        return planarity->computeCandidateEnergy(layoutChanges);
+    }
 };
 
 TEST_F(TSAUniformGridTest, GridCorrectness) {
@@ -67,8 +75,8 @@ TEST_F(TSAUniformGridTest, GridCorrectness) {
 
     EXPECT_EQ(1, planarity->energy()) << "Grid correctly detects one crossing";
 
-    const ogdf::DPoint newPos = ogdf::DPoint(0.1, 0.7);
-    double candEnergy = planarity->computeCandidateEnergy(b, newPos);
+    ogdf::DPoint newPos = ogdf::DPoint(0.1, 0.7);
+    double candEnergy = computeCandidateEnergy(b, newPos, planarity);
     EXPECT_EQ(0, candEnergy) << "Grid calculates correct candidate energy";
 
     EXPECT_EQ(1, planarity->energy()) << "Grid maintains energy while candidate is not accepted";
@@ -90,24 +98,24 @@ TEST_F(TSAUniformGridTest, GridCorrectnessMultipleCandidatesEvaluated) {
     EXPECT_EQ(1, planarity->energy()) << "Grid correctly detects one crossing";
 
     ogdf::DPoint newPos = ogdf::DPoint(0.1, 0.7);
-    double candEnergy = planarity->computeCandidateEnergy(b, newPos);
+    double candEnergy = computeCandidateEnergy(b, newPos, planarity);
     EXPECT_EQ(0, candEnergy) << "Grid calculates correct candidate energy";
 
     EXPECT_EQ(1, planarity->energy()) << "Grid maintains energy while candidate is not accepted";
 
     newPos = ogdf::DPoint(0.6, 0.4);
-    candEnergy = planarity->computeCandidateEnergy(b, newPos);
+    candEnergy = computeCandidateEnergy(b, newPos, planarity);
     EXPECT_EQ(1, candEnergy) << "Grid calculates correct candidate energy";
 
     planarity->candidateTaken();
     EXPECT_EQ(1, planarity->energy()) << "Grid correctly updates energy when candidate is accepted";
 
     newPos = ogdf::DPoint(0.6, 0.4);
-    candEnergy = planarity->computeCandidateEnergy(b, newPos);
+    candEnergy = computeCandidateEnergy(b, newPos, planarity);
     EXPECT_EQ(1, candEnergy) << "Grid calculates correct candidate energy";
 
     newPos = ogdf::DPoint(0.1, 0.7);
-    candEnergy = planarity->computeCandidateEnergy(b, newPos);
+    candEnergy = computeCandidateEnergy(b, newPos, planarity);
     EXPECT_EQ(0, candEnergy) << "Grid calculates correct candidate energy";
 
     planarity->candidateTaken();
@@ -125,8 +133,8 @@ TEST_F(TSAUniformGridTest, GridCorrectnessNewGridNecessary) {
 
     EXPECT_EQ(1, planarity->energy()) << "Grid correctly detects one crossing";
 
-    const ogdf::DPoint newPos = ogdf::DPoint(2,1.5);
-    double candEnergy = planarity->computeCandidateEnergy(b, newPos);
+    ogdf::DPoint newPos = ogdf::DPoint(2,1.5);
+    double candEnergy = computeCandidateEnergy(b, newPos, planarity);
     EXPECT_EQ(0, candEnergy) << "Grid calculates correct candidate energy";
 
     //EXPECT_EQ(true, grid->newGridNecessary(b, newPos)) << "A new grid is necessary";
@@ -188,13 +196,17 @@ TEST_F(TSAUniformGridTest, GridCorrectnessPlanarityGrid) {
         int n = rand() % numNodes;
         ogdf::DPoint newPos = ogdf::DPoint(randf(), randf());
 
-        double planCandEnergy = planarity->computeCandidateEnergy(nodes[n], newPos);
-        double gridCandEnergy = planarityGrid->computeCandidateEnergy(nodes[n], newPos);
+        ogdf::Hashing<ogdf::node, ogdf::DPoint> layoutChanges;
+        layoutChanges.insert(nodes[n], newPos);
+
+        double planCandEnergy = planarity->computeCandidateEnergy(layoutChanges);
+        double gridCandEnergy = planarityGrid->computeCandidateEnergy(layoutChanges);
         EXPECT_EQ(planCandEnergy, gridCandEnergy) << "Grid computes same candidate energy";
 
         if(randf() < 0.5) {
             planarity->candidateTaken();
             planarityGrid->candidateTaken();
+
             grid->updateNodePosition(nodes[n], newPos);
         }
 
@@ -228,7 +240,7 @@ TEST_F(TSAUniformGridTest, AngRestCandidateEnergyCorrectness) {
     double idealAngle = 2*M_PI/3.0;
 
     ogdf::DPoint newPos = ogdf::DPoint(0.5, 0.5);
-    double candEnergy = angres->computeCandidateEnergy(b, newPos);
+    double candEnergy = computeCandidateEnergy(b, newPos, angres);
     EXPECT_DOUBLE_EQ((idealAngle-M_PI/4.0)/idealAngle + (idealAngle-M_PI/2.0)/idealAngle + 2, candEnergy) << "Candidate energy is correct";
 
     EXPECT_DOUBLE_EQ((idealAngle-M_PI/4.0)/idealAngle * 4, angres->energy()) << "Energy should not be updated yet";
@@ -239,7 +251,7 @@ TEST_F(TSAUniformGridTest, AngRestCandidateEnergyCorrectness) {
     EXPECT_DOUBLE_EQ((idealAngle-M_PI/4.0)/idealAngle + (idealAngle-M_PI/2.0)/idealAngle + 2, angres->energy()) << "Updated energy is correct";
 
     newPos = ogdf::DPoint(1, 0);
-    candEnergy = angres->computeCandidateEnergy(b, newPos);
+    candEnergy = computeCandidateEnergy(b, newPos, angres);
     EXPECT_DOUBLE_EQ((idealAngle-M_PI/4.0)/idealAngle * 4, candEnergy) << "Candidate energy is correct (2)";
 
     m_GA->x(b) = 1;

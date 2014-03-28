@@ -49,7 +49,7 @@
 #define OGDF_TSAATTRACTION_H
 
 
-#include <ogdf/internal/energybased/NodePairEnergy.h>
+#include <ogdf/TSANodePairEnergy.h>
 
 namespace ogdf {
 
@@ -63,7 +63,7 @@ namespace ogdf {
  * distance between two adjacent vertices depends on the size of
  * the two vertices.
  */
-class TSAAttraction: public NodePairEnergy {
+class TSAAttraction: public TSANodePairEnergy {
 public:
 		//Initializes data structures to speed up later computations
         TSAAttraction(GraphAttributes &AG, double preferredEdgeLength);
@@ -74,7 +74,7 @@ public:
 private:
     double m_scaleFactor;
 	//! computes the energy contributed by the two nodes if they are placed at the two given positions
-	double computeCoordEnergy(node,node, const DPoint&, const DPoint &) const;
+    double computeCoordEnergy(node,node) const;
 };
 
 }// namespace ogdf

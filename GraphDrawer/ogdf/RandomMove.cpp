@@ -21,7 +21,7 @@ RandomMove::~RandomMove()
 {
 }
 
-void RandomMove::generateNeighbouringLayout(double temp, List<LayoutChange> &result)
+void RandomMove::generateNeighbouringLayout(double temp, Hashing<node, DPoint> &result)
 {
     double diskRadius = min(500.0, 1e4 * (temp - 1e-6));
 
@@ -34,11 +34,7 @@ void RandomMove::generateNeighbouringLayout(double temp, List<LayoutChange> &res
     newPos.m_y = oldy+sin(randomAngle)*diskRadius * randNum();
     newPos.m_x = oldx+cos(randomAngle)*diskRadius * randNum();
 
-    LayoutChange lc;
-    lc.n = v;
-    lc.newPos = newPos;
-
-    result.pushBack(lc);
+    result.insert(v, newPos);
 }
 
 }

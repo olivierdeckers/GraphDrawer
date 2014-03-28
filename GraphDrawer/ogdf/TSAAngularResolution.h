@@ -1,12 +1,11 @@
 #ifndef TSAANGULARRESOLUTION_H
 #define TSAANGULARRESOLUTION_H
 
-#include <ogdf/internal/energybased/EnergyFunction.h>
+#include <ogdf/TSAEnergyFunction.h>
 
 namespace ogdf {
 
-class TSAAngularResolution : public EnergyFunction
-{
+class TSAAngularResolution : public TSAEnergyFunction {
 public:
     TSAAngularResolution(GraphAttributes &GA);
     ~TSAAngularResolution();
@@ -20,11 +19,10 @@ public:
 
 protected:
 
-    //! Computes energy of candidate.
-    void compCandEnergy();
-
     //! Changes internal data if candidate is taken.
     void internalCandidateTaken();
+
+    void compCandEnergy();
 
     NodeArray<double> m_nodeEnergy;
 
@@ -35,7 +33,7 @@ protected:
     List<NodeEnergyChange> m_candidateNodeEnergy;
 
 private:
-    double computeAngularResolution(node v, node movedNode, DPoint& newPos) const;
+    double computeAngularResolution(node v) const;
 };
 
 }

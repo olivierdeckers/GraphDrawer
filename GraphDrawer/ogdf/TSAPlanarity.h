@@ -51,7 +51,7 @@
 #define OGDF_TSAPLANARITY_H
 
 
-#include <ogdf/internal/energybased/EnergyFunction.h>
+#include <ogdf/TSAEnergyFunction.h>
 #include <ogdf/basic/Array2D.h>
 #include <ogdf/AccelerationStructure.h>
 #include <ogdf/basic/Graph.h>
@@ -60,7 +60,7 @@
 namespace ogdf {
 
 
-class TSAPlanarity: public EnergyFunction {
+class TSAPlanarity: public TSAEnergyFunction {
 public:
 	//! Initializes data structures to speed up later computations.
     TSAPlanarity(GraphAttributes &AG, AccelerationStructure *accStruct);
@@ -68,7 +68,7 @@ public:
     ~TSAPlanarity();
 
 	//! Computes energy of initial layout and stores it in \a m_energy.
-	void computeEnergy();
+    void computeEnergy();
 
     struct Crossing {
         edge edge1;
@@ -87,9 +87,6 @@ protected:
 	//! Returns 1 if edges cross else 0.
 	bool intersect(const edge, const edge, double&) const;
 
-	//! Computes energy of candidate.
-	void compCandEnergy();
-
 	//! Changes internal data if candidate is taken.
 	void internalCandidateTaken();
 
@@ -99,6 +96,8 @@ protected:
 	//! Tests if two lines given by four points intersect.
 	bool lowLevelIntersect( const DPoint&, const DPoint&, const DPoint&,
 		 const DPoint&, double&) const;
+
+    void compCandEnergy();
 
 #ifdef OGDF_DEBUG
     virtual void printInternalData() const;

@@ -8,18 +8,13 @@
 
 namespace ogdf {
 
-struct LayoutChange {
-    node n;
-    DPoint newPos;
-};
-
 class NeighbourhoodStructure
 {
 public:
     NeighbourhoodStructure(GraphAttributes &GA) : m_GA(GA), m_G(GA.constGraph()) {}
 
     virtual ~NeighbourhoodStructure() {}
-    virtual void generateNeighbouringLayout(double temp, List<LayoutChange> &result) = 0;
+    virtual void generateNeighbouringLayout(double temp, Hashing<node, DPoint> &result) = 0;
 
 protected:
     GraphAttributes &m_GA;

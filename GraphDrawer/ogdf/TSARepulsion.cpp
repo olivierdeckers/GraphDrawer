@@ -45,23 +45,18 @@
 
 namespace ogdf {
 
-    TSARepulsion::TSARepulsion(GraphAttributes &AG, double prefEdgeLength) : NodePairEnergy("Repulsion",AG) {
+    TSARepulsion::TSARepulsion(GraphAttributes &AG, double prefEdgeLength) : TSANodePairEnergy("Repulsion",AG) {
         int nbNodes = AG.constGraph().numberOfNodes();
         m_scaleFactor = (ceil(sqrt(nbNodes)) - 1) * prefEdgeLength;
     }
 
 
-    double TSARepulsion::computeCoordEnergy(
-		node v1,
-		node v2,
-		const DPoint &p1,
-		const DPoint &p2)
-		const
+    double TSARepulsion::computeCoordEnergy(node v1, node v2) const
 	{
         IntersectionRectangle i1 = shape(v1);
         IntersectionRectangle i2 = shape(v2);
-        i1.move(p1);
-        i2.move(p2);
+        i1.move(newPos(v1));
+        i2.move(newPos(v2));
         double dist = i1.distance(i2) / m_scaleFactor;
         OGDF_ASSERT(dist >= 0.0);
         double div = (dist+1.0)*(dist+1.0);

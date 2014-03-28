@@ -11,6 +11,7 @@ class AccelerationStructure
 public:
     virtual ~AccelerationStructure() {}
 
+    //TODO: change to udateNodePosition(Hashing<node, DPoint> &layoutChanges
     virtual void updateNodePosition(const node n, const DPoint& newPos) = 0;
 
     virtual void possibleCrossingEdges(const DPoint& sPos, const DPoint& tPos, List<edge>& result) const = 0;

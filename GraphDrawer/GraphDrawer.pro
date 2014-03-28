@@ -31,7 +31,9 @@ SOURCES += gui/main.cpp\
     ogdf/TSAAngularResolution.cpp \
     ogdf/TSAUniformGrid.cpp \
     ogdf/AccelerationStructure.cpp \
-    ogdf/TSANoAcceleration.cpp
+    ogdf/TSANoAcceleration.cpp \
+    ogdf/TSAEnergyFunction.cpp \
+    ogdf/TSANodePairEnergy.cpp
 
 HEADERS  += gui/mainwindow.h \
     gui/graphcanvas.h \
@@ -51,7 +53,9 @@ HEADERS  += gui/mainwindow.h \
     ogdf/TSAAngularResolution.h \
     ogdf/TSAUniformGrid.h \
     ogdf/AccelerationStructure.h \
-    ogdf/TSANoAcceleration.h
+    ogdf/TSANoAcceleration.h \
+    ogdf/TSAEnergyFunction.h \
+    ogdf/TSANodePairEnergy.h
 
 FORMS    += gui/mainwindow.ui \
     gui/accstructcomparison.ui

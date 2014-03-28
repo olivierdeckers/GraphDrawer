@@ -49,7 +49,7 @@
 #define OGDF_TSA_H
 
 
-#include <ogdf/internal/energybased/EnergyFunction.h>
+#include <ogdf/TSAEnergyFunction.h>
 #include <ogdf/NeighbourhoodStructure.h>
 #include <ogdf/TSAUniformGrid.h>
 #ifdef GRAPHDRAWER
@@ -76,7 +76,7 @@ public:
     void setQuality(double quality);
 
 	//! Adds an energy function \a F with a certain weight.
-	void addEnergyFunction(EnergyFunction *F, double weight);
+    void addEnergyFunction(TSAEnergyFunction *F, double weight);
 
     void addNeighbourhoodStructure(NeighbourhoodStructure *ns);
 
@@ -106,7 +106,7 @@ private:
     double m_totalCostDiff;
     double m_totalEntropyDiff;
 
-	List<EnergyFunction*> m_energyFunctions; //!< The list of the energy functions.
+    List<TSAEnergyFunction*> m_energyFunctions; //!< The list of the energy functions.
     List<double> m_weightsOfEnergyFunctions; //!< The list of the weights for the energy functions.
     List<NeighbourhoodStructure*> m_neighbourhoodStructures;
     List<double> m_neighbourhoodImprovements;

@@ -99,7 +99,7 @@ namespace ogdf {
 
 	//whenever an energy function is added, the initial energy of the new function
 	//is computed and added to the initial energy of the layout
-	void TSA::addEnergyFunction(EnergyFunction *F, double weight)
+    void TSA::addEnergyFunction(TSAEnergyFunction *F, double weight)
 	{
 		m_energyFunctions.pushBack(F);
 		OGDF_ASSERT(weight >= 0);
@@ -147,7 +147,7 @@ namespace ogdf {
     List<String> TSA::returnEnergyFunctionNames()
 	{
         List<String> names;
-		ListIterator<EnergyFunction*> it;
+        ListIterator<TSAEnergyFunction*> it;
 		for(it = m_energyFunctions.begin(); it.valid(); it = it.succ())
 			names.pushBack((*it)->getName());
 		return names;
@@ -195,7 +195,7 @@ namespace ogdf {
 	void TSA::computeInitialEnergy()
 	{
 		OGDF_ASSERT(!m_energyFunctions.empty());
-		ListIterator<EnergyFunction*> it;
+        ListIterator<TSAEnergyFunction*> it;
 		ListIterator<double> it2;
 		it2 = m_weightsOfEnergyFunctions.begin();
 		for(it = m_energyFunctions.begin(); it.valid() && it2.valid(); it=it.succ(), it2 = it2.succ())
@@ -289,7 +289,7 @@ namespace ogdf {
 			int iterationsSinceLastChange = 0;
 			//this is the main optimization loop
             while((m_temperature > m_endTemperature || i < 20) && i < 1e5 /*&& m_diskRadius >= 1*/) {
-                List<LayoutChange> layoutChanges;
+                Hashing<node, DPoint> layoutChanges;
                 int neighbourhood = (i > 1000) ? chooseNeighbourhood() : randomNumber(0, m_neighbourhoodStructures.size() - 1);
 
                 try {
@@ -300,17 +300,13 @@ namespace ogdf {
                     m_neighbourhoodStructures.front()->generateNeighbouringLayout(m_temperature, layoutChanges);
                 }
                 cout << "neighbourhood used: " << neighbourhood << endl;
-                LayoutChange change = layoutChanges.front();
-
-                node v = change.n;
-                DPoint newPos = change.newPos;
 
 				//compute candidate energy and decide if new layout is chosen
-				ListIterator<EnergyFunction*> it;
+                ListIterator<TSAEnergyFunction*> it;
 				ListIterator<double> it2 = m_weightsOfEnergyFunctions.begin();
 				double newEnergy = 0.0;
 				for(it = m_energyFunctions.begin(); it.valid(); it = it.succ()) {
-					newEnergy += (*it)->computeCandidateEnergy(v,newPos) * (*it2);
+                    newEnergy += (*it)->computeCandidateEnergy(layoutChanges) * (*it2);
 					it2 = it2.succ();
 				}
 				OGDF_ASSERT(newEnergy >= 0.0);
@@ -325,15 +321,20 @@ namespace ogdf {
 
 					for(it = m_energyFunctions.begin(); it.valid(); it = it.succ())
 						(*it)->candidateTaken();
-					AG.x(v) = newPos.m_x;
-					AG.y(v) = newPos.m_y;
-                    m_energy = newEnergy;
 
-                    grid->updateNodePosition(v, newPos);
+                    HashConstIterator<node, DPoint> it;
+                    for(it = layoutChanges.begin(); it.valid(); ++it)
+                    {
+                        AG.x(it.key()) = it.info().m_x;
+                        AG.y(it.key()) = it.info().m_y;
+                        grid->updateNodePosition(it.key(), it.info());
+                    }
+
+                    m_energy = newEnergy;
 
                     if(costDiff < -1e-4)
                         iterationsSinceLastChange = 0;
-				}
+                }
 
 				if(costDiff > 0) {
                     m_totalEntropyDiff -= costDiff / m_temperature;

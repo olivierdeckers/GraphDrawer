@@ -53,19 +53,20 @@
 #define OGDF_TSAREPULSION_H
 
 
-#include <ogdf/internal/energybased/NodePairEnergy.h>
+#include <ogdf/TSANodePairEnergy.h>
 
 
 namespace ogdf {
 
-class TSARepulsion: public NodePairEnergy {
+class TSARepulsion: public TSANodePairEnergy {
 public:
 	//Initializes data structures to speed up later computations
     TSARepulsion(GraphAttributes &AG, double prefEdgeLength);
 
+
 private:
 	//computes for two vertices an the given positions the repulsive energy
-	double computeCoordEnergy(node, node, const DPoint&, const DPoint&) const;
+    double computeCoordEnergy(node, node) const;
 
     double m_scaleFactor;
 };
