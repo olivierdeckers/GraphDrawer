@@ -58,14 +58,6 @@ void TSAEnergyFunction::candidateTaken()
 {
     m_energy=m_candidateEnergy;
     m_candidateEnergy = 0.0;
-    //TODO: remove this?
-//    ListIterator<LayoutChange> it;
-//    for(it = m_layoutChanges->begin(); it.valid(); it++)
-//    {
-//        LayoutChange lc = *it;
-//        m_AG.x(lc.n) = lc.newPos.m_x;
-//        m_AG.y(lc.n) = lc.newPos.m_y;
-//    }
     internalCandidateTaken();
 }
 

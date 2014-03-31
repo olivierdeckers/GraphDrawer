@@ -181,7 +181,11 @@ namespace ogdf {
 
             edge e;
             forall_adj_edges(e,v) if(!e->isSelfLoop()) {
-                // first we compute the two endpoints of e if v is on its new position
+                // If oppsosite node is moved as well, make sure it is not handled twice!
+                node opposite = e->opposite(v);
+                if(m_layoutChanges->member(opposite) && opposite->index() < v->index())
+                    continue;
+
                 node s = e->source();
                 node t = e->target();
                 DPoint p1 = newPos(s);
@@ -200,7 +204,6 @@ namespace ogdf {
                     }
                 }
 
-                // now we compute the crossings of all other edges with e
                 ListIterator<edge> it;
                 List<edge> possibleCrossings;
                 m_accStruct->possibleCrossingEdges(p1, p2, possibleCrossings);
@@ -208,7 +211,7 @@ namespace ogdf {
                     edge f = *it;
                     node s2 = f->source();
                     node t2 = f->target();
-                    if(s2 != s && s2 != t && t2 != s && t2 != t) {
+                    if(s2 != s && s2 != t && t2 != s && t2 != t && !m_layoutChanges->member(s2) && !m_layoutChanges->member(t2)) {
                         double intersectEnergy = 0;
                         lowLevelIntersect(p1,p2,newPos(s2),newPos(t2), intersectEnergy);
                         int f_num = (*m_edgeNums)[f];
@@ -220,6 +223,31 @@ namespace ogdf {
                             cc.edgeNum2 = max(e_num,f_num);
                             cc.crossEnergy = intersectEnergy;
                             m_crossingChanges.pushBack(cc);
+                        }
+                    }
+                }
+
+                HashConstIterator<node, DPoint> it2;
+                for(it2 = m_layoutChanges->begin(); it2.valid(); ++it2) if(it2.key() != v)
+                {
+                    node v2 = it2.key();
+                    edge e2;
+                    forall_adj_edges(e2, v2) if(!e->isSelfLoop()) {
+                        node s2 = e2->source();
+                        node t2 = e2->target();
+                        if(s2 != s && s2 != t && t2 != s && t2 != t) {
+                            double intersectEnergy = 0;
+                            lowLevelIntersect(p1,p2,newPos(s2),newPos(t2), intersectEnergy);
+                            int f_num = (*m_edgeNums)[e2];
+
+                            if(intersectEnergy > 0) {
+                                m_candidateEnergy += intersectEnergy; // produced a new intersection
+                                ChangedCrossing cc;
+                                cc.edgeNum1 = min(e_num,f_num);
+                                cc.edgeNum2 = max(e_num,f_num);
+                                cc.crossEnergy = intersectEnergy;
+                                m_crossingChanges.pushBack(cc);
+                            }
                         }
                     }
                 }
