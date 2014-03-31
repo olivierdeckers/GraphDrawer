@@ -116,32 +116,38 @@ namespace ogdf {
 
     int TSA::chooseNeighbourhood() const
     {
-        if(m_totalCostDiff == 0) {
+        int r = randomNumber(0, 100);
+        if(r < 5)
+            return 1;
+        return 0;
+        /*if(m_totalCostDiff == 0) {
             return randomNumber(0, m_neighbourhoodStructures.size() - 1);
         }
 
         double r = randNum();
         double acc = 0;
         int neighbourhood = 0;
+        double worstCostImprovement = m_neighbourhoodImprovements.front();
         ListConstIterator<double> it;
 
         for(it = m_neighbourhoodImprovements.begin(); it.valid(); it++) {
             cout << "neighbourhood " << neighbourhood << ": " << *it << endl;
+            worstCostImprovement = max(worstCostImprovement, *it);
             neighbourhood ++;
         }
         neighbourhood = 0;
 
         for(it = m_neighbourhoodImprovements.begin(); it.valid(); it++)
         {
-            acc += (*it) / m_totalCostDiff;
-            OGDF_ASSERT(acc >= 0 && acc <= 1);
+            acc += (*it - worstCostImprovement) / (m_totalCostDiff - worstCostImprovement * m_neighbourhoodImprovements.size());
+            OGDF_ASSERT(acc >= -1e-6 && acc <= 1 + 1e-6);
             if (r <= acc) {
                 return neighbourhood;
             }
             neighbourhood++;
         }
 
-        throw;
+        throw;*/
     }
 
     List<String> TSA::returnEnergyFunctionNames()
@@ -365,6 +371,14 @@ namespace ogdf {
 			
 			cout << "energy: " << std::fixed << m_energy << endl;
 			cout << "iterations: " << std::fixed << i << endl;
+            cout << "Improvement: " << std::fixed << m_totalCostDiff << endl;
+            ListIterator<double> it;
+            int neighbourhood=0;
+            for(it = m_neighbourhoodImprovements.begin(); it.valid(); it++)
+            {
+                cout << "neighbourhood " << neighbourhood << " improvement: " << *it << endl;
+                neighbourhood++;
+            }
 		}
         //TODO: consider zero degree vertices
 		//if there are zero degree vertices, they are placed using placeIsolatedNodes
