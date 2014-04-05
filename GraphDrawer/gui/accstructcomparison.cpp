@@ -59,14 +59,15 @@ void AccStructComparison::performLayouting()
     layout.fixSettings(ogdf::TSALayout::spPlanar);
     layout.setAttractionWeight(1);
     layout.setRepulsionWeight(1);
+    layout.setAngularResolutionWeight(1);
     layout.setPlanarityWeight(3);
     layout.setQuality(10);
     layout.setPreferredEdgeLength(5);
-    layout.setAccelerationStructureParameter(ogdf::TSALayout::grid);
+    layout.setAccelerationStructureParameter(ogdf::TSALayout::none);
 
     m_accStruct = new ogdf::TSANoAcceleration(GA);
-    m_repulsion = new ogdf::TSARepulsion(GA, 50);
-    m_attraction = new ogdf::TSAAttraction(GA, 50);
+    m_repulsion = new ogdf::TSARepulsion(GA, 5);
+    m_attraction = new ogdf::TSAAttraction(GA, 5);
     m_planarity = new ogdf::TSAPlanarity(GA, m_accStruct);
     m_angres = new ogdf::TSAAngularResolution(GA);
 

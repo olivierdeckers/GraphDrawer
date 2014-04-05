@@ -109,7 +109,8 @@ private:
     List<TSAEnergyFunction*> m_energyFunctions; //!< The list of the energy functions.
     List<double> m_weightsOfEnergyFunctions; //!< The list of the weights for the energy functions.
     List<NeighbourhoodStructure*> m_neighbourhoodStructures;
-    List<double> m_neighbourhoodImprovements;
+    List<int> m_neighbourhoodImprovements;
+    List<int> m_neighbourhoodDeclinations;
 
 	//! Resets the parameters for subsequent runs.
 	void initParameters();
@@ -126,7 +127,7 @@ private:
 	//! Computes positions for the vertices of degree zero.
 	void placeIsolatedNodes(GraphAttributes &AG) const;
 
-    int chooseNeighbourhood() const;
+    int chooseNeighbourhood(int nbIterations) const;
 
 	//! Fake assignment operator (dummy to avoid copying)
 	TSA& operator=(const TSA &dh);

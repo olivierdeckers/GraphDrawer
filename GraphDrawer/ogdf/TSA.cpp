@@ -111,35 +111,37 @@ namespace ogdf {
     void TSA::addNeighbourhoodStructure(NeighbourhoodStructure *ns)
     {
         m_neighbourhoodStructures.pushBack(ns);
-        m_neighbourhoodImprovements.pushBack(0.0);
+        m_neighbourhoodImprovements.pushBack(0);
+        m_neighbourhoodDeclinations.pushBack(0);
     }
 
-    int TSA::chooseNeighbourhood() const
+    int TSA::chooseNeighbourhood(int nbIterations) const
     {
-        int r = randomNumber(0, 100);
-        if(r < 5)
+        /*int r = randomNumber(0, 99);
+        if(r < 50)
             return 1;
-        return 0;
-        /*if(m_totalCostDiff == 0) {
-            return randomNumber(0, m_neighbourhoodStructures.size() - 1);
+        return 0;/**/
+
+        if(nbIterations <= 100)
+            return randomNumber(0, m_neighbourhoodImprovements.size() - 1);
+
+        int neighbourhood = 0;
+        double totalScore = 0;
+        ListConstIterator<int> improvementIt = m_neighbourhoodImprovements.begin();
+        ListConstIterator<int> declinationIt = m_neighbourhoodDeclinations.begin();
+        for(;improvementIt.valid(); improvementIt++, declinationIt++)
+        {
+            totalScore += (double) *improvementIt / *declinationIt;
         }
 
         double r = randNum();
         double acc = 0;
-        int neighbourhood = 0;
-        double worstCostImprovement = m_neighbourhoodImprovements.front();
-        ListConstIterator<double> it;
-
-        for(it = m_neighbourhoodImprovements.begin(); it.valid(); it++) {
-            cout << "neighbourhood " << neighbourhood << ": " << *it << endl;
-            worstCostImprovement = max(worstCostImprovement, *it);
-            neighbourhood ++;
-        }
-        neighbourhood = 0;
-
-        for(it = m_neighbourhoodImprovements.begin(); it.valid(); it++)
+        improvementIt = m_neighbourhoodImprovements.begin();
+        declinationIt = m_neighbourhoodDeclinations.begin();
+        for(; improvementIt.valid(); improvementIt++, declinationIt++)
         {
-            acc += (*it - worstCostImprovement) / (m_totalCostDiff - worstCostImprovement * m_neighbourhoodImprovements.size());
+            double score = (double) *improvementIt / *declinationIt;
+            acc += score / totalScore;
             OGDF_ASSERT(acc >= -1e-6 && acc <= 1 + 1e-6);
             if (r <= acc) {
                 return neighbourhood;
@@ -147,7 +149,7 @@ namespace ogdf {
             neighbourhood++;
         }
 
-        throw;*/
+        throw;/**/
     }
 
     List<String> TSA::returnEnergyFunctionNames()
@@ -296,7 +298,7 @@ namespace ogdf {
 			//this is the main optimization loop
             while((m_temperature > m_endTemperature || i < 20) && i < 1e5 /*&& m_diskRadius >= 1*/) {
                 Hashing<node, DPoint> layoutChanges;
-                int neighbourhood = (i > 1000) ? chooseNeighbourhood() : randomNumber(0, m_neighbourhoodStructures.size() - 1);
+                int neighbourhood = chooseNeighbourhood(i);
 
                 try {
                     (*(m_neighbourhoodStructures.get(neighbourhood)))->generateNeighbouringLayout(m_temperature, layoutChanges);
@@ -319,11 +321,15 @@ namespace ogdf {
 
 				costDiff = newEnergy - m_energy;
 
+                if(costDiff < 0)
+                    (*(m_neighbourhoodImprovements.get(neighbourhood))) ++;
+                else if(costDiff > 0)
+                    (*(m_neighbourhoodDeclinations.get(neighbourhood))) ++;
+
 				//this tests if the new layout is accepted. If this is the case,
 				//all energy functions are informed that the new layout is accepted
 				if(testEnergyValue(newEnergy)) {
                     m_totalCostDiff += costDiff;
-                    (*(m_neighbourhoodImprovements.get(neighbourhood))) += costDiff;
 
 					for(it = m_energyFunctions.begin(); it.valid(); it = it.succ())
 						(*it)->candidateTaken();
@@ -372,11 +378,12 @@ namespace ogdf {
 			cout << "energy: " << std::fixed << m_energy << endl;
 			cout << "iterations: " << std::fixed << i << endl;
             cout << "Improvement: " << std::fixed << m_totalCostDiff << endl;
-            ListIterator<double> it;
+            ListIterator<int> improvementIt = m_neighbourhoodImprovements.begin();
+            ListIterator<int> declinationIt = m_neighbourhoodDeclinations.begin();
             int neighbourhood=0;
-            for(it = m_neighbourhoodImprovements.begin(); it.valid(); it++)
+            for(; improvementIt.valid(); improvementIt++, declinationIt++)
             {
-                cout << "neighbourhood " << neighbourhood << " improvement: " << *it << endl;
+                cout << "neighbourhood " << neighbourhood << " improvements: " << *improvementIt << ", declinations: " << *declinationIt << endl;
                 neighbourhood++;
             }
 		}
