@@ -39,8 +39,8 @@ void randomLayout(ogdf::Graph &G, ogdf::GraphAttributes &GA)
 {
     ogdf::node v;
     forall_nodes(v, G) {
-        GA.x(v) = rand() % 1024;
-        GA.y(v) = rand() % 1024;
+        GA.x(v) = (double) rand() / RAND_MAX;
+        GA.y(v) = (double) rand() / RAND_MAX;
     }
 }
 

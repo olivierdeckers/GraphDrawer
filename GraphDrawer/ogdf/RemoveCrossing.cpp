@@ -21,7 +21,6 @@ void RemoveCrossing::generateNeighbouringLayout(double temp, Hashing<node, DPoin
     DLine e2 = DLine(m_GA.x(c.edge2->source()), m_GA.y(c.edge2->source()), m_GA.x(c.edge2->target()), m_GA.y(c.edge2->target()));
     DPoint crossing;
     e1.intersection(e2, crossing);
-    cout << "Intersection: " << crossing << endl;
 
     int nbNode = rand() % 4;
     node n;
@@ -41,12 +40,10 @@ void RemoveCrossing::generateNeighbouringLayout(double temp, Hashing<node, DPoin
     }
 
     DPoint pos = DPoint(m_GA.x(n), m_GA.y(n));
-    cout << "current Pos: " << pos << endl;
     DPoint diff = crossing - pos;
     double alpha = randomDouble(1.001, 2);
     diff = DPoint(diff.m_x * alpha, diff.m_y * alpha);
     DPoint newPos = pos + diff;
-    cout << "new pos: " << newPos << endl;
 
     result.insert(n, newPos);
 }

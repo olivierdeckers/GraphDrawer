@@ -60,9 +60,8 @@ namespace ogdf {
 	TSA::TSA():
 	m_temperature(m_startingTemp),
 	m_energy(0.0),
-	m_endTemperature(m_defaultEndTemperature),
-	m_quality(1.0)
-	//m_numberOfIterations(0)
+    m_quality(1.0),
+    m_endTemperature(m_defaultEndTemperature)
 	{
 		
 	}
@@ -307,7 +306,7 @@ namespace ogdf {
                     neighbourhood = 0;
                     m_neighbourhoodStructures.front()->generateNeighbouringLayout(m_temperature, layoutChanges);
                 }
-                cout << "neighbourhood used: " << neighbourhood << endl;
+                cout << "neighbourhood used: " << neighbourhood << ", iteration: " << i << endl;
 
 				//compute candidate energy and decide if new layout is chosen
                 ListIterator<TSAEnergyFunction*> it;
@@ -322,9 +321,9 @@ namespace ogdf {
 				costDiff = newEnergy - m_energy;
 
                 if(costDiff < 0)
-                    (*(m_neighbourhoodImprovements.get(neighbourhood))) ++;
-                else if(costDiff > 0)
-                    (*(m_neighbourhoodDeclinations.get(neighbourhood))) ++;
+                    (*(m_neighbourhoodImprovements.get(neighbourhood))) += i;
+                else
+                    (*(m_neighbourhoodDeclinations.get(neighbourhood))) += i;
 
 				//this tests if the new layout is accepted. If this is the case,
 				//all energy functions are informed that the new layout is accepted
