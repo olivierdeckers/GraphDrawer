@@ -109,8 +109,10 @@ private:
     List<TSAEnergyFunction*> m_energyFunctions; //!< The list of the energy functions.
     List<double> m_weightsOfEnergyFunctions; //!< The list of the weights for the energy functions.
     List<NeighbourhoodStructure*> m_neighbourhoodStructures;
-    List<int> m_neighbourhoodImprovements;
-    List<int> m_neighbourhoodDeclinations;
+    List<long> m_neighbourhoodImprovements;
+    List<long> m_neighbourhoodDeclinations;
+    int m_neighbourhoodChangeMultiplier;
+    int m_lastNeighbourhoodUsed;
 
 	//! Resets the parameters for subsequent runs.
 	void initParameters();

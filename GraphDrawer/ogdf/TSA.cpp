@@ -57,11 +57,13 @@ namespace ogdf {
 	const double TSA::m_defaultEndTemperature = 1e-5;
 
 	//initializes internal data and the random number generator
-	TSA::TSA():
-	m_temperature(m_startingTemp),
-	m_energy(0.0),
-    m_quality(1.0),
-    m_endTemperature(m_defaultEndTemperature)
+    TSA::TSA():
+        m_temperature(m_startingTemp),
+        m_energy(0.0),
+        m_quality(1.0),
+        m_endTemperature(m_defaultEndTemperature),
+        m_neighbourhoodChangeMultiplier(1),
+        m_lastNeighbourhoodUsed(-1)
 	{
 		
 	}
@@ -126,8 +128,8 @@ namespace ogdf {
 
         int neighbourhood = 0;
         double totalScore = 0;
-        ListConstIterator<int> improvementIt = m_neighbourhoodImprovements.begin();
-        ListConstIterator<int> declinationIt = m_neighbourhoodDeclinations.begin();
+        ListConstIterator<long> improvementIt = m_neighbourhoodImprovements.begin();
+        ListConstIterator<long> declinationIt = m_neighbourhoodDeclinations.begin();
         for(;improvementIt.valid(); improvementIt++, declinationIt++)
         {
             totalScore += (double) *improvementIt / *declinationIt;
@@ -320,10 +322,16 @@ namespace ogdf {
 
 				costDiff = newEnergy - m_energy;
 
-                if(costDiff < 0)
-                    (*(m_neighbourhoodImprovements.get(neighbourhood))) += i;
+                if(neighbourhood == m_lastNeighbourhoodUsed)
+                    m_neighbourhoodChangeMultiplier += 1;
                 else
-                    (*(m_neighbourhoodDeclinations.get(neighbourhood))) += i;
+                    m_neighbourhoodChangeMultiplier = 1;
+                m_lastNeighbourhoodUsed = neighbourhood;
+
+                if(costDiff < 0)
+                    (*(m_neighbourhoodImprovements.get(neighbourhood))) += 1;
+                else
+                    (*(m_neighbourhoodDeclinations.get(neighbourhood))) += m_neighbourhoodChangeMultiplier;
 
 				//this tests if the new layout is accepted. If this is the case,
 				//all energy functions are informed that the new layout is accepted
@@ -377,8 +385,8 @@ namespace ogdf {
 			cout << "energy: " << std::fixed << m_energy << endl;
 			cout << "iterations: " << std::fixed << i << endl;
             cout << "Improvement: " << std::fixed << m_totalCostDiff << endl;
-            ListIterator<int> improvementIt = m_neighbourhoodImprovements.begin();
-            ListIterator<int> declinationIt = m_neighbourhoodDeclinations.begin();
+            ListIterator<long> improvementIt = m_neighbourhoodImprovements.begin();
+            ListIterator<long> declinationIt = m_neighbourhoodDeclinations.begin();
             int neighbourhood=0;
             for(; improvementIt.valid(); improvementIt++, declinationIt++)
             {
