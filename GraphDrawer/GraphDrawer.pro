@@ -25,7 +25,6 @@ SOURCES += gui/main.cpp\
     ogdf/TSARepulsion.cpp \
     ogdf/TSAPlanarity.cpp \
     gui/accstructcomparison.cpp \
-    ogdf/NeighbourhoodStructure.cpp \
     ogdf/RandomMove.cpp \
     ogdf/RemoveCrossing.cpp \
     ogdf/TSAAngularResolution.cpp \
@@ -33,7 +32,8 @@ SOURCES += gui/main.cpp\
     ogdf/AccelerationStructure.cpp \
     ogdf/TSANoAcceleration.cpp \
     ogdf/TSAEnergyFunction.cpp \
-    ogdf/TSANodePairEnergy.cpp
+    ogdf/TSANodePairEnergy.cpp \
+    ogdf/MoveEdge.cpp
 
 HEADERS  += gui/mainwindow.h \
     gui/graphcanvas.h \
@@ -55,7 +55,8 @@ HEADERS  += gui/mainwindow.h \
     ogdf/AccelerationStructure.h \
     ogdf/TSANoAcceleration.h \
     ogdf/TSAEnergyFunction.h \
-    ogdf/TSANodePairEnergy.h
+    ogdf/TSANodePairEnergy.h \
+    ogdf/MoveEdge.h
 
 FORMS    += gui/mainwindow.ui \
     gui/accstructcomparison.ui

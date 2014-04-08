@@ -17,7 +17,6 @@ SOURCES += tsauniformgridtest.cpp \
     ../GraphDrawer/ogdf/TSANoAcceleration.cpp \
     ../GraphDrawer/ogdf/RemoveCrossing.cpp \
     ../GraphDrawer/ogdf/RandomMove.cpp \
-    ../GraphDrawer/ogdf/NeighbourhoodStructure.cpp \
     ../GraphDrawer/ogdf/TSAEnergyFunction.cpp \
     ../GraphDrawer/ogdf/TSANodePairEnergy.cpp \
     ../GraphDrawer/ogdf/AccelerationStructure.cpp
