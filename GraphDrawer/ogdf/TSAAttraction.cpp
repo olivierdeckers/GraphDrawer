@@ -48,7 +48,7 @@ namespace ogdf {
 TSAAttraction::TSAAttraction(GraphAttributes &AG, double preferredEdgeLength) :
     TSANodePairEnergy("Attraction", AG) {
     int nbNodes = AG.constGraph().numberOfNodes();
-    m_scaleFactor = ((ceil(sqrt(nbNodes)) - 1) * preferredEdgeLength);
+    m_scaleFactor = 1;//((ceil(sqrt(nbNodes)) - 1) * preferredEdgeLength);
 
 }
 

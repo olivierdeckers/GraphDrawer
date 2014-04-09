@@ -23,7 +23,7 @@ RandomMove::~RandomMove()
 
 void RandomMove::generateNeighbouringLayout(double temp, Hashing<node, DPoint> &result)
 {
-    double diskRadius = min(500.0, 1e6 * (temp - 1e-6));
+    double diskRadius = min(1.0, 5 * temp);
 
     int randomPos = randomNumber(0, m_nonIsolatedNodes.size()-1);
     node v = *(m_nonIsolatedNodes.get(randomPos));

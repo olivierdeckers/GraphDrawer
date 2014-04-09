@@ -60,7 +60,7 @@ void GraphCanvas::paintEvent(QPaintEvent *)
 
     if(m_GA != NULL && m_G != NULL)
     {
-        double margin = 10;
+        double margin = 0.1;
         calculateBBox(margin);
 
         painter.setBrush(QBrush());

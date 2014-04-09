@@ -54,14 +54,14 @@ void AccStructComparison::performLayouting()
     loadGraph(filename.toStdString().c_str(), G, GA);
 
     ogdf::TSALayout layout = ogdf::TSALayout();
-    int samples = 100;
+    int samples = 10;
 
     layout.fixSettings(ogdf::TSALayout::spPlanar);
     layout.setAttractionWeight(1);
     layout.setRepulsionWeight(1);
     layout.setAngularResolutionWeight(1);
     layout.setPlanarityWeight(3);
-    layout.setQuality(10);
+    layout.setQuality(1000);
     layout.setPreferredEdgeLength(5);
     layout.setAccelerationStructureParameter(ogdf::TSALayout::none);
 

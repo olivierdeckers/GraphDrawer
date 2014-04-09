@@ -52,7 +52,7 @@
 
 namespace ogdf {
 
-	const double TSA::m_startingTemp = 1e-2;
+    const double TSA::m_startingTemp = 1e-1;
 	//const int TSA::m_iterationMultiplier = 25;  //best//30;ori
 	const double TSA::m_defaultEndTemperature = 1e-5;
 
@@ -119,9 +119,12 @@ namespace ogdf {
     int TSA::chooseNeighbourhood(int nbIterations) const
     {
         /*int r = randomNumber(0, 99);
-        if(r < 50)
+        if(r < 20)
             return 1;
         return 0;/**/
+
+        if(m_neighbourhoodStructures.size() == 1)
+            return 0;
 
         if(nbIterations <= 100)
             return randomNumber(0, m_neighbourhoodImprovements.size() - 1);
@@ -308,7 +311,19 @@ namespace ogdf {
                     neighbourhood = 0;
                     m_neighbourhoodStructures.front()->generateNeighbouringLayout(m_temperature, layoutChanges);
                 }
-                cout << "neighbourhood used: " << neighbourhood << ", iteration: " << i << endl;
+                //cout << "neighbourhood used: " << neighbourhood << ", iteration: " << i << endl;
+
+//                ListConstIterator<long> improveIt = m_neighbourhoodImprovements.begin();
+//                ListConstIterator<long> declineIt = m_neighbourhoodDeclinations.begin();
+//                for(; improveIt.valid(); declineIt++)
+//                {
+//                    cout << *improveIt << "," << *declineIt;
+//                    improveIt++;
+//                    if(improveIt.valid())
+//                        cout << ",";
+//                }
+//                cout << endl;
+                //cout << m_temperature << endl;
 
 				//compute candidate energy and decide if new layout is chosen
                 ListIterator<TSAEnergyFunction*> it;
@@ -331,7 +346,7 @@ namespace ogdf {
                 if(costDiff < 0)
                     (*(m_neighbourhoodImprovements.get(neighbourhood))) += 1;
                 else
-                    (*(m_neighbourhoodDeclinations.get(neighbourhood))) += m_neighbourhoodChangeMultiplier;
+                    (*(m_neighbourhoodDeclinations.get(neighbourhood))) += 1 * m_neighbourhoodChangeMultiplier;
 
 				//this tests if the new layout is accepted. If this is the case,
 				//all energy functions are informed that the new layout is accepted
@@ -376,8 +391,8 @@ namespace ogdf {
 				cout << "iteration: " << i << endl;*/
                 iterationsSinceLastChange ++;
 
-                if(iterationsSinceLastChange > 100)
-					break;
+                if(iterationsSinceLastChange > 10000)
+                    break;
 
                 i ++;
 			}

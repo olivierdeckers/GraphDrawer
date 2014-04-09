@@ -47,7 +47,7 @@ namespace ogdf {
 
     TSARepulsion::TSARepulsion(GraphAttributes &AG, double prefEdgeLength) : TSANodePairEnergy("Repulsion",AG) {
         int nbNodes = AG.constGraph().numberOfNodes();
-        m_scaleFactor = (ceil(sqrt(nbNodes)) - 1) * prefEdgeLength;
+        m_scaleFactor = 1;//(ceil(sqrt(nbNodes)) - 1) * prefEdgeLength;
     }
 
 

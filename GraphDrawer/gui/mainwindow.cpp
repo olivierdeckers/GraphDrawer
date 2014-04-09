@@ -56,8 +56,8 @@ void MainWindow::loadGraph(const std::string filename) {
 
     ogdf::node v;
     forall_nodes(v, *m_G) {
-        m_GA->width(v) = 10;
-        m_GA->height(v) = 10;
+        m_GA->width(v) = 0.05;
+        m_GA->height(v) = 0.05;
     }
 
     ui->graphCanvas->update();
@@ -153,8 +153,8 @@ void MainWindow::on_randomLayoutButton_clicked()
 {
     ogdf::node v;
     forall_nodes(v, *m_G) {
-        m_GA->x(v) = rand() % 1024;
-        m_GA->y(v) = rand() % 1024;
+        m_GA->x(v) = (double) rand() / RAND_MAX;
+        m_GA->y(v) = (double) rand() / RAND_MAX;
     }
 
     ui->graphCanvas->update();
