@@ -66,7 +66,7 @@ namespace ogdf {
 		int e_num = 1;
         for(it = m_nonSelfLoops.begin(); it.valid(); ++it) (*m_edgeNums)[*it] = e_num ++;
 		e_num --;
-		m_crossingMatrix = new Array2D<double> (1,e_num,1,e_num);
+        m_crossingMatrix = new Array2D<double> (1,e_num,1,e_num,0);
 	}
 
 
@@ -192,15 +192,26 @@ namespace ogdf {
                 DPoint p2 = newPos(t);
                 int e_num = (*m_edgeNums)[e];
 
-                for(int i=e_num+1; i<=m_nonSelfLoops.size(); i++) {
-                    double crossingEnergy = (*m_crossingMatrix)(e_num, i);
+                for(int i=1; i<=m_nonSelfLoops.size(); i++)  if(i != e_num) {
+                    double crossingEnergy = (*m_crossingMatrix)(min(i, e_num), max(i, e_num));
                     if(crossingEnergy > 0) {
-                        m_candidateEnergy -= crossingEnergy;
-                        ChangedCrossing cc;
-                        cc.edgeNum1 = e_num;
-                        cc.edgeNum2 = i;
-                        cc.crossEnergy = 0;
-                        m_crossingChanges.pushBack(cc);
+                        bool alreadyProcessed = false;
+                        for(ListConstIterator<ChangedCrossing> it2 = m_crossingChanges.begin(); it2.valid(); it2++)
+                        {
+                            ChangedCrossing cc = *it2;
+                            if(cc.edgeNum1 == min(i, e_num) && cc.edgeNum2 == max(i, e_num)) {
+                                alreadyProcessed = true;
+                                break;
+                            }
+                        }
+                        if(!alreadyProcessed) {
+                            m_candidateEnergy -= crossingEnergy;
+                            ChangedCrossing cc;
+                            cc.edgeNum1 = min(i, e_num);
+                            cc.edgeNum2 = max(i, e_num);
+                            cc.crossEnergy = 0;
+                            m_crossingChanges.pushBack(cc);
+                        }
                     }
                 }
 
@@ -241,12 +252,23 @@ namespace ogdf {
                             int f_num = (*m_edgeNums)[e2];
 
                             if(intersectEnergy > 0) {
-                                m_candidateEnergy += intersectEnergy; // produced a new intersection
-                                ChangedCrossing cc;
-                                cc.edgeNum1 = min(e_num,f_num);
-                                cc.edgeNum2 = max(e_num,f_num);
-                                cc.crossEnergy = intersectEnergy;
-                                m_crossingChanges.pushBack(cc);
+                                bool alreadyProcessed = false;
+                                for(ListConstIterator<ChangedCrossing> it2 = m_crossingChanges.begin(); it2.valid(); it2++)
+                                {
+                                    ChangedCrossing cc = *it2;
+                                    if(cc.edgeNum1 == min(e_num, f_num) && cc.edgeNum2 == max(e_num, f_num) && cc.crossEnergy > 0) {
+                                        alreadyProcessed = true;
+                                        break;
+                                    }
+                                }
+                                if(!alreadyProcessed) {
+                                    m_candidateEnergy += intersectEnergy; // produced a new intersection
+                                    ChangedCrossing cc;
+                                    cc.edgeNum1 = min(e_num,f_num);
+                                    cc.edgeNum2 = max(e_num,f_num);
+                                    cc.crossEnergy = intersectEnergy;
+                                    m_crossingChanges.pushBack(cc);
+                                }
                             }
                         }
                     }

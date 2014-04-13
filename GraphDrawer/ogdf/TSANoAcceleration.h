@@ -18,6 +18,7 @@ public:
 
 private:
     const Graph &m_G;
+    List<edge> m_nonSelfLoops;
 };
 
 }

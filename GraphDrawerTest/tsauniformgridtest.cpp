@@ -189,6 +189,7 @@ TEST_F(TSAUniformGridTest, GridCorrectnessPlanarityGrid) {
     ogdf::AccelerationStructure* none = new ogdf::TSANoAcceleration(*GA);
     ogdf::TSAPlanarity* planarityGrid = new ogdf::TSAPlanarity(*GA, grid);
     ogdf::TSAPlanarity* planarity = new ogdf::TSAPlanarity(*GA, none);
+    ogdf::TSAPlanarity* noDeltaPlan = new ogdf::TSAPlanarity(*GA, none);
     planarityGrid->computeEnergy();
     planarity->computeEnergy();
 
@@ -219,6 +220,9 @@ TEST_F(TSAUniformGridTest, GridCorrectnessPlanarityGrid) {
                 GA->y(it.key()) = it.info().m_y;
             }
         }
+
+        noDeltaPlan->computeEnergy();
+        EXPECT_EQ(noDeltaPlan->energy(), planarity->energy());
 
         EXPECT_EQ(planarity->energy(), planarityGrid->energy());
     }
