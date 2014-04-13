@@ -48,6 +48,7 @@
 #include <ogdf/TSANoAcceleration.h>
 #include <ogdf/RandomMove.h>
 #include <ogdf/RemoveCrossing.h>
+#include <ogdf/MoveEdge.h>
 
 
 #define DEFAULT_REPULSION_WEIGHT 1e6
@@ -223,8 +224,10 @@ void TSALayout::call(GraphAttributes &AG)
 
     RandomMove rm(AG);
     RemoveCrossing rc(AG, *planarity);
+    MoveEdge me(AG);
     tsa.addNeighbourhoodStructure(&rm);
     tsa.addNeighbourhoodStructure(&rc);
+    //tsa.addNeighbourhoodStructure(&me);
 
 
     tsa.setStartTemperature(m_startTemperature);

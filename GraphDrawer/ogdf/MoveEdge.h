@@ -12,7 +12,7 @@ public:
     MoveEdge(GraphAttributes &GA);
     ~MoveEdge();
 
-    virtual void generateNeighbouringLayout(double temp, Hashing<node, DPoint> &result) = 0;
+    virtual void generateNeighbouringLayout(double temp, Hashing<node, DPoint> &result);
 
 private:
     List<edge> m_edges;

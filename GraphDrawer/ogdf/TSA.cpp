@@ -62,8 +62,8 @@ namespace ogdf {
         m_energy(0.0),
         m_quality(1.0),
         m_endTemperature(m_defaultEndTemperature),
-        m_neighbourhoodChangeMultiplier(1),
-        m_lastNeighbourhoodUsed(-1)
+        m_penaltyParameter(0.01),
+        m_rewardParameter(0.1)
 	{
 		
 	}
@@ -73,6 +73,11 @@ namespace ogdf {
 	void TSA::initParameters()
     {
         m_energy = 0.0;
+
+        int nbNeighbourhoods = m_neighbourhoodStructures.size();
+        for(int i=0; i<nbNeighbourhoods; i++) {
+            m_neighbourhoodSelectionChances.pushBack(1.0 / nbNeighbourhoods);
+        }
 
         unsigned int t = (unsigned) time(NULL);
 		cout << "seed: " << t << endl;
@@ -112,8 +117,6 @@ namespace ogdf {
     void TSA::addNeighbourhoodStructure(NeighbourhoodStructure *ns)
     {
         m_neighbourhoodStructures.pushBack(ns);
-        m_neighbourhoodImprovements.pushBack(0);
-        m_neighbourhoodDeclinations.pushBack(0);
     }
 
     int TSA::chooseNeighbourhood(int nbIterations) const
@@ -123,29 +126,19 @@ namespace ogdf {
             return 1;
         return 0;/**/
 
+        if(nbIterations > 3000)
+            return 0;
+
         if(m_neighbourhoodStructures.size() == 1)
             return 0;
 
-        if(nbIterations <= 100)
-            return randomNumber(0, m_neighbourhoodImprovements.size() - 1);
-
-        int neighbourhood = 0;
-        double totalScore = 0;
-        ListConstIterator<long> improvementIt = m_neighbourhoodImprovements.begin();
-        ListConstIterator<long> declinationIt = m_neighbourhoodDeclinations.begin();
-        for(;improvementIt.valid(); improvementIt++, declinationIt++)
-        {
-            totalScore += (double) *improvementIt / *declinationIt;
-        }
-
         double r = randNum();
         double acc = 0;
-        improvementIt = m_neighbourhoodImprovements.begin();
-        declinationIt = m_neighbourhoodDeclinations.begin();
-        for(; improvementIt.valid(); improvementIt++, declinationIt++)
+        int neighbourhood = 0;
+        ListConstIterator<double> it = m_neighbourhoodSelectionChances.begin();
+        for(; it.valid(); it++)
         {
-            double score = (double) *improvementIt / *declinationIt;
-            acc += score / totalScore;
+            acc += *it;
             OGDF_ASSERT(acc >= -1e-6 && acc <= 1 + 1e-6);
             if (r <= acc) {
                 return neighbourhood;
@@ -210,8 +203,11 @@ namespace ogdf {
         ListIterator<TSAEnergyFunction*> it;
 		ListIterator<double> it2;
 		it2 = m_weightsOfEnergyFunctions.begin();
-		for(it = m_energyFunctions.begin(); it.valid() && it2.valid(); it=it.succ(), it2 = it2.succ())
+        cout << "initial energy components: " << endl;
+        for(it = m_energyFunctions.begin(); it.valid() && it2.valid(); it=it.succ(), it2 = it2.succ()) {
 			m_energy += (*it)->energy() * (*it2);
+            cout << (*it)->getName() << ": " << (*it)->energy() << endl;
+        }
 	}
 
 	//the vertices with degree zero are placed below all other vertices on a horizontal
@@ -337,16 +333,22 @@ namespace ogdf {
 
 				costDiff = newEnergy - m_energy;
 
-                if(neighbourhood == m_lastNeighbourhoodUsed)
-                    m_neighbourhoodChangeMultiplier += 1;
-                else
-                    m_neighbourhoodChangeMultiplier = 1;
-                m_lastNeighbourhoodUsed = neighbourhood;
-
-                if(costDiff < 0)
-                    (*(m_neighbourhoodImprovements.get(neighbourhood))) += 1;
-                else
-                    (*(m_neighbourhoodDeclinations.get(neighbourhood))) += 1 * m_neighbourhoodChangeMultiplier;
+                int reward = (costDiff < 0) ? 1 : 0;
+                int nbNeighbours = m_neighbourhoodStructures.size();
+                ListIterator<double> chanceIt = m_neighbourhoodSelectionChances.begin();
+                for(int i=0; chanceIt.valid(); chanceIt++, i++)
+                {
+                    if(i == neighbourhood)
+                    {
+                        *chanceIt += m_rewardParameter * reward * (1-*chanceIt)
+                                - m_penaltyParameter * (1-reward) * *chanceIt;
+                    }
+                    else
+                    {
+                        *chanceIt += -m_rewardParameter * reward * *chanceIt
+                                + m_penaltyParameter * (1-reward) * ((1.0 / (nbNeighbours - 1)) - *chanceIt);
+                    }
+                }
 
 				//this tests if the new layout is accepted. If this is the case,
 				//all energy functions are informed that the new layout is accepted
@@ -400,13 +402,10 @@ namespace ogdf {
 			cout << "energy: " << std::fixed << m_energy << endl;
 			cout << "iterations: " << std::fixed << i << endl;
             cout << "Improvement: " << std::fixed << m_totalCostDiff << endl;
-            ListIterator<long> improvementIt = m_neighbourhoodImprovements.begin();
-            ListIterator<long> declinationIt = m_neighbourhoodDeclinations.begin();
-            int neighbourhood=0;
-            for(; improvementIt.valid(); improvementIt++, declinationIt++)
-            {
-                cout << "neighbourhood " << neighbourhood << " improvements: " << *improvementIt << ", declinations: " << *declinationIt << endl;
-                neighbourhood++;
+            cout << "energy components: " << endl;
+            ListIterator<TSAEnergyFunction*> it = m_energyFunctions.begin();
+            for(;it.valid(); it++) {
+                cout << (*it)->getName() << ": " << (*it)->energy() << endl;
             }
 		}
         //TODO: consider zero degree vertices

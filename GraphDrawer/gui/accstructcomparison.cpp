@@ -61,7 +61,7 @@ void AccStructComparison::performLayouting()
     layout.setRepulsionWeight(1);
     layout.setAngularResolutionWeight(1);
     layout.setPlanarityWeight(3);
-    layout.setQuality(1000);
+    layout.setQuality(10);
     layout.setPreferredEdgeLength(5);
     layout.setAccelerationStructureParameter(ogdf::TSALayout::none);
 
