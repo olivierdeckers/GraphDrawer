@@ -20,7 +20,8 @@ SOURCES += tsauniformgridtest.cpp \
     ../GraphDrawer/ogdf/TSAEnergyFunction.cpp \
     ../GraphDrawer/ogdf/TSANodePairEnergy.cpp \
     ../GraphDrawer/ogdf/AccelerationStructure.cpp \
-    ../GraphDrawer/ogdf/MoveEdge.cpp
+    ../GraphDrawer/ogdf/MoveEdge.cpp \
+    ../GraphDrawer/ogdf/MoveCluster.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 unix {
@@ -47,4 +48,5 @@ HEADERS += \
     ../GraphDrawer/ogdf/TSANodePairEnergy.h \
     ../GraphDrawer/ogdf/TSANoAcceleration.h \
     ../GraphDrawer/ogdf/AccelerationStructure.h \
-    ../GraphDrawer/ogdf/MoveEdge.h
+    ../GraphDrawer/ogdf/MoveEdge.h \
+    ../GraphDrawer/ogdf/MoveCluster.h

@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_G = new ogdf::Graph();
     m_GA = new ogdf::GraphAttributes(*m_G, ogdf::GraphAttributes::nodeGraphics |
-       ogdf:: GraphAttributes::edgeGraphics );
+       ogdf:: GraphAttributes::edgeGraphics | ogdf::GraphAttributes::nodeLabel );
 
     ui->graphCanvas->setGraph(*m_GA, *m_G);
 

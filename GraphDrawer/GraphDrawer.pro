@@ -33,7 +33,8 @@ SOURCES += gui/main.cpp\
     ogdf/TSANoAcceleration.cpp \
     ogdf/TSAEnergyFunction.cpp \
     ogdf/TSANodePairEnergy.cpp \
-    ogdf/MoveEdge.cpp
+    ogdf/MoveEdge.cpp \
+    ogdf/MoveCluster.cpp
 
 HEADERS  += gui/mainwindow.h \
     gui/graphcanvas.h \
@@ -56,7 +57,8 @@ HEADERS  += gui/mainwindow.h \
     ogdf/TSANoAcceleration.h \
     ogdf/TSAEnergyFunction.h \
     ogdf/TSANodePairEnergy.h \
-    ogdf/MoveEdge.h
+    ogdf/MoveEdge.h \
+    ogdf/MoveCluster.h
 
 FORMS    += gui/mainwindow.ui \
     gui/accstructcomparison.ui
