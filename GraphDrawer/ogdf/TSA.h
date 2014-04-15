@@ -78,7 +78,7 @@ public:
 	//! Adds an energy function \a F with a certain weight.
     void addEnergyFunction(TSAEnergyFunction *F, double weight);
 
-    void addNeighbourhoodStructure(NeighbourhoodStructure *ns);
+    void addNeighbourhoodStructure(NeighbourhoodStructure *ns, double weight);
 
 	//! Returns a list of the names of the energy functions.
     List<String> returnEnergyFunctionNames();

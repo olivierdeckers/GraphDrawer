@@ -74,9 +74,16 @@ namespace ogdf {
     {
         m_energy = 0.0;
 
-        int nbNeighbourhoods = m_neighbourhoodStructures.size();
-        for(int i=0; i<nbNeighbourhoods; i++) {
-            m_neighbourhoodSelectionChances.pushBack(1.0 / nbNeighbourhoods);
+        ListIterator<double> it = m_neighbourhoodSelectionChances.begin();
+        double sum = 0;
+        for(;it.valid(); it++)
+        {
+            sum += *it;
+        }
+        it = m_neighbourhoodSelectionChances.begin();
+        for(; it.valid(); it++)
+        {
+            *it /= sum;
         }
 
         unsigned int t = (unsigned) time(NULL);
@@ -114,9 +121,10 @@ namespace ogdf {
 		m_energy += F->energy();
 	}
 
-    void TSA::addNeighbourhoodStructure(NeighbourhoodStructure *ns)
+    void TSA::addNeighbourhoodStructure(NeighbourhoodStructure *ns, double weight)
     {
         m_neighbourhoodStructures.pushBack(ns);
+        m_neighbourhoodSelectionChances.pushBack(weight);
     }
 
     int TSA::chooseNeighbourhood(int nbIterations) const

@@ -227,10 +227,10 @@ void TSALayout::call(GraphAttributes &AG)
     RemoveCrossing rc(AG, *planarity);
     MoveEdge me(AG);
     MoveCluster mc(AG);
-    tsa.addNeighbourhoodStructure(&rm);
-    tsa.addNeighbourhoodStructure(&rc);
-    //tsa.addNeighbourhoodStructure(&me);
-    //tsa.addNeighbourhoodStructure(&mc);
+    tsa.addNeighbourhoodStructure(&rm, 1);
+    tsa.addNeighbourhoodStructure(&rc, 0.6);
+    //tsa.addNeighbourhoodStructure(&me, 1);
+    tsa.addNeighbourhoodStructure(&mc, 0.1);
 
 
     tsa.setStartTemperature(m_startTemperature);
