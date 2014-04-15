@@ -15,15 +15,13 @@ MoveEdge::~MoveEdge() {}
 
 void MoveEdge::generateNeighbouringLayout(double temp, Hashing<node, DPoint> &result)
 {
-    double diskRadius = min(1.0, 10*temp);
-
     int r = randomNumber(0, m_edges.size() - 1);
     edge e = *(m_edges.get(r));
 
     double randomAngle = randNum() * 2.0 * Math::pi;
     DPoint diff;
-    diff.m_y = sin(randomAngle) * diskRadius * randNum();
-    diff.m_x = cos(randomAngle) * diskRadius * randNum();
+    diff.m_y = sin(randomAngle) * diskRadius(temp) * randNum();
+    diff.m_x = cos(randomAngle) * diskRadius(temp) * randNum();
 
     node s = e->source();
     node t = e->target();

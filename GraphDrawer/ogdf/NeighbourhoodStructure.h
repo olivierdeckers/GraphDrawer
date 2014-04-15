@@ -19,6 +19,11 @@ public:
 protected:
     GraphAttributes &m_GA;
     const Graph &m_G;
+
+    double diskRadius(double temp)
+    {
+        return min(1.0, 10*temp);
+    }
 };
 
 }
