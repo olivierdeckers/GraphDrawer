@@ -17,7 +17,6 @@ SOURCES += gui/main.cpp\
     gui/graphcanvas.cpp \
     gui/layoutworker.cpp \
     gui/qcustomplot.cpp \
-    gui/energyplotter.cpp \
     ogdf/TSA.cpp \
     ogdf/TSALayout.cpp \
     ogdf/PlanarityApprox.cpp \
@@ -34,7 +33,8 @@ SOURCES += gui/main.cpp\
     ogdf/TSAEnergyFunction.cpp \
     ogdf/TSANodePairEnergy.cpp \
     ogdf/MoveEdge.cpp \
-    ogdf/MoveCluster.cpp
+    ogdf/MoveCluster.cpp \
+    gui/plotter.cpp
 
 HEADERS  += gui/mainwindow.h \
     gui/graphcanvas.h \
@@ -46,7 +46,6 @@ HEADERS  += gui/mainwindow.h \
     ogdf/TSARepulsion.h \
     ogdf/TSAPlanarity.h \
     gui/qcustomplot.h \
-    gui/energyplotter.h \
     gui/accstructcomparison.h \
     ogdf/NeighbourhoodStructure.h \
     ogdf/RandomMove.h \
@@ -58,7 +57,8 @@ HEADERS  += gui/mainwindow.h \
     ogdf/TSAEnergyFunction.h \
     ogdf/TSANodePairEnergy.h \
     ogdf/MoveEdge.h \
-    ogdf/MoveCluster.h
+    ogdf/MoveCluster.h \
+    gui/plotter.h
 
 FORMS    += gui/mainwindow.ui \
     gui/accstructcomparison.ui

@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <ogdf/basic/Graph.h>
 #include <ogdf/basic/GraphAttributes.h>
-#include "energyplotter.h"
+#include "plotter.h"
 
 namespace Ui {
 class MainWindow;
@@ -39,7 +39,7 @@ private:
     ogdf::Graph *m_G;
     ogdf::GraphAttributes *m_GA;
     QHash<QString, QString> *graphs;
-    EnergyPlotter *plotter;
+    Plotter *plotter;
 };
 
 #endif // MAINWINDOW_H

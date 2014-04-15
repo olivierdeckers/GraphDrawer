@@ -230,7 +230,7 @@ void TSALayout::call(GraphAttributes &AG)
     tsa.addNeighbourhoodStructure(&rm, 1);
     tsa.addNeighbourhoodStructure(&rc, 0.6);
     //tsa.addNeighbourhoodStructure(&me, 1);
-    tsa.addNeighbourhoodStructure(&mc, 0.1);
+    tsa.addNeighbourhoodStructure(&mc, 10);
 
 
     tsa.setStartTemperature(m_startTemperature);

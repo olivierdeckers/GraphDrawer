@@ -13,10 +13,14 @@ public:
     //~LayoutWorker();
 
     void energyInfo(double energy, double temperature);
+    void neighbourhoodSelectionChance(int id, double chance);
+    void neighbourhoodLegendEntry(int id, QString name);
 
 signals:
     void finished(QString timingResult);
-    void energyInfoAvailable(double energy, double temperature);
+    void energyInfoSignal(double energy, double temperature);
+    void neighbourhoodSelectionChanceSignal(int id, double chance);
+    void neighbourhoodLegendEntrySignal(int id, QString name);
 
 public slots:
     void run();

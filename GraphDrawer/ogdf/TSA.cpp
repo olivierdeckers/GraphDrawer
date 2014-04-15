@@ -134,8 +134,8 @@ namespace ogdf {
             return 1;
         return 0;/**/
 
-        if(nbIterations > 3000)
-            return 0;
+        //if(nbIterations > 3000)
+        //    return 0;
 
         if(m_neighbourhoodStructures.size() == 1)
             return 0;
@@ -291,6 +291,15 @@ namespace ogdf {
 	{
 		initParameters();
 
+#ifdef GRAPHDRAWER
+        ListIterator<NeighbourhoodStructure*> it = m_neighbourhoodStructures.begin();
+        int i=0;
+        for(; it.valid(); it++, i++)
+        {
+            worker->neighbourhoodLegendEntry(i, QString((*it)->getName().cstr()));
+        }
+#endif
+
 		time_t start = time(NULL);
 
 		OGDF_ASSERT(!m_energyFunctions.empty());
@@ -392,8 +401,15 @@ namespace ogdf {
 				}
 
 #ifdef GRAPHDRAWER
-                if(worker != NULL)
+                if(worker != NULL) {
                     worker->energyInfo(m_energy, m_temperature);
+
+                    ListIterator<double> it = m_neighbourhoodSelectionChances.begin();
+                    for(int j = 0; it.valid(); it++, j++)
+                    {
+                        worker->neighbourhoodSelectionChance(j, *it);
+                    }
+                }
 #endif
 				/*cout << "temperature: " << m_temperature << endl;
 				cout << "diskradius: " << m_diskRadius << endl;

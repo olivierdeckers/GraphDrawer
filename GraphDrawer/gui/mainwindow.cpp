@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
     qSort(keys);
     ui->graphFileInput->addItems(keys);
 
-    plotter = new EnergyPlotter(ui->plotWidget);
+    plotter = new Plotter(ui->energyPlotWidget, ui->neighbourhoodPlotWidget);
 }
 
 MainWindow::~MainWindow()
@@ -120,8 +120,11 @@ void MainWindow::layoutGraph()
     connect(worker, SIGNAL(finished(QString)), this, SLOT(layoutFinished(QString)));
     connect(worker, SIGNAL(finished(QString)), ui->graphCanvas, SLOT(update()), Qt::QueuedConnection);
 
-    connect(worker, SIGNAL(energyInfoAvailable(double,double)), plotter, SLOT(energyInfoAvailable(double,double)), Qt::QueuedConnection);
-    connect(worker, SIGNAL(energyInfoAvailable(double,double)), ui->graphCanvas, SLOT(update()), Qt::QueuedConnection);
+    connect(worker, SIGNAL(energyInfoSignal(double,double)), plotter, SLOT(energyInfo(double,double)), Qt::QueuedConnection);
+    connect(worker, SIGNAL(energyInfoSignal(double,double)), ui->graphCanvas, SLOT(update()), Qt::QueuedConnection);
+
+    connect(worker, SIGNAL(neighbourhoodLegendEntrySignal(int,QString)), plotter, SLOT(neighbourhoodLegendEntry(int,QString)), Qt::QueuedConnection);
+    connect(worker, SIGNAL(neighbourhoodSelectionChanceSignal(int,double)), plotter, SLOT(neighbourhoodSelectionChanceInfo(int,double)), Qt::QueuedConnection);
 
     worker->moveToThread(thread);
     thread->start();

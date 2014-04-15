@@ -11,10 +11,12 @@ namespace ogdf {
 class NeighbourhoodStructure
 {
 public:
-    NeighbourhoodStructure(GraphAttributes &GA) : m_GA(GA), m_G(GA.constGraph()) {}
+    NeighbourhoodStructure(GraphAttributes &GA, String name) : m_GA(GA), m_G(GA.constGraph()), m_name(name) {}
 
     virtual ~NeighbourhoodStructure() {}
     virtual void generateNeighbouringLayout(double temp, Hashing<node, DPoint> &result) = 0;
+
+    String getName() { return m_name; }
 
 protected:
     GraphAttributes &m_GA;
@@ -24,6 +26,8 @@ protected:
     {
         return min(1.0, 10*temp);
     }
+private:
+    const String m_name;
 };
 
 }

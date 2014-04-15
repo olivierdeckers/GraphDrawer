@@ -11,7 +11,7 @@ public:
     }
 };
 
-MoveCluster::MoveCluster(ogdf::GraphAttributes &GA) : NeighbourhoodStructure(GA)
+MoveCluster::MoveCluster(ogdf::GraphAttributes &GA) : NeighbourhoodStructure(GA, "MoveCluster")
 {
     List<node> nodes;
     m_G.allNodes(nodes);

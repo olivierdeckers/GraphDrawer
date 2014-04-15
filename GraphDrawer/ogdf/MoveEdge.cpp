@@ -6,7 +6,7 @@
 
 namespace ogdf {
 
-MoveEdge::MoveEdge(GraphAttributes &GA) : NeighbourhoodStructure(GA)
+MoveEdge::MoveEdge(GraphAttributes &GA) : NeighbourhoodStructure(GA, "MoveEdge")
 {
     m_G.allEdges(m_edges);
 }

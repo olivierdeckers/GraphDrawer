@@ -320,7 +320,22 @@
    <attribute name="dockWidgetArea">
     <number>8</number>
    </attribute>
-   <widget class="QCustomPlot" name="plotWidget"/>
+   <widget class="QCustomPlot" name="neighbourhoodPlotWidget"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_2">
+   <property name="minimumSize">
+    <size>
+     <width>300</width>
+     <height>300</height>
+    </size>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QCustomPlot" name="energyPlotWidget"/>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

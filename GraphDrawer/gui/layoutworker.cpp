@@ -29,5 +29,15 @@ void LayoutWorker::run()
 
 void LayoutWorker::energyInfo(double energy, double temperature)
 {
-    emit energyInfoAvailable(energy, temperature);
+    emit energyInfoSignal(energy, temperature);
+}
+
+void LayoutWorker::neighbourhoodSelectionChance(int id, double chance)
+{
+    emit neighbourhoodSelectionChanceSignal(id, chance);
+}
+
+void LayoutWorker::neighbourhoodLegendEntry(int id, QString name)
+{
+    emit neighbourhoodLegendEntrySignal(id, name);
 }
