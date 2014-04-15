@@ -1,4 +1,5 @@
 #include "MoveCluster.h"
+#include <ogdf/basic/Math.h>
 
 namespace ogdf {
 
@@ -25,7 +26,10 @@ MoveCluster::MoveCluster(ogdf::GraphAttributes &GA) : NeighbourhoodStructure(GA)
         growCluster(*n, c, nodes, clusterIdx);
         clusterIdx ++;
 
-        m_clusters.pushBack(c);
+        if(c.nodes.size() >= 4)
+        {
+            m_clusters.pushBack(c);
+        }
     }
 }
 
@@ -97,7 +101,21 @@ void MoveCluster::growCluster(node start, Cluster &c, List<node> &nodes, int clu
 
 void MoveCluster::generateNeighbouringLayout(double temp, Hashing<ogdf::node, ogdf::DPoint> &result)
 {
+    int r = randomNumber(0, m_clusters.size() - 1);
+    Cluster c = *(m_clusters.get(r));
 
+    double randomAngle = randomDouble(0, 1) * 2.0 * Math::pi;
+    double diffX = cos(randomAngle) * diskRadius(temp);
+    double diffY = sin(randomAngle) * diskRadius(temp);
+
+    ListIterator<node> it = c.nodes.begin();
+    for(; it.valid(); it++)
+    {
+        DPoint newPos;
+        newPos.m_x = m_GA.x(*it) + diffX;
+        newPos.m_y = m_GA.y(*it) + diffY;
+        result.insert(*it, newPos);
+    }
 }
 
 }
