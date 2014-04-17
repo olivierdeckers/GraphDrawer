@@ -79,6 +79,8 @@ void Plotter::energyInfo(double energy, double temperature)
 void Plotter::clear()
 {
     neighbourhood_iteration = energy_iteration = 0;
+    energyPlotter->yAxis->setRangeUpper(1);
+    energyPlotter->yAxis2->setRangeUpper(1);
     energyPlotter->graph(0)->clearData();
     energyPlotter->graph(1)->clearData();
 
