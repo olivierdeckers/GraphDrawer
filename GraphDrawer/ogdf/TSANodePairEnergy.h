@@ -53,11 +53,9 @@ class TSANodePairEnergy: public TSAEnergyFunction {
 public:
     //Initializes data dtructures to speed up later computations
     TSANodePairEnergy(const String energyname, GraphAttributes &AG);
-    virtual ~TSANodePairEnergy() {delete m_nodeNums; delete m_pairEnergy;}
+    virtual ~TSANodePairEnergy() {delete m_nodeNums; delete m_pairEnergy; delete m_candPairEnergy; }
     //computes the energy of the initial layout
     void computeEnergy();
-
-    double computeCandidateEnergy(const Hashing<node, DPoint> &layoutChanges);
 
 protected:
     //computes the energy stored by a pair of vertices at the given positions
@@ -76,7 +74,7 @@ protected:
 private:
     NodeArray<int> *m_nodeNums;//stores internal number of each vertex
     Array2D<double> *m_pairEnergy;//stores for each pair of vertices its energy
-    NodeArray<double> m_candPairEnergy;//stores for each vertex its pair energy with
+    Array2D<double> *m_candPairEnergy;//stores for each vertex its pair energy with
     //respect to the vertex to be moved if its new position is chosen
     NodeArray<IntersectionRectangle> m_shape;//stores the shape of each vertex as
     //an IntersectionRectangle

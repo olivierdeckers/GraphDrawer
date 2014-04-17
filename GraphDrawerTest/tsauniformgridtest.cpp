@@ -12,6 +12,8 @@
 #include <ogdf/TSAAngularResolution.h>
 #include <ogdf/TSAUniformGrid.h>
 #include <ogdf/TSANoAcceleration.h>
+#include <ogdf/TSAAttraction.h>
+#include <ogdf/TSARepulsion.h>
 
 #define randf() (static_cast <float> (rand()) / static_cast <float> (RAND_MAX))
 
@@ -296,6 +298,64 @@ TEST_F(TSAUniformGridTest, AngRestCandidateEnergyCorrectness) {
     m_GA->y(b) = 0;
     angres->candidateTaken();
     EXPECT_DOUBLE_EQ((idealAngle-M_PI/4.0)/idealAngle * 4, angres->energy()) << "Updated energy is correct (2)";
+}
+
+TEST_F(TSAUniformGridTest, NodePairEnergyMoveMultipleNodesCorrectness) {
+    unsigned int seed = std::time(NULL);
+    srand(seed);
+    cout << "seed: " << seed << endl;
+
+    ogdf::Graph* G = new ogdf::Graph();
+    ogdf::GraphAttributes* GA = new ogdf::GraphAttributes(*G, ogdf::GraphAttributes::nodeGraphics | ogdf::GraphAttributes::edgeGraphics);
+
+    int numNodes = 20;
+    ogdf::node nodes [numNodes];
+    for(int i=0; i<numNodes; i++) {
+        nodes[i] = G->newNode();
+        GA->x(nodes[i]) = randf();
+        GA->y(nodes[i]) = randf();
+    }
+    int nbEdges = 50;
+    for(int i=0; i<nbEdges; i++) {
+        int a = rand() % numNodes;
+        int b = rand() % numNodes;
+        G->newEdge(nodes[a], nodes[b]);
+    }
+
+    ogdf::TSAAttraction *attraction = new ogdf::TSAAttraction(*GA, 5);
+    ogdf::TSARepulsion *repulsion = new ogdf::TSARepulsion(*GA, 5);
+    attraction->computeEnergy();
+    repulsion->computeEnergy();
+
+    for(int i=0; i<100; i++) {
+        ogdf::Hashing<ogdf::node, ogdf::DPoint> layoutChanges;
+        int numMoved = ogdf::randomNumber(1, floor(numNodes/5));
+        for(int i=0; i<numMoved; i++) {
+            int n = rand() % numNodes;
+            ogdf::DPoint newPos = ogdf::DPoint(randf(), randf());
+            layoutChanges.insert(nodes[n], newPos);
+        }
+
+        double attrCandEnergy = attraction->computeCandidateEnergy(layoutChanges);
+        double repCandEnergy = repulsion->computeCandidateEnergy(layoutChanges);
+
+        attraction->candidateTaken();
+        repulsion->candidateTaken();
+
+        ogdf::HashConstIterator<ogdf::node, ogdf::DPoint> it;
+        for(it = layoutChanges.begin(); it.valid(); ++it)
+        {
+            GA->x(it.key()) = it.info().m_x;
+            GA->y(it.key()) = it.info().m_y;
+        }
+
+        attraction->computeEnergy();
+        repulsion->computeEnergy();
+        EXPECT_FLOAT_EQ(attraction->energy(), attrCandEnergy);
+        EXPECT_FLOAT_EQ(repulsion->energy(), repCandEnergy);
+    }
+
+
 }
 
 

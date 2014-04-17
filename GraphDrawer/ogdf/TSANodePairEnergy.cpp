@@ -51,7 +51,6 @@ namespace ogdf {
 
 TSANodePairEnergy::TSANodePairEnergy(const String energyname, GraphAttributes &AG) :
     TSAEnergyFunction(energyname,AG),
-    m_candPairEnergy(m_G),
     m_shape(m_G),
     m_adjacentOracle(m_G)
 {
@@ -76,7 +75,8 @@ TSANodePairEnergy::TSANodePairEnergy(const String energyname, GraphAttributes &A
         n_num++;
     }
     n_num--;
-    m_pairEnergy = new Array2D<double> (1,n_num,1,n_num);
+    m_pairEnergy = new Array2D<double> (1,n_num,1,n_num, 0);
+    m_candPairEnergy = new Array2D<double> (1, n_num, 1, n_num, 0);
 }
 
 
@@ -102,57 +102,60 @@ void TSANodePairEnergy::computeEnergy()
 
 
 void TSANodePairEnergy::internalCandidateTaken() {
-    HashConstIterator<node, DPoint> it;
-    for(it = m_layoutChanges->begin(); it.valid(); ++it)
-    {
-        node v = it.key();
-        int candNum = (*m_nodeNums)[v];
-        ListIterator<node> it;
-        for(it = m_nonIsolated.begin(); it.valid(); ++ it) {
-            if((*it) != v) {
-                int numit = (*m_nodeNums)[*it];
-                (*m_pairEnergy)(min(numit,candNum),max(numit,candNum)) = m_candPairEnergy[*it];
-                m_candPairEnergy[*it] = 0.0;
+    int n_num = m_nonIsolated.size();
+    double sum = 0;
+    for(int i=1; i<=n_num-1; i++) {
+        for(int j=i+1; j<=n_num; j++) {
+            double E = (*m_candPairEnergy)(i, j);
+            OGDF_ASSERT(E >= 0);
+            if(E > 0) {
+                (*m_pairEnergy)(i, j) = E;
+                (*m_candPairEnergy)(i, j) = 0;
             }
+            sum += (*m_pairEnergy)(i,j);
         }
     }
+
+    OGDF_ASSERT(abs(sum-m_energy) < 1e-10);
 }
 
 
 void TSANodePairEnergy::compCandEnergy()
 {
+    cout << "compcandenergy" << endl;
     m_candidateEnergy = energy();
     HashConstIterator<node, DPoint> it;
     for(it = m_layoutChanges->begin(); it.valid(); ++it)
     {
         node v = it.key();
         int numv = (*m_nodeNums)[v];
+        cout << "node " << numv << " moved" << endl;
+
         ListIterator<node> it;
         for(it = m_nonIsolated.begin(); it.valid(); ++ it) {
-            if(*it != v) {
-                int j = (*m_nodeNums)[*it];
+            int j = (*m_nodeNums)[*it];
+            if(numv != j && (numv < j || !m_layoutChanges->member(*it))) {
+
                 m_candidateEnergy -= (*m_pairEnergy)(min(j,numv),max(j,numv));
-                m_candPairEnergy[*it] = computeCoordEnergy(v,*it);
-                m_candidateEnergy += m_candPairEnergy[*it];
+                double candEnergy = computeCoordEnergy(v,*it);
+                cout << "pair (" << min(j,numv) << "," << max(j,numv) << ") updated: " << candEnergy << endl;
+                m_candidateEnergy += candEnergy;
+                (*m_candPairEnergy)(min(j,numv),max(j,numv)) = candEnergy;
                 if(m_candidateEnergy < 0.0) {
                     OGDF_ASSERT(m_candidateEnergy > -0.00001);
                     m_candidateEnergy = 0.0;
                 }
             }
-            else m_candPairEnergy[*it] = 0.0;
+            else {
+                (*m_candPairEnergy)(min(j,numv),max(j,numv)) = 0;
+            }
         }
-        OGDF_ASSERT(m_candidateEnergy >= -0.0001);
     }
 }
 
 
 #ifdef OGDF_DEBUG
 void TSANodePairEnergy::printInternalData() const {
-    ListConstIterator<node> it;
-    for(it = m_nonIsolated.begin(); it.valid(); ++it) {
-        cout << "\nNode: " << (*m_nodeNums)[*it];
-        cout << " CandidatePairEnergy: " << m_candPairEnergy[*it];
-    }
     cout << "\nPair energies:";
     for(int i=1; i< m_nonIsolated.size(); i++)
         for(int j=i+1; j <= m_nonIsolated.size(); j++)
