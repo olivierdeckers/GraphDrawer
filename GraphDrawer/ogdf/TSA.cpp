@@ -157,6 +157,26 @@ namespace ogdf {
         throw;/**/
     }
 
+    void TSA::updateNeighbourhoodChances(double costDiff, int neighbourhoodUsed)
+    {
+        int reward = (costDiff < 0) ? 1 : 0;
+        int nbNeighbours = m_neighbourhoodStructures.size();
+        ListIterator<double> chanceIt = m_neighbourhoodSelectionChances.begin();
+        for(int i=0; chanceIt.valid(); chanceIt++, i++)
+        {
+            if(i == neighbourhoodUsed)
+            {
+                *chanceIt += m_rewardParameter * reward * (1-*chanceIt)
+                        - m_penaltyParameter * (1-reward) * *chanceIt;
+            }
+            else
+            {
+                *chanceIt += -m_rewardParameter * reward * *chanceIt
+                        + m_penaltyParameter * (1-reward) * ((1.0 / (nbNeighbours - 1)) - *chanceIt);
+            }
+        }
+    }
+
     List<String> TSA::returnEnergyFunctionNames()
 	{
         List<String> names;
@@ -326,18 +346,6 @@ namespace ogdf {
                 }
                 //cout << "neighbourhood used: " << neighbourhood << ", iteration: " << i << endl;
 
-//                ListConstIterator<long> improveIt = m_neighbourhoodImprovements.begin();
-//                ListConstIterator<long> declineIt = m_neighbourhoodDeclinations.begin();
-//                for(; improveIt.valid(); declineIt++)
-//                {
-//                    cout << *improveIt << "," << *declineIt;
-//                    improveIt++;
-//                    if(improveIt.valid())
-//                        cout << ",";
-//                }
-//                cout << endl;
-                //cout << m_temperature << endl;
-
 				//compute candidate energy and decide if new layout is chosen
                 ListIterator<TSAEnergyFunction*> it;
 				ListIterator<double> it2 = m_weightsOfEnergyFunctions.begin();
@@ -350,22 +358,7 @@ namespace ogdf {
 
 				costDiff = newEnergy - m_energy;
 
-                int reward = (costDiff < 0) ? 1 : 0;
-                int nbNeighbours = m_neighbourhoodStructures.size();
-                ListIterator<double> chanceIt = m_neighbourhoodSelectionChances.begin();
-                for(int i=0; chanceIt.valid(); chanceIt++, i++)
-                {
-                    if(i == neighbourhood)
-                    {
-                        *chanceIt += m_rewardParameter * reward * (1-*chanceIt)
-                                - m_penaltyParameter * (1-reward) * *chanceIt;
-                    }
-                    else
-                    {
-                        *chanceIt += -m_rewardParameter * reward * *chanceIt
-                                + m_penaltyParameter * (1-reward) * ((1.0 / (nbNeighbours - 1)) - *chanceIt);
-                    }
-                }
+                updateNeighbourhoodChances(costDiff, neighbourhood);
 
 				//this tests if the new layout is accepted. If this is the case,
 				//all energy functions are informed that the new layout is accepted

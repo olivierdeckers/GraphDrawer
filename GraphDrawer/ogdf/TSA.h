@@ -129,6 +129,8 @@ private:
 
     int chooseNeighbourhood(int nbIterations) const;
 
+    void updateNeighbourhoodChances(double costDiff, int neighbourhoodUsed);
+
 	//! Fake assignment operator (dummy to avoid copying)
 	TSA& operator=(const TSA &dh);
 	//! Fake copy constructor (dummy to avoid copying)
