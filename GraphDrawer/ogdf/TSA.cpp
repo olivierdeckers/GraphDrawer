@@ -329,11 +329,13 @@ namespace ogdf {
 			
             m_totalCostDiff = 0;
             m_totalEntropyDiff = 0;
-			double costDiff;
+            double costDiff;
+            double entropyDiffSinceLastUpdate = 0;
+            double costDiffSinceLastUpdate = 0;
 			int i = 0;
-			int iterationsSinceLastChange = 0;
-			//this is the main optimization loop
-            while((m_temperature > m_endTemperature || i < 20) && i < 1e5 /*&& m_diskRadius >= 1*/) {
+            int iterationsSinceLastChange = 0;
+            bool updateTemp = true;
+            while((m_temperature > m_endTemperature || i < 20) && i < 1e5) {
                 Hashing<node, DPoint> layoutChanges;
                 int neighbourhood = chooseNeighbourhood(i);
 
@@ -363,8 +365,6 @@ namespace ogdf {
 				//this tests if the new layout is accepted. If this is the case,
 				//all energy functions are informed that the new layout is accepted
 				if(testEnergyValue(newEnergy)) {
-                    m_totalCostDiff += costDiff;
-
 					for(it = m_energyFunctions.begin(); it.valid(); it = it.succ())
 						(*it)->candidateTaken();
 
@@ -376,23 +376,39 @@ namespace ogdf {
                         grid->updateNodePosition(it.key(), it.info());
                     }
 
+                    if(costDiffSinceLastUpdate == 0)
+                        costDiffSinceLastUpdate = costDiff;
+                    else
+                        costDiffSinceLastUpdate = min(costDiffSinceLastUpdate, costDiff);
+
                     m_energy = newEnergy;
 
                     if(costDiff < -1e-4)
                         iterationsSinceLastChange = 0;
                 }
 
-				if(costDiff > 0) {
-                    m_totalEntropyDiff -= costDiff / m_temperature;
+                if(costDiff > 0) {
+                    double currentEntropyDiff = costDiff / m_temperature;
+                    entropyDiffSinceLastUpdate = max(entropyDiffSinceLastUpdate, currentEntropyDiff);
 				}
 				
+                if(updateTemp)
+                {
+                    m_totalCostDiff += costDiffSinceLastUpdate;
+                    m_totalEntropyDiff -= entropyDiffSinceLastUpdate;
+                    costDiffSinceLastUpdate = 0;
+                    entropyDiffSinceLastUpdate = 0;
+                }
+
                 if(m_totalCostDiff >= 0 || m_totalEntropyDiff == 0) {
 					m_temperature = m_startingTemp;
 				}
-				else {
+                else if(updateTemp) {
                     m_temperature = m_quality * (m_totalCostDiff / m_totalEntropyDiff);
 				}
 
+
+                updateTemp = i%1 == 0;
 #ifdef GRAPHDRAWER
                 if(worker != NULL) {
                     worker->energyInfo(m_energy, m_temperature);
