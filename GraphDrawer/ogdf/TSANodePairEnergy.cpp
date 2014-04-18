@@ -76,7 +76,7 @@ TSANodePairEnergy::TSANodePairEnergy(const String energyname, GraphAttributes &A
     }
     n_num--;
     m_pairEnergy = new Array2D<double> (1,n_num,1,n_num, 0);
-    m_candPairEnergy = new Array2D<double> (1, n_num, 1, n_num, 0);
+    m_candPairEnergy = new Array2D<double> (1, n_num, 1, n_num, -1);
 }
 
 
@@ -107,10 +107,9 @@ void TSANodePairEnergy::internalCandidateTaken() {
     for(int i=1; i<=n_num-1; i++) {
         for(int j=i+1; j<=n_num; j++) {
             double E = (*m_candPairEnergy)(i, j);
-            OGDF_ASSERT(E >= 0);
-            if(E > 0) {
+            if(E != -1) {
+                OGDF_ASSERT(E >= 0);
                 (*m_pairEnergy)(i, j) = E;
-                (*m_candPairEnergy)(i, j) = 0;
             }
             sum += (*m_pairEnergy)(i,j);
         }
@@ -122,14 +121,14 @@ void TSANodePairEnergy::internalCandidateTaken() {
 
 void TSANodePairEnergy::compCandEnergy()
 {
-    cout << "compcandenergy" << endl;
+    m_candPairEnergy->fill(-1);
+
     m_candidateEnergy = energy();
     HashConstIterator<node, DPoint> it;
     for(it = m_layoutChanges->begin(); it.valid(); ++it)
     {
         node v = it.key();
         int numv = (*m_nodeNums)[v];
-        cout << "node " << numv << " moved" << endl;
 
         ListIterator<node> it;
         for(it = m_nonIsolated.begin(); it.valid(); ++ it) {
@@ -138,16 +137,8 @@ void TSANodePairEnergy::compCandEnergy()
 
                 m_candidateEnergy -= (*m_pairEnergy)(min(j,numv),max(j,numv));
                 double candEnergy = computeCoordEnergy(v,*it);
-                cout << "pair (" << min(j,numv) << "," << max(j,numv) << ") updated: " << candEnergy << endl;
                 m_candidateEnergy += candEnergy;
                 (*m_candPairEnergy)(min(j,numv),max(j,numv)) = candEnergy;
-                if(m_candidateEnergy < 0.0) {
-                    OGDF_ASSERT(m_candidateEnergy > -0.00001);
-                    m_candidateEnergy = 0.0;
-                }
-            }
-            else {
-                (*m_candPairEnergy)(min(j,numv),max(j,numv)) = 0;
             }
         }
     }
