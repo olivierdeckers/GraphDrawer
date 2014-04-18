@@ -300,7 +300,7 @@ TEST_F(TSAUniformGridTest, AngRestCandidateEnergyCorrectness) {
     EXPECT_DOUBLE_EQ((idealAngle-M_PI/4.0)/idealAngle * 4, angres->energy()) << "Updated energy is correct (2)";
 }
 
-TEST_F(TSAUniformGridTest, NodePairEnergyMoveMultipleNodesCorrectness) {
+TEST_F(TSAUniformGridTest, DeltaUpdatesCorrectness) {
     unsigned int seed = std::time(NULL);
     srand(seed);
     cout << "seed: " << seed << endl;
@@ -324,8 +324,10 @@ TEST_F(TSAUniformGridTest, NodePairEnergyMoveMultipleNodesCorrectness) {
 
     ogdf::TSAAttraction *attraction = new ogdf::TSAAttraction(*GA, 5);
     ogdf::TSARepulsion *repulsion = new ogdf::TSARepulsion(*GA, 5);
+    ogdf::TSAAngularResolution *angres = new ogdf::TSAAngularResolution(*GA);
     attraction->computeEnergy();
     repulsion->computeEnergy();
+    angres->computeEnergy();
 
     for(int i=0; i<100; i++) {
         ogdf::Hashing<ogdf::node, ogdf::DPoint> layoutChanges;
@@ -338,9 +340,11 @@ TEST_F(TSAUniformGridTest, NodePairEnergyMoveMultipleNodesCorrectness) {
 
         double attrCandEnergy = attraction->computeCandidateEnergy(layoutChanges);
         double repCandEnergy = repulsion->computeCandidateEnergy(layoutChanges);
+        double angresCandEnergy = angres->computeCandidateEnergy(layoutChanges);
 
         attraction->candidateTaken();
         repulsion->candidateTaken();
+        angres->candidateTaken();
 
         ogdf::HashConstIterator<ogdf::node, ogdf::DPoint> it;
         for(it = layoutChanges.begin(); it.valid(); ++it)
@@ -351,8 +355,10 @@ TEST_F(TSAUniformGridTest, NodePairEnergyMoveMultipleNodesCorrectness) {
 
         attraction->computeEnergy();
         repulsion->computeEnergy();
+        angres->computeEnergy();
         EXPECT_FLOAT_EQ(attraction->energy(), attrCandEnergy);
         EXPECT_FLOAT_EQ(repulsion->energy(), repCandEnergy);
+        EXPECT_FLOAT_EQ(angres->energy(), angresCandEnergy);
     }
 
 

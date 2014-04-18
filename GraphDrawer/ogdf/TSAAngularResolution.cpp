@@ -2,6 +2,8 @@
 
 namespace ogdf {
 
+//TODO changes kunnen efficienter bewaard worden met nodearray
+
 TSAAngularResolution::TSAAngularResolution(GraphAttributes &GA) : TSAEnergyFunction("AngularResolution", GA),
     m_nodeEnergy(m_G, 0),
     m_candidateNodeEnergy()
@@ -38,13 +40,24 @@ void TSAAngularResolution::compCandEnergy()
         forall_adj_edges(e, v) {
             node opposite = e->opposite(v);
 
-            m_candidateEnergy -= m_nodeEnergy[opposite];
-            double energy = computeAngularResolution(opposite);
-            NodeEnergyChange nec;
-            nec.angRes = energy;
-            nec.v = opposite;
-            m_candidateNodeEnergy.pushBack(nec);
-            m_candidateEnergy += energy;
+            bool alreadyProcessed = false;
+            ListIterator<NodeEnergyChange> it2 = m_candidateNodeEnergy.begin();
+            for(; it2.valid(); it2++) {
+                if((*it2).v == opposite) {
+                    alreadyProcessed = true;
+                    break;
+                }
+            }
+
+            if(!alreadyProcessed && !m_layoutChanges->member(opposite)) {
+                m_candidateEnergy -= m_nodeEnergy[opposite];
+                double energy = computeAngularResolution(opposite);
+                NodeEnergyChange nec;
+                nec.angRes = energy;
+                nec.v = opposite;
+                m_candidateNodeEnergy.pushBack(nec);
+                m_candidateEnergy += energy;
+            }
         }
 
         m_candidateEnergy -= m_nodeEnergy[v];
