@@ -333,7 +333,8 @@ namespace ogdf {
             double entropyDiffSinceLastUpdate = 0;
             double costDiffSinceLastUpdate = 0;
 			int i = 0;
-            int iterationsSinceLastChange = 0;
+            double costDiffPrediction = 0;
+            double alpha = 0.9;
             bool updateTemp = true;
             while((m_temperature > m_endTemperature || i < 20) && i < 1e5) {
                 Hashing<node, DPoint> layoutChanges;
@@ -382,9 +383,6 @@ namespace ogdf {
                         costDiffSinceLastUpdate = min(costDiffSinceLastUpdate, costDiff);
 
                     m_energy = newEnergy;
-
-                    if(costDiff < -1e-4)
-                        iterationsSinceLastChange = 0;
                 }
 
                 if(costDiff > 0) {
@@ -424,9 +422,11 @@ namespace ogdf {
 				cout << "diskradius: " << m_diskRadius << endl;
 				cout << "energy: " << m_energy << endl;
 				cout << "iteration: " << i << endl;*/
-                iterationsSinceLastChange ++;
 
-                if(iterationsSinceLastChange > 10000)
+                if(costDiff <= 0)
+                    costDiffPrediction = alpha * costDiff + (1-alpha) * costDiffPrediction;
+
+                if(costDiffPrediction > -1e-4 && i > 1000)
                     break;
 
                 i ++;
