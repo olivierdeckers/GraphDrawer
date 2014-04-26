@@ -101,7 +101,7 @@ void MoveCluster::growCluster(node start, Cluster &c, List<node> &nodes, int clu
 
 void MoveCluster::generateNeighbouringLayout(double temp, Hashing<ogdf::node, ogdf::DPoint> &result)
 {
-    if(m_clusters.size() == 0)
+    if(m_clusters.size() <= 1)
         throw "There are no clusters to move";
 
     int r = randomNumber(0, m_clusters.size() - 1);
