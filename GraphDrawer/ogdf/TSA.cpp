@@ -300,6 +300,36 @@ namespace ogdf {
 		}
 	}
 
+    double TSA::compCandEnergy(Hashing<node,DPoint> &layoutChanges)
+    {
+        ListIterator<TSAEnergyFunction*> it;
+        ListIterator<double> it2 = m_weightsOfEnergyFunctions.begin();
+        double newEnergy = 0.0;
+        for(it = m_energyFunctions.begin(); it.valid(); it = it.succ()) {
+            newEnergy += (*it)->computeCandidateEnergy(layoutChanges) * (*it2);
+            it2 = it2.succ();
+        }
+        OGDF_ASSERT(newEnergy >= 0.0);
+        return newEnergy;
+    }
+
+    void TSA::acceptChanges(GraphAttributes &AG, Hashing<node,DPoint> &layoutChanges, AccelerationStructure *grid)
+    {
+        ListIterator<TSAEnergyFunction*> energyFunctionIt;
+        for(energyFunctionIt = m_energyFunctions.begin(); energyFunctionIt.valid(); energyFunctionIt = energyFunctionIt.succ())
+            (*energyFunctionIt)->candidateTaken();
+
+        HashConstIterator<node, DPoint> it;
+        for(it = layoutChanges.begin(); it.valid(); ++it)
+        {
+            AG.x(it.key()) = it.info().m_x;
+            AG.y(it.key()) = it.info().m_y;
+            grid->updateNodePosition(it.key(), it.info());
+        }
+
+        m_energy = m_candEnergy;
+    }
+
 	//this is the main optimization routine with the loop that lowers the temperature
 	//and the disk radius geometrically until the temperature is zero. For each
 	//temperature, a certain number of new positions for a random vertex are tried
@@ -350,39 +380,21 @@ namespace ogdf {
                 //cout << "neighbourhood used: " << neighbourhood << ", iteration: " << i << endl;
 
 				//compute candidate energy and decide if new layout is chosen
-                ListIterator<TSAEnergyFunction*> it;
-				ListIterator<double> it2 = m_weightsOfEnergyFunctions.begin();
-				double newEnergy = 0.0;
-				for(it = m_energyFunctions.begin(); it.valid(); it = it.succ()) {
-                    newEnergy += (*it)->computeCandidateEnergy(layoutChanges) * (*it2);
-					it2 = it2.succ();
-				}
-				OGDF_ASSERT(newEnergy >= 0.0);
+                m_candEnergy = compCandEnergy(layoutChanges);
 
-				costDiff = newEnergy - m_energy;
+                costDiff = m_candEnergy - m_energy;
 
                 updateNeighbourhoodChances(costDiff, neighbourhood);
 
 				//this tests if the new layout is accepted. If this is the case,
 				//all energy functions are informed that the new layout is accepted
-				if(testEnergyValue(newEnergy)) {
-					for(it = m_energyFunctions.begin(); it.valid(); it = it.succ())
-						(*it)->candidateTaken();
-
-                    HashConstIterator<node, DPoint> it;
-                    for(it = layoutChanges.begin(); it.valid(); ++it)
-                    {
-                        AG.x(it.key()) = it.info().m_x;
-                        AG.y(it.key()) = it.info().m_y;
-                        grid->updateNodePosition(it.key(), it.info());
-                    }
+                if(testEnergyValue(m_candEnergy)) {
+                    acceptChanges(AG, layoutChanges, grid);
 
                     if(costDiffSinceLastUpdate == 0)
                         costDiffSinceLastUpdate = costDiff;
                     else
                         costDiffSinceLastUpdate = min(costDiffSinceLastUpdate, costDiff);
-
-                    m_energy = newEnergy;
                 }
 
                 if(costDiff > 0) {
@@ -431,6 +443,8 @@ namespace ogdf {
 
                 i ++;
 			}
+
+            postProcessingPhase(AG, grid);
 			
 			cout << "energy: " << std::fixed << m_energy << endl;
 			cout << "iterations: " << std::fixed << i << endl;
@@ -446,5 +460,36 @@ namespace ogdf {
         //if(m_nonIsolatedNodes.size() != G.numberOfNodes())
         //	placeIsolatedNodes(AG);
 		cout << "Time: " << (time(NULL) - start) << endl;
+    }
+
+    void TSA::postProcessingPhase(GraphAttributes &AG, AccelerationStructure *grid)
+    {
+        cout << "PostProcessing... Current energy: " << m_energy << endl;
+        DRect rect = AG.boundingBox();
+        double size = max(rect.height(), rect.width());
+        double diskRadius = 0.01*size;
+
+        node n;
+        forall_nodes(n, AG.constGraph())
+        {
+            for(int i=0; i<10; i++) {
+                Hashing<node, DPoint> layoutChanges;
+                double oldx = AG.x(n);
+                double oldy = AG.y(n);
+                double randomAngle = randNum() * 2.0 * Math::pi;
+                DPoint newPos;
+                newPos.m_y = oldy + sin(randomAngle) * diskRadius * randNum();
+                newPos.m_x = oldx + cos(randomAngle) * diskRadius * randNum();
+                layoutChanges.insert(n, newPos);
+
+                double newEnergy = compCandEnergy(layoutChanges);
+                if(newEnergy < m_energy) {
+                    acceptChanges(AG, layoutChanges, grid);
+                    i = 0;
+                }
+            }
+        }
+
+        cout << "Finished postprocessing. New Energy: " << m_energy << endl;
     }
 } //namespace

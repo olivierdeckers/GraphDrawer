@@ -229,7 +229,7 @@ void TSALayout::call(GraphAttributes &AG)
     MoveCluster mc(AG);
     tsa.addNeighbourhoodStructure(&rm, 1);
     tsa.addNeighbourhoodStructure(&rc, 0.6);
-    //tsa.addNeighbourhoodStructure(&me, 1);
+    tsa.addNeighbourhoodStructure(&me, 1);
     tsa.addNeighbourhoodStructure(&mc, 10);
 
 

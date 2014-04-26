@@ -101,6 +101,7 @@ private:
 
 	double m_temperature;          //!< The temperature during the annealing process.
     double m_energy;            //!< The current energy of the system.
+    double m_candEnergy;
 	double m_quality;			//!< The quality/runtime tradeoff parameter: higher values means higher quality and higher runtime
 	double m_endTemperature;	//!< The stop condition for temperature
     double m_totalCostDiff;
@@ -118,6 +119,8 @@ private:
 	//! Tests if new energy value satisfies annealing property (only better if m_fineTune).
 	bool testEnergyValue(double newVal);
 
+    double compCandEnergy(Hashing<node,DPoint> &layoutChanges);
+
 	//! Computes a random number between zero and one
 	double randNum() const;
 
@@ -130,6 +133,10 @@ private:
     int chooseNeighbourhood(int nbIterations) const;
 
     void updateNeighbourhoodChances(double costDiff, int neighbourhoodUsed);
+
+    void acceptChanges(GraphAttributes &AG, Hashing<node,DPoint> &layoutChanges, AccelerationStructure *grid);
+
+    void postProcessingPhase(GraphAttributes &AG, AccelerationStructure *grid);
 
 	//! Fake assignment operator (dummy to avoid copying)
 	TSA& operator=(const TSA &dh);
