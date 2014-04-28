@@ -85,7 +85,7 @@ protected:
 	};
 
 	//! Returns 1 if edges cross else 0.
-	bool intersect(const edge, const edge, double&) const;
+    bool intersect(const edge, const edge, double&) const;
 
 	//! Changes internal data if candidate is taken.
 	void internalCandidateTaken();
@@ -94,7 +94,7 @@ protected:
 	void clearCandidateCrossings();
 
 	//! Tests if two lines given by four points intersect.
-	bool lowLevelIntersect( const DPoint&, const DPoint&, const DPoint&,
+    virtual bool lowLevelIntersect( const DPoint&, const DPoint&, const DPoint&,
 		 const DPoint&, double&) const;
 
     void compCandEnergy();

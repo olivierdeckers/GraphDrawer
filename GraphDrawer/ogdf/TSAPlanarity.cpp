@@ -137,8 +137,7 @@ namespace ogdf {
 		node v2s = e2->source();
 		node v2t = e2->target();
 
-		bool cross = false;
-		DPoint inter;
+        bool cross = false;
 		if(v1s != v2s && v1s != v2t && v1t != v2s && v1t != v2t)
 			cross = lowLevelIntersect(currentPos(v1s),currentPos(v1t), currentPos(v2s),currentPos(v2t), energy);
 		return cross;

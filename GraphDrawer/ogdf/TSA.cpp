@@ -43,6 +43,9 @@
 #include <ogdf/basic/Math.h>
 #include <time.h>
 
+#include <ogdf/TSAEdgeLength.h>
+#include <ogdf/NodeEdgeDistance.h>
+
 //TODO: in addition to the layout size, node sizes should be used in
 //the initial radius computation in case of "all central" layouts with
 //huge nodes
@@ -230,12 +233,13 @@ namespace ogdf {
 		OGDF_ASSERT(!m_energyFunctions.empty());
         ListIterator<TSAEnergyFunction*> it;
 		ListIterator<double> it2;
-		it2 = m_weightsOfEnergyFunctions.begin();
+        it2 = m_weightsOfEnergyFunctions.begin();
         cout << "initial energy components: " << endl;
         for(it = m_energyFunctions.begin(); it.valid() && it2.valid(); it=it.succ(), it2 = it2.succ()) {
 			m_energy += (*it)->energy() * (*it2);
             cout << (*it)->getName() << ": " << (*it)->energy() << endl;
         }
+        cout << "Initial energy" << m_energy << endl;
 	}
 
 	//the vertices with degree zero are placed below all other vertices on a horizontal
@@ -445,51 +449,58 @@ namespace ogdf {
 			}
 
             postProcessingPhase(AG, grid);
-			
-			cout << "energy: " << std::fixed << m_energy << endl;
-			cout << "iterations: " << std::fixed << i << endl;
-            cout << "Improvement: " << std::fixed << m_totalCostDiff << endl;
-            cout << "energy components: " << endl;
-            ListIterator<TSAEnergyFunction*> it = m_energyFunctions.begin();
-            for(;it.valid(); it++) {
-                cout << (*it)->getName() << ": " << (*it)->energy() << endl;
-            }
 		}
         //TODO: consider zero degree vertices
 		//if there are zero degree vertices, they are placed using placeIsolatedNodes
         //if(m_nonIsolatedNodes.size() != G.numberOfNodes())
         //	placeIsolatedNodes(AG);
 		cout << "Time: " << (time(NULL) - start) << endl;
+        cout << "iterations: " << std::fixed << i << endl;
     }
 
     void TSA::postProcessingPhase(GraphAttributes &AG, AccelerationStructure *grid)
     {
         cout << "PostProcessing... Current energy: " << m_energy << endl;
+        TSAEdgeLength edgeLength(AG);
+        NodeEdgeDistance nodeEdgeDistance(AG, grid);
+        addEnergyFunction(&edgeLength, 100);
+        addEnergyFunction(&nodeEdgeDistance, 100);
+        computeInitialEnergy();
+        cout << "Energy with extra energy functions: " << m_energy << endl;
+
         DRect rect = AG.boundingBox();
         double size = max(rect.height(), rect.width());
-        double diskRadius = 0.01*size;
+        double diskRadius = 0.0001*size;
 
         node n;
         forall_nodes(n, AG.constGraph())
         {
-            for(int i=0; i<10; i++) {
+            for(int i=0; i<100; i++) {
                 Hashing<node, DPoint> layoutChanges;
                 double oldx = AG.x(n);
                 double oldy = AG.y(n);
                 double randomAngle = randNum() * 2.0 * Math::pi;
                 DPoint newPos;
-                newPos.m_y = oldy + sin(randomAngle) * diskRadius * randNum();
-                newPos.m_x = oldx + cos(randomAngle) * diskRadius * randNum();
+                newPos.m_y = oldy;// + sin(randomAngle) * diskRadius;// * randNum();
+                newPos.m_x = oldx;// + cos(randomAngle) * diskRadius;// * randNum();
                 layoutChanges.insert(n, newPos);
 
                 double newEnergy = compCandEnergy(layoutChanges);
+                cout << m_energy - newEnergy << endl;
                 if(newEnergy < m_energy) {
                     acceptChanges(AG, layoutChanges, grid);
-                    i = 0;
+                    //i = 0;
                 }
             }
         }
 
         cout << "Finished postprocessing. New Energy: " << m_energy << endl;
+        cout << "energy: " << std::fixed << m_energy << endl;
+        cout << "Improvement: " << std::fixed << m_totalCostDiff << endl;
+        cout << "energy components: " << endl;
+        ListIterator<TSAEnergyFunction*> it = m_energyFunctions.begin();
+        for(;it.valid(); it++) {
+            cout << (*it)->getName() << ": " << (*it)->energy() << endl;
+        }
     }
 } //namespace
