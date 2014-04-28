@@ -50,6 +50,7 @@
 #include <ogdf/RemoveCrossing.h>
 #include <ogdf/MoveEdge.h>
 #include <ogdf/MoveCluster.h>
+#include <ogdf/TSAEdgeLength.h>
 
 
 #define DEFAULT_REPULSION_WEIGHT 1e6
@@ -217,11 +218,13 @@ void TSALayout::call(GraphAttributes &AG)
     TSARepulsion rep(AG, preferredEdgeLength);
     TSAAttraction atr(AG, preferredEdgeLength);
     TSAAngularResolution angRes(AG);
+    TSAEdgeLength edgeLength(AG);
 
     tsa.addEnergyFunction(&rep,m_repulsionWeight);
     tsa.addEnergyFunction(&atr,m_attractionWeight);
     tsa.addEnergyFunction(&angRes,m_angResWeight);
     tsa.addEnergyFunction(planarity, m_planarityWeight);
+    tsa.addEnergyFunction(&edgeLength, 10);
 
     RandomMove rm(AG);
     RemoveCrossing rc(AG, *planarity);

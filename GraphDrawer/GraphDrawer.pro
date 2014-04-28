@@ -34,7 +34,8 @@ SOURCES += gui/main.cpp\
     ogdf/TSANodePairEnergy.cpp \
     ogdf/MoveEdge.cpp \
     ogdf/MoveCluster.cpp \
-    gui/plotter.cpp
+    gui/plotter.cpp \
+    ogdf/TSAEdgeLength.cpp
 
 HEADERS  += gui/mainwindow.h \
     gui/graphcanvas.h \
@@ -58,7 +59,8 @@ HEADERS  += gui/mainwindow.h \
     ogdf/TSANodePairEnergy.h \
     ogdf/MoveEdge.h \
     ogdf/MoveCluster.h \
-    gui/plotter.h
+    gui/plotter.h \
+    ogdf/TSAEdgeLength.h
 
 FORMS    += gui/mainwindow.ui \
     gui/accstructcomparison.ui

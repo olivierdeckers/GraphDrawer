@@ -66,7 +66,7 @@ public:
 
 private:
 	//computes for two vertices an the given positions the repulsive energy
-    double computeCoordEnergy(node, node) const;
+    double computeCoordEnergy(node, node);
 
     double m_scaleFactor;
 };

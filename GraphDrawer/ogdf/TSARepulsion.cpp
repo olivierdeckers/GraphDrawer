@@ -51,7 +51,7 @@ namespace ogdf {
     }
 
 
-    double TSARepulsion::computeCoordEnergy(node v1, node v2) const
+    double TSARepulsion::computeCoordEnergy(node v1, node v2)
 	{
         IntersectionRectangle i1 = shape(v1);
         IntersectionRectangle i2 = shape(v2);

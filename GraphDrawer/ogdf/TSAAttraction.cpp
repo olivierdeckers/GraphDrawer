@@ -53,7 +53,6 @@ TSAAttraction::TSAAttraction(GraphAttributes &AG, double preferredEdgeLength) :
 }
 
 double TSAAttraction::computeCoordEnergy(node v1, node v2)
-const
 {
 	double energy = 0.0;
 	if(adjacent(v1,v2)) {

@@ -59,13 +59,16 @@ public:
 
 protected:
     //computes the energy stored by a pair of vertices at the given positions
-    virtual double computeCoordEnergy(node, node) const = 0;
+    virtual double computeCoordEnergy(node, node) = 0;
     //returns the internal number given to each vertex
     int nodeNum(node v) const { return (*m_nodeNums)[v]; }
     //returns true in constant time if two vertices are adjacent
     bool adjacent(const node v, const node w) const {return m_adjacentOracle.adjacent(v,w);}
     //returns the shape of a vertex as an IntersectionRectangle
     const IntersectionRectangle& shape(const node v) const {return m_shape[v];}
+    //If a candidate change is chosen as the new position, this function sets the
+    //internal data accordingly
+    virtual void internalCandidateTaken();
 
 #ifdef OGDF_DEBUG
     virtual void printInternalData() const;
@@ -82,9 +85,7 @@ private:
     const AdjacencyOracle m_adjacentOracle;//structure for constant time adjacency queries
     //computes energy of whole layout if new position of the candidate vertex is chosen
     void compCandEnergy();
-    //If a candidate change is chosen as the new position, this function sets the
-    //internal data accordingly
-    void internalCandidateTaken();
+
     };
 
 

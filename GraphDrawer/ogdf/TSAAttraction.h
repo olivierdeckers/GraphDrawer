@@ -74,7 +74,7 @@ public:
 private:
     double m_scaleFactor;
 	//! computes the energy contributed by the two nodes if they are placed at the two given positions
-    double computeCoordEnergy(node,node) const;
+    double computeCoordEnergy(node,node);
 };
 
 }// namespace ogdf
