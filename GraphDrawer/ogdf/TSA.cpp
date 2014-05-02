@@ -343,7 +343,7 @@ namespace ogdf {
     void TSA::call(GraphAttributes &AG, AccelerationStructure *grid)
 #endif
 	{
-		initParameters();
+        initParameters();
 
 #ifdef GRAPHDRAWER
         ListIterator<NeighbourhoodStructure*> it = m_neighbourhoodStructures.begin();
@@ -475,21 +475,20 @@ namespace ogdf {
         node n;
         forall_nodes(n, AG.constGraph())
         {
-            for(int i=0; i<100; i++) {
+            for(int i=0; i<10; i++) {
                 Hashing<node, DPoint> layoutChanges;
                 double oldx = AG.x(n);
                 double oldy = AG.y(n);
                 double randomAngle = randNum() * 2.0 * Math::pi;
                 DPoint newPos;
-                newPos.m_y = oldy;// + sin(randomAngle) * diskRadius;// * randNum();
-                newPos.m_x = oldx;// + cos(randomAngle) * diskRadius;// * randNum();
+                newPos.m_y = oldy + sin(randomAngle) * diskRadius * randNum();
+                newPos.m_x = oldx + cos(randomAngle) * diskRadius * randNum();
                 layoutChanges.insert(n, newPos);
 
-                double newEnergy = compCandEnergy(layoutChanges);
-                cout << m_energy - newEnergy << endl;
-                if(newEnergy < m_energy) {
+                m_candEnergy = compCandEnergy(layoutChanges);
+                if(m_candEnergy < m_energy) {
                     acceptChanges(AG, layoutChanges, grid);
-                    //i = 0;
+                    i = 0;
                 }
             }
         }
