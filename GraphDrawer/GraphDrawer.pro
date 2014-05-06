@@ -23,7 +23,6 @@ SOURCES += gui/main.cpp\
     ogdf/TSAAttraction.cpp \
     ogdf/TSARepulsion.cpp \
     ogdf/TSAPlanarity.cpp \
-    gui/accstructcomparison.cpp \
     ogdf/RandomMove.cpp \
     ogdf/RemoveCrossing.cpp \
     ogdf/TSAAngularResolution.cpp \
@@ -48,7 +47,6 @@ HEADERS  += gui/mainwindow.h \
     ogdf/TSARepulsion.h \
     ogdf/TSAPlanarity.h \
     gui/qcustomplot.h \
-    gui/accstructcomparison.h \
     ogdf/NeighbourhoodStructure.h \
     ogdf/RandomMove.h \
     ogdf/RemoveCrossing.h \
