@@ -13,10 +13,12 @@ void LayoutWorker::run()
     QTime timer;
     timer.start();
 
+#ifdef GRAPHDRAWER
     ogdf::TSALayout* tsaLayout = dynamic_cast<ogdf::TSALayout*>(layout);
     if(tsaLayout != nullptr) {
         tsaLayout->setWorker(this);
     }
+#endif
 
     layout->call(*GA);
 

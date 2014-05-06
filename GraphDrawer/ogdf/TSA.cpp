@@ -90,9 +90,8 @@ namespace ogdf {
         }
 
         unsigned int t = (unsigned) time(NULL);
-		cout << "seed: " << t << endl;
-		srand(t);
-		//srand((unsigned int) 1385114936);
+        //cout << "seed: " << t << endl;
+        srand(t);
 	}
 
 	void TSA::setQuality(double quality) 
@@ -234,12 +233,12 @@ namespace ogdf {
         ListIterator<TSAEnergyFunction*> it;
 		ListIterator<double> it2;
         it2 = m_weightsOfEnergyFunctions.begin();
-        cout << "initial energy components: " << endl;
+        //cout << "initial energy components: " << endl;
         for(it = m_energyFunctions.begin(); it.valid() && it2.valid(); it=it.succ(), it2 = it2.succ()) {
 			m_energy += (*it)->energy() * (*it2);
-            cout << (*it)->getName() << ": " << (*it)->energy() << endl;
+            //cout << (*it)->getName() << ": " << (*it)->energy() << endl;
         }
-        cout << "Initial energy" << m_energy << endl;
+        //cout << "Initial energy" << m_energy << endl;
 	}
 
 	//the vertices with degree zero are placed below all other vertices on a horizontal
@@ -448,14 +447,17 @@ namespace ogdf {
                 i ++;
 			}
 
-            postProcessingPhase(AG, grid);
+            //cout << "Time: " << (time(NULL) - start) << endl;
+            cout << std::fixed << i << "\t";
+            cout << std::fixed << m_energy << "\t";
+
+            //postProcessingPhase(AG, grid);
 		}
         //TODO: consider zero degree vertices
 		//if there are zero degree vertices, they are placed using placeIsolatedNodes
         //if(m_nonIsolatedNodes.size() != G.numberOfNodes())
         //	placeIsolatedNodes(AG);
-		cout << "Time: " << (time(NULL) - start) << endl;
-        cout << "iterations: " << std::fixed << i << endl;
+
     }
 
     void TSA::postProcessingPhase(GraphAttributes &AG, AccelerationStructure *grid)

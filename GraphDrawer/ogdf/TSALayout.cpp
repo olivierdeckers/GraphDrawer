@@ -202,7 +202,7 @@ void TSALayout::call(GraphAttributes &AG)
     case AccelerationStructureType::none:
         accStruct = new TSANoAcceleration(AG);
         planarity = new TSAPlanarity(AG, accStruct);
-        cout << "regular" << endl;
+        //cout << "regular" << endl;
         break;
     /*case AccelerationStructureType::approximation:
         accStruct = new TSANoAcceleration(AG);
@@ -212,7 +212,7 @@ void TSALayout::call(GraphAttributes &AG)
     case AccelerationStructureType::grid:
         accStruct = new TSAUniformGrid(AG);
         planarity = new TSAPlanarity(AG, accStruct);
-        cout << "grid" << endl;
+        //cout << "grid" << endl;
         break;
     }
 

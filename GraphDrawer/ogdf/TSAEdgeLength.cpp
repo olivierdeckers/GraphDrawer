@@ -63,8 +63,6 @@ void TSAEdgeLength::internalCandidateTaken()
         m_edgeLengths[e] = elc.length;
     }
 
-    cout << "length: " << m_sumOfEdgeLengths / m_nbEdges << endl;
-
     m_edgeLengthChanges.clear();
 }
 
