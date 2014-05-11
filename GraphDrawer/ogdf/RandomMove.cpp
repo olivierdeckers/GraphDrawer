@@ -7,7 +7,7 @@
 
 namespace ogdf {
 
-RandomMove::RandomMove(GraphAttributes &GA) : NeighbourhoodStructure(GA, "RandomMove")
+RandomMove::RandomMove(GraphAttributes &GA) : NeighbourhoodStructure(GA, "MoveNode")
 {
     m_G.allNodes(m_nonIsolatedNodes);
     ListIterator<node> it,itSucc;

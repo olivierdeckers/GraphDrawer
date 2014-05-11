@@ -132,7 +132,7 @@ private:
 	double m_nodeOverlapWeight; //!< The weight for node overlap energy.
     double m_angResWeight;
 	double m_planarityWeight;   //!< The weight for edge crossing energy.
-	int m_startTemperature;     //!< The temperature at the start of the optimization.
+    double m_startTemperature;     //!< The temperature at the start of the optimization.
 	double m_multiplier;        //!< edge length multiplier
 	double m_prefEdgeLength;    //!< Preferred edge length (abs value), only used if > 0
 	bool m_crossings;           //!< Should crossings be computed?

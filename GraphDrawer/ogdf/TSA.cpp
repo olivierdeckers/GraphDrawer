@@ -345,6 +345,8 @@ namespace ogdf {
 	{
         initParameters();
 
+        //cout << "Temperature,Energy,CandidateEnergy,CostDiff,CostDiffPrediction" << endl;
+
 #ifdef GRAPHDRAWER
         ListIterator<NeighbourhoodStructure*> it = m_neighbourhoodStructures.begin();
         int i=0;
@@ -370,6 +372,7 @@ namespace ogdf {
             double costDiffPrediction = 0;
             double alpha = 0.9;
             bool updateTemp = true;
+            //m_temperature = 5;
             while((m_temperature > m_endTemperature || i < 20) && i < 1e5) {
                 Hashing<node, DPoint> layoutChanges;
                 int neighbourhood = chooseNeighbourhood(i);
@@ -419,7 +422,8 @@ namespace ogdf {
 				}
                 else if(updateTemp) {
                     m_temperature = m_quality * (m_totalCostDiff / m_totalEntropyDiff);
-				}
+                }
+                //m_temperature = 0.9997 * m_temperature;
 
 
                 updateTemp = i%1 == 0;
@@ -445,10 +449,22 @@ namespace ogdf {
                 if(costDiffPrediction > -1e-4 && i > 1000)
                     break;
 
+                /*cout << m_temperature << ",";
+                cout << m_energy << ",";
+                cout << m_candEnergy << ",";
+                cout << costDiff << ",";
+                cout << costDiffPrediction << endl;*/
+
                 i ++;
 			}
 
-            postProcessingPhase(AG, grid);
+            cout << i << ", "<< m_energy << endl;
+
+            //cout << "Time: " << (time(NULL) - start) << endl;
+            //cout << std::fixed << i << "\t";
+            //cout << std::fixed << m_energy << endl;
+
+            //postProcessingPhase(AG, grid);
 		}
         //TODO: consider zero degree vertices
 		//if there are zero degree vertices, they are placed using placeIsolatedNodes

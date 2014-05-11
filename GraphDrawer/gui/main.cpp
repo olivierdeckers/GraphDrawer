@@ -38,8 +38,7 @@ void compareAccStruct()
     ogdf::GraphAttributes GA = ogdf::GraphAttributes(G, ogdf::GraphAttributes::nodeGraphics |
        ogdf::GraphAttributes::edgeGraphics | ogdf::GraphAttributes::nodeLabel);
 
-    QString filename = QCoreApplication::applicationDirPath() + "/../GraphDrawer/GraphDrawer/graphs/60.gml";
-    loadGraph(filename.toStdString().c_str(), G, GA);
+    loadGraph("../GraphDrawer/GraphDrawer/graphs/grid.gml", G, GA);
 
     ogdf::TSALayout layout = ogdf::TSALayout();
     int samples = 10;
@@ -48,46 +47,45 @@ void compareAccStruct()
     layout.setRepulsionWeight(1);
     layout.setAngularResolutionWeight(1);
     layout.setPlanarityWeight(3);
-    layout.setQuality(10);
+    layout.setQuality(7);
     layout.setPreferredEdgeLength(5);
     layout.setAccelerationStructureParameter(ogdf::TSALayout::grid);
-
-    //ogdf::TSAUniformGrid accStruct(GA);
-    /*ogdf::TSARepulsion repulsion(GA, 5);
-    ogdf::TSAAttraction attraction(GA, 5);*/
-    //ogdf::TSAPlanarity planarity(GA, &accStruct);
-    /*ogdf::TSAAngularResolution angres(GA);
 
     double meanRepulsionEnergy = 0;
     double meanAttractionEnergy = 0;
     double meanPlanarityEnergy = 0;
-    double meanAngResEnergy = 0;*/
+    double meanAngResEnergy = 0;
     //double meanTime;
-    QTime time;
+    //QTime time;
     for(int i=0; i<samples; i++) {
         randomLayout(G, GA);
         layout.call(GA);
-        ogdf::TSAUniformGrid accStruct(GA);
-        ogdf::TSAPlanarity planarity(GA, &accStruct);
-        time.start();
+        //ogdf::TSAUniformGrid accStruct(GA);
+        //ogdf::TSAPlanarity planarity(GA, &accStruct);
+        //time.start();
         //layout.call(GA);
-        for(int i=0; i<100; i++)
-            planarity.computeEnergy();
-        cout << time.elapsed() << endl;
+        //cout << time.elapsed() << endl;
 
-        /*attraction.computeEnergy();
+        ogdf::TSAUniformGrid accStruct(GA);
+        ogdf::TSARepulsion repulsion(GA, 5);
+        ogdf::TSAAttraction attraction(GA, 5);
+        ogdf::TSAPlanarity planarity(GA, &accStruct);
+        ogdf::TSAAngularResolution angres(GA);
+
+        attraction.computeEnergy();
         repulsion.computeEnergy();
         planarity.computeEnergy();
         angres.computeEnergy();
         meanAttractionEnergy += attraction.energy();
         meanRepulsionEnergy += repulsion.energy();
         meanPlanarityEnergy += planarity.energy();
-        meanAngResEnergy += angres.energy();*/
+        meanAngResEnergy += angres.energy();
     }
-    /*meanAttractionEnergy /= samples;
+    meanAttractionEnergy /= samples;
     meanRepulsionEnergy /= samples;
     meanPlanarityEnergy /= samples;
-    meanAngResEnergy /= samples;*/
+    meanAngResEnergy /= samples;
+    cout << meanAttractionEnergy + meanRepulsionEnergy + meanAngResEnergy + meanPlanarityEnergy * 3 << endl;
     //meanTime /= samples;
     /*cout << "attraction: " << meanAttractionEnergy << endl;
     cout << "repulsion: " << meanRepulsionEnergy << endl;
@@ -104,8 +102,8 @@ int main(int argc, char *argv[])
 
     return a.exec();/**/
 
-    //compareAccStruct();
+    /*compareAccStruct();
 
-    //return 0;
+    return 0;/**/
 
 }

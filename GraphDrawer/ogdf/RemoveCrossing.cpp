@@ -4,7 +4,7 @@
 namespace ogdf {
 
 RemoveCrossing::RemoveCrossing(GraphAttributes &GA, TSAPlanarity &planarity) :
-    NeighbourhoodStructure(GA, "Crossing"),
+    NeighbourhoodStructure(GA, "RemoveCrossing"),
     m_planarity(planarity)
 {
 }
