@@ -35,7 +35,8 @@ SOURCES += gui/main.cpp\
     ogdf/MoveCluster.cpp \
     gui/plotter.cpp \
     ogdf/TSAEdgeLength.cpp \
-    ogdf/NodeEdgeDistance.cpp
+    ogdf/NodeEdgeDistance.cpp \
+    ogdf/BipartiteNeighbourhood.cpp
 
 HEADERS  += gui/mainwindow.h \
     gui/graphcanvas.h \
@@ -60,7 +61,8 @@ HEADERS  += gui/mainwindow.h \
     ogdf/MoveCluster.h \
     gui/plotter.h \
     ogdf/TSAEdgeLength.h \
-    ogdf/NodeEdgeDistance.h
+    ogdf/NodeEdgeDistance.h \
+    ogdf/BipartiteNeighbourhood.h
 
 FORMS    += gui/mainwindow.ui \
     gui/accstructcomparison.ui

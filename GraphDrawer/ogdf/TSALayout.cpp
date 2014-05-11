@@ -52,6 +52,7 @@
 #include <ogdf/MoveCluster.h>
 #include <ogdf/TSAEdgeLength.h>
 #include <ogdf/NodeEdgeDistance.h>
+#include <ogdf/BipartiteNeighbourhood.h>
 
 
 #define DEFAULT_REPULSION_WEIGHT 1e6
@@ -220,20 +221,23 @@ void TSALayout::call(GraphAttributes &AG)
     TSAAttraction atr(AG, preferredEdgeLength);
     TSAAngularResolution angRes(AG);
 
-    tsa.addEnergyFunction(&rep,m_repulsionWeight);
-    tsa.addEnergyFunction(&atr,m_attractionWeight);
+    //tsa.addEnergyFunction(&rep,m_repulsionWeight);
+    //tsa.addEnergyFunction(&atr,m_attractionWeight);
     tsa.addEnergyFunction(&angRes,m_angResWeight);
     tsa.addEnergyFunction(planarity, m_planarityWeight);
 
-    RandomMove rm(AG);
+    /*RandomMove rm(AG);
     RemoveCrossing rc(AG, *planarity);
     MoveEdge me(AG);
     MoveCluster mc(AG);
     tsa.addNeighbourhoodStructure(&rm, 1);
     tsa.addNeighbourhoodStructure(&rc, 0.6);
     tsa.addNeighbourhoodStructure(&me, 1);
-    tsa.addNeighbourhoodStructure(&mc, 10);
+    tsa.addNeighbourhoodStructure(&mc, 10);*/
 
+    BipartiteNeighbourhood bn(AG);
+    tsa.addNeighbourhoodStructure(&bn, 1);
+    bn.initialLayout();
 
     tsa.setStartTemperature(m_startTemperature);
     tsa.setQuality(m_quality);

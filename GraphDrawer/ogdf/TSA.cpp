@@ -372,7 +372,7 @@ namespace ogdf {
             double costDiffPrediction = 0;
             double alpha = 0.9;
             bool updateTemp = true;
-            //m_temperature = 5;
+            m_temperature = 5;
             while((m_temperature > m_endTemperature || i < 20) && i < 1e5) {
                 Hashing<node, DPoint> layoutChanges;
                 int neighbourhood = chooseNeighbourhood(i);
@@ -417,13 +417,13 @@ namespace ogdf {
                     entropyDiffSinceLastUpdate = 0;
                 }
 
-                if(m_totalCostDiff >= 0 || m_totalEntropyDiff == 0) {
+                /*if(m_totalCostDiff >= 0 || m_totalEntropyDiff == 0) {
 					m_temperature = m_startingTemp;
 				}
                 else if(updateTemp) {
                     m_temperature = m_quality * (m_totalCostDiff / m_totalEntropyDiff);
-                }
-                //m_temperature = 0.9997 * m_temperature;
+                }*/
+                m_temperature = 0.9997 * m_temperature;
 
 
                 updateTemp = i%1 == 0;
@@ -446,8 +446,8 @@ namespace ogdf {
                 if(costDiff <= 0)
                     costDiffPrediction = alpha * costDiff + (1-alpha) * costDiffPrediction;
 
-                if(costDiffPrediction > -1e-4 && i > 1000)
-                    break;
+                //if(costDiffPrediction > -1e-4 && i > 1000)
+                //    break;
 
                 /*cout << m_temperature << ",";
                 cout << m_energy << ",";
