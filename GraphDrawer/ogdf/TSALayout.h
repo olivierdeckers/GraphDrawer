@@ -75,17 +75,14 @@ public:
 	//! Calls the layout algorithm for graph attributes \a GA.
     void call(GraphAttributes &GA);
 
-	//! Fixes the cost values to special configurations.
-	void fixSettings(SettingsParameter sp);
+    void setQuality(double quality);
 
-	void setQuality(double quality);
-
-	//! Sets the preferred edge length multiplier for attraction.
-	/**
-	 * This is bad design, cause you dont need to have an attraction function,
-	 * DH is purely modular and independent with its cost functions.
-	 */
-	void setPreferredEdgeLengthMultiplier(double multi) {m_multiplier = multi;}
+    //! Sets the preferred edge length multiplier for attraction.
+    /**
+     * This is bad design, cause you dont need to have an attraction function,
+     * DH is purely modular and independent with its cost functions.
+     */
+    void setPreferredEdgeLengthMultiplier(double multi) {m_multiplier = multi;}
 
 	//! Sets the preferred edge length to \a elen
 	void setPreferredEdgeLength(double elen) {m_prefEdgeLength = elen;}
@@ -102,11 +99,9 @@ public:
 	//! Returns the weight for the energy function \a Attraction.
 	double getAttractionWeight() const {return m_attractionWeight;}
 
-	//! Sets the weight for the energy function \a NodeOverlap.
-	void setNodeOverlapWeight(double);
+    void setEdgeLengthWeight(double);
 
-	//! Returns the weight for the energy function \a NodeOverlap.
-	double getNodeOverlapWeight() const {return m_nodeOverlapWeight;}
+    double getEdgeLengthWeigh() const {return m_edgeLengthWeight;}
 
     void setAngularResolutionWeight(double);
 
@@ -128,12 +123,12 @@ private:
     double calculatePreferredEdgeLength(const GraphAttributes &G, const double multiplier) const;
 
 	double m_repulsionWeight;   //!< The weight for repulsion energy.
-	double m_attractionWeight;  //!< The weight for attraction energy.
-	double m_nodeOverlapWeight; //!< The weight for node overlap energy.
+    double m_attractionWeight;  //!< The weight for attraction energy.
+    double m_edgeLengthWeight;
     double m_angResWeight;
 	double m_planarityWeight;   //!< The weight for edge crossing energy.
     double m_startTemperature;     //!< The temperature at the start of the optimization.
-	double m_multiplier;        //!< edge length multiplier
+    double m_multiplier;        //!< edge length multiplier
 	double m_prefEdgeLength;    //!< Preferred edge length (abs value), only used if > 0
 	bool m_crossings;           //!< Should crossings be computed?
 	double m_quality;

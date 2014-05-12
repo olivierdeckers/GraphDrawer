@@ -66,13 +66,12 @@ namespace ogdf {
 class TSAAttraction: public TSANodePairEnergy {
 public:
 		//Initializes data structures to speed up later computations
-        TSAAttraction(GraphAttributes &AG, double preferredEdgeLength);
+        TSAAttraction(GraphAttributes &AG);
         ~TSAAttraction() {}
 #ifdef OGDF_DEBUG
 		void printInternalData() const;
 #endif
 private:
-    double m_scaleFactor;
 	//! computes the energy contributed by the two nodes if they are placed at the two given positions
     double computeCoordEnergy(node,node);
 };

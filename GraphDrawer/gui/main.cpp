@@ -67,8 +67,8 @@ void compareAccStruct()
         //cout << time.elapsed() << endl;
 
         ogdf::TSAUniformGrid accStruct(GA);
-        ogdf::TSARepulsion repulsion(GA, 5);
-        ogdf::TSAAttraction attraction(GA, 5);
+        ogdf::TSARepulsion repulsion(GA);
+        ogdf::TSAAttraction attraction(GA);
         ogdf::TSAPlanarity planarity(GA, &accStruct);
         ogdf::TSAAngularResolution angres(GA);
 

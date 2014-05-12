@@ -45,10 +45,8 @@
 namespace ogdf {
 
 //initializes internal data, like name and layout
-TSAAttraction::TSAAttraction(GraphAttributes &AG, double preferredEdgeLength) :
+TSAAttraction::TSAAttraction(GraphAttributes &AG) :
     TSANodePairEnergy("Attraction", AG) {
-    int nbNodes = AG.constGraph().numberOfNodes();
-    m_scaleFactor = 1;//((ceil(sqrt(nbNodes)) - 1) * preferredEdgeLength);
 
 }
 
@@ -59,7 +57,7 @@ double TSAAttraction::computeCoordEnergy(node v1, node v2)
 		IntersectionRectangle i1(shape(v1)), i2(shape(v2));
         i1.move(newPos(v1));
         i2.move(newPos(v2));
-        energy = i1.distance(i2) / m_scaleFactor;
+        energy = i1.distance(i2);
         energy *= energy;
 	}
 	return energy;
@@ -69,7 +67,6 @@ double TSAAttraction::computeCoordEnergy(node v1, node v2)
 #ifdef OGDF_DEBUG
 void TSAAttraction::printInternalData() const {
     TSANodePairEnergy::printInternalData();
-    cout << "\nScale factor: " << m_scaleFactor;
 }
 #endif
 

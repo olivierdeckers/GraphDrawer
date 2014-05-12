@@ -56,7 +56,7 @@
 
 #define DEFAULT_REPULSION_WEIGHT 1e6
 #define DEFAULT_ATTRACTION_WEIGHT 1e2
-#define DEFAULT_OVERLAP_WEIGHT 100
+#define DEFAULT_EDGELENGTH_WEIGHT 100
 #define DEFAULT_ANGRES_WEIGHT 100
 #define DEFAULT_PLANARITY_WEIGHT 500
 #define DEFAULT_START_TEMPERATURE 1e-1
@@ -75,13 +75,13 @@ struct TemperatureNonPositive : InputValueInvalid { };
 TSALayout::TSALayout()
 {
 	m_repulsionWeight = DEFAULT_REPULSION_WEIGHT;
-	m_attractionWeight = DEFAULT_ATTRACTION_WEIGHT;
-	m_nodeOverlapWeight = DEFAULT_OVERLAP_WEIGHT;
+    m_attractionWeight = DEFAULT_ATTRACTION_WEIGHT;
 	m_planarityWeight = DEFAULT_PLANARITY_WEIGHT;
     m_angResWeight = DEFAULT_ANGRES_WEIGHT;
-	m_startTemperature = DEFAULT_START_TEMPERATURE;
-	m_multiplier = 2.0;
-	m_prefEdgeLength = 0.0;
+    m_edgeLengthWeight = DEFAULT_EDGELENGTH_WEIGHT;
+    m_startTemperature = DEFAULT_START_TEMPERATURE;
+    m_multiplier = 2.0;
+    m_prefEdgeLength = 0.0;
 	m_crossings = false;
 	m_quality = DEFAULT_TSA_QUALITY;
     m_accStruct = AccelerationStructureType::none;
@@ -97,30 +97,6 @@ void TSALayout::setWorker(LayoutWorker * worker)
 }
 
 #endif
-
-
-void TSALayout::fixSettings(SettingsParameter sp)
-{
-	double r, a, p, o;
-	switch (sp) {
-	case spStandard:
-		r = 900; a = 250; o = 1450; p = 300; m_crossings = false;
-		break;
-	case spRepulse:
-		r = 9000; a = 250; o = 1450; p = 300; m_crossings = false;
-		break;
-	case spPlanar:
-		r = 900; a = 250; o = 1450; p = 3000; m_crossings = true;
-		break;
-	default:
-		OGDF_THROW_PARAM(AlgorithmFailureException, afcIllegalParameter);
-	}//switch
-	setRepulsionWeight(r);
-	setAttractionWeight(a);
-	setNodeOverlapWeight(o);
-	setPlanarityWeight(p);
-    setAngularResolutionWeight(DEFAULT_ANGRES_WEIGHT);
-}//fixSettings
 
 void TSALayout::setAccelerationStructureParameter(AccelerationStructureType as)
 {
@@ -143,14 +119,13 @@ void TSALayout::setRepulsionWeight(double w)
 void TSALayout::setAttractionWeight(double w)
 {
 	if(w < 0) throw WeightLessThanZeroException();
-	else m_attractionWeight = w;
+    else m_attractionWeight = w;
 }
 
-
-void TSALayout::setNodeOverlapWeight(double w)
+void TSALayout::setEdgeLengthWeight(double w)
 {
-	if(w < 0) throw WeightLessThanZeroException();
-    else m_nodeOverlapWeight = w;
+    if(w < 0) throw WeightLessThanZeroException();
+    else m_edgeLengthWeight = w;
 }
 
 void TSALayout::setAngularResolutionWeight(double w)
@@ -216,14 +191,16 @@ void TSALayout::call(GraphAttributes &AG)
         break;
     }
 
-    TSARepulsion rep(AG, preferredEdgeLength);
-    TSAAttraction atr(AG, preferredEdgeLength);
+    TSARepulsion rep(AG);
+    TSAAttraction atr(AG);
     TSAAngularResolution angRes(AG);
+    TSAEdgeLength el(AG, preferredEdgeLength);
 
     tsa.addEnergyFunction(&rep,m_repulsionWeight);
     tsa.addEnergyFunction(&atr,m_attractionWeight);
     tsa.addEnergyFunction(&angRes,m_angResWeight);
     tsa.addEnergyFunction(planarity, m_planarityWeight);
+    tsa.addEnergyFunction(&el, m_edgeLengthWeight);
 
     RandomMove rm(AG);
     RemoveCrossing rc(AG, *planarity);

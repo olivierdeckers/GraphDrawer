@@ -464,7 +464,7 @@ namespace ogdf {
             //cout << std::fixed << i << "\t";
             //cout << std::fixed << m_energy << endl;
 
-            //postProcessingPhase(AG, grid);
+            postProcessingPhase(AG, grid);
 		}
         //TODO: consider zero degree vertices
 		//if there are zero degree vertices, they are placed using placeIsolatedNodes
@@ -477,10 +477,8 @@ namespace ogdf {
     void TSA::postProcessingPhase(GraphAttributes &AG, AccelerationStructure *grid)
     {
         cout << "PostProcessing... Current energy: " << m_energy << endl;
-        TSAEdgeLength edgeLength(AG);
         NodeEdgeDistance nodeEdgeDistance(AG, grid);
-        addEnergyFunction(&edgeLength, 100);
-        addEnergyFunction(&nodeEdgeDistance, 100);
+        addEnergyFunction(&nodeEdgeDistance, 1);
         computeInitialEnergy();
         cout << "Energy with extra energy functions: " << m_energy << endl;
 

@@ -27,7 +27,7 @@
    <property name="minimumSize">
     <size>
      <width>328</width>
-     <height>505</height>
+     <height>571</height>
     </size>
    </property>
    <property name="floating">
@@ -56,10 +56,23 @@
         <enum>QFrame::Raised</enum>
        </property>
        <layout class="QFormLayout" name="formLayout">
+        <property name="fieldGrowthPolicy">
+         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+        </property>
         <item row="0" column="0">
          <widget class="QLabel" name="label_7">
           <property name="text">
            <string>Graph</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="graphFileInput"/>
+        </item>
+        <item row="2" column="1">
+         <widget class="QPushButton" name="loadGraph">
+          <property name="text">
+           <string>Load file</string>
           </property>
          </widget>
         </item>
@@ -138,25 +151,37 @@
            <number>1</number>
           </property>
           <property name="maximum">
-           <number>10</number>
+           <number>100</number>
           </property>
           <property name="value">
            <number>5</number>
           </property>
          </widget>
         </item>
-        <item row="8" column="0">
-         <widget class="QLabel" name="label_8">
+        <item row="6" column="0">
+         <widget class="QLabel" name="label_9">
           <property name="text">
-           <string>Layout duration</string>
+           <string>Acceleration</string>
           </property>
          </widget>
         </item>
-        <item row="8" column="1">
-         <widget class="QLabel" name="layoutDuration">
-          <property name="text">
-           <string/>
-          </property>
+        <item row="6" column="1">
+         <widget class="QComboBox" name="accStructBox">
+          <item>
+           <property name="text">
+            <string>None</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Grid</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Approximation</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item row="7" column="0" colspan="2">
@@ -189,7 +214,7 @@
            <item row="0" column="1">
             <widget class="QSpinBox" name="planarityInput">
              <property name="minimum">
-              <number>1</number>
+              <number>0</number>
              </property>
              <property name="maximum">
               <number>10000</number>
@@ -202,20 +227,26 @@
            <item row="1" column="1">
             <widget class="QSpinBox" name="repulsionWeight">
              <property name="minimum">
-              <number>1</number>
+              <number>0</number>
              </property>
              <property name="maximum">
               <number>10000</number>
+             </property>
+             <property name="value">
+              <number>1</number>
              </property>
             </widget>
            </item>
            <item row="2" column="1">
             <widget class="QSpinBox" name="attractionWeight">
              <property name="minimum">
-              <number>1</number>
+              <number>0</number>
              </property>
              <property name="maximum">
               <number>10000</number>
+             </property>
+             <property name="value">
+              <number>1</number>
              </property>
             </widget>
            </item>
@@ -229,49 +260,47 @@
            <item row="3" column="1">
             <widget class="QSpinBox" name="angResWeight">
              <property name="minimum">
-              <number>1</number>
+              <number>0</number>
              </property>
              <property name="maximum">
               <number>10000</number>
+             </property>
+             <property name="value">
+              <number>1</number>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_11">
+             <property name="text">
+              <string>EdgeLength</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QSpinBox" name="edgeLengthWeight">
+             <property name="maximum">
+              <number>10000</number>
+             </property>
+             <property name="value">
+              <number>1</number>
              </property>
             </widget>
            </item>
           </layout>
          </widget>
         </item>
-        <item row="2" column="1">
-         <widget class="QPushButton" name="loadGraph">
+        <item row="8" column="0">
+         <widget class="QLabel" name="label_8">
           <property name="text">
-           <string>Load file</string>
+           <string>Layout duration</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QComboBox" name="graphFileInput"/>
-        </item>
-        <item row="6" column="1">
-         <widget class="QComboBox" name="accStructBox">
-          <item>
-           <property name="text">
-            <string>None</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Grid</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Approximation</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item row="6" column="0">
-         <widget class="QLabel" name="label_9">
+        <item row="8" column="1">
+         <widget class="QLabel" name="layoutDuration">
           <property name="text">
-           <string>Acceleration</string>
+           <string/>
           </property>
          </widget>
         </item>

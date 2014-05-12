@@ -61,14 +61,12 @@ namespace ogdf {
 class TSARepulsion: public TSANodePairEnergy {
 public:
 	//Initializes data structures to speed up later computations
-    TSARepulsion(GraphAttributes &AG, double prefEdgeLength);
+    TSARepulsion(GraphAttributes &AG);
 
 
 private:
 	//computes for two vertices an the given positions the repulsive energy
     double computeCoordEnergy(node, node);
-
-    double m_scaleFactor;
 };
 
 

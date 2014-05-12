@@ -62,8 +62,7 @@ HEADERS  += gui/mainwindow.h \
     ogdf/TSAEdgeLength.h \
     ogdf/NodeEdgeDistance.h
 
-FORMS    += gui/mainwindow.ui \
-    gui/accstructcomparison.ui
+FORMS    += gui/mainwindow.ui
 
 win32 {
 LIBS += -L$$PWD/../../OGDF/OGDF/Win32/Debug -lOGDF

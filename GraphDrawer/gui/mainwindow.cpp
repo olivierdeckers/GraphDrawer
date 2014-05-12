@@ -70,7 +70,6 @@ void MainWindow::layoutGraph()
     QString layoutName = ui->layoutSpinner->currentText();
     if(layoutName.compare("TSA") == 0) {
         ogdf::TSALayout *tLayout = new ogdf::TSALayout();
-        tLayout->fixSettings(ogdf::TSALayout::spPlanar);
 
         tLayout->setPreferredEdgeLength(0);
         tLayout->setPreferredEdgeLengthMultiplier(ui->edgeLengthInput->value());
@@ -78,6 +77,7 @@ void MainWindow::layoutGraph()
         tLayout->setRepulsionWeight(ui->repulsionWeight->value());
         tLayout->setPlanarityWeight(ui->planarityInput->value());
         tLayout->setAngularResolutionWeight(ui->angResWeight->value());
+        tLayout->setEdgeLengthWeight(ui->edgeLengthWeight->value());
         tLayout->setQuality(ui->qualityInput->value());
         switch(ui->accStructBox->currentIndex()) {
         case 0:

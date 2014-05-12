@@ -8,24 +8,12 @@ namespace ogdf {
 class TSAEdgeLength : public TSANodePairEnergy
 {
 public:
-    TSAEdgeLength(GraphAttributes &AG);
+    TSAEdgeLength(GraphAttributes &AG, double preferredEdgeLength);
 
 private:
     double computeCoordEnergy(node, node);
 
-    virtual void internalCandidateTaken();
-
-    edge findEdge(node a, node b, List<edge> &edges);
-
-    struct EdgeLengthChange {
-        node a, b;
-        double length;
-    };
-
-    EdgeArray<double> m_edgeLengths;
-    double m_sumOfEdgeLengths;
-    int m_nbEdges;
-    List<EdgeLengthChange> m_edgeLengthChanges;
+    double m_prefEdgeLength;
 };
 
 }
