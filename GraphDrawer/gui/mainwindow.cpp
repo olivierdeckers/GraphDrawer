@@ -34,6 +34,12 @@ MainWindow::MainWindow(QWidget *parent) :
     graphs->insert("grid", "graphs/grid.gml");
     graphs->insert("tree", "graphs/tree.gml");
     graphs->insert("fb", "graphs/fb.gml");
+    graphs->insert("dodecahedron", "graphs/dodecahedron.gml");
+    graphs->insert("bipartite", "graphs/bipartite2.gml");
+    graphs->insert("cuboid", "graphs/balk.gml");
+    graphs->insert("cobweb", "graphs/cobweb.gml");
+    graphs->insert("k33", "graphs/k33.gml");
+    graphs->insert("ring", "graphs/ring.gml");
     QList<QString> keys = graphs->keys();
     qSort(keys);
     ui->graphFileInput->addItems(keys);
