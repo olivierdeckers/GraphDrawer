@@ -7,7 +7,7 @@ class NodeDegreeComparer {
 public:
     bool less(node a, node b) const
     {
-        return a->degree() < b->degree();
+        return a->degree() > b->degree();
     }
 };
 
@@ -72,9 +72,10 @@ void MoveCluster::growCluster(node start, Cluster &c, List<node> &nodes, int clu
                     score++;
                 }
             }
-            score /= candidate->degree();
+            score /= c.nodes.size() + candidate->degree();
 
-            if( (score >= 0.3 && score > bestScore) || (score == bestScore && candidate->degree() < bestCandidate->degree()) ) {
+            if( (score >= 0.15 && score > bestScore) ||
+                (bestScore == 0 && candidate->degree() == 1) ) {
                 bestScore = score;
                 bestCandidate = candidate;
             }

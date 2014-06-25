@@ -89,8 +89,8 @@ void GraphCanvas::paintEvent(QPaintEvent *)
 
             painter.drawEllipse(x, y, w, h);
 
-            //if(m_GA->labelNode(v).length() > 0)
-            //    painter.drawText((int) x, (int) y, QString(m_GA->labelNode(v).cstr()));
+            if(m_GA->labelNode(v).length() > 0)
+                painter.drawText((int) x, (int) y, QString(m_GA->labelNode(v).cstr()));
         }
     }
     /*QTimer *timer = new QTimer(this);

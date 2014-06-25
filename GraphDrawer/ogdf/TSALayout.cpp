@@ -142,7 +142,7 @@ void TSALayout::setPlanarityWeight(double w)
 }
 
 
-void TSALayout::setStartTemperature (int w)
+void TSALayout::setStartTemperature (double w)
 {
 	if(w < 0) throw TemperatureNonPositive();
 	else m_startTemperature = w;
@@ -177,17 +177,14 @@ void TSALayout::call(GraphAttributes &AG)
     case AccelerationStructureType::none:
         accStruct = new TSANoAcceleration(AG);
         planarity = new TSAPlanarity(AG, accStruct);
-        cout << "regular" << endl;
         break;
     /*case AccelerationStructureType::approximation:
         accStruct = new TSANoAcceleration(AG);
         planarity = new PlanarityApprox(AG, accStruct);
-        cout << "approx" << endl;
         break;*/
     case AccelerationStructureType::grid:
         accStruct = new TSAUniformGrid(AG);
         planarity = new TSAPlanarity(AG, accStruct);
-        cout << "grid" << endl;
         break;
     }
 
@@ -207,9 +204,9 @@ void TSALayout::call(GraphAttributes &AG)
     MoveEdge me(AG);
     MoveCluster mc(AG);
     tsa.addNeighbourhoodStructure(&rm, 1);
-    tsa.addNeighbourhoodStructure(&rc, 0.6);
+    tsa.addNeighbourhoodStructure(&rc, 1);
     tsa.addNeighbourhoodStructure(&me, 1);
-    tsa.addNeighbourhoodStructure(&mc, 10);
+    tsa.addNeighbourhoodStructure(&mc, 1);
 
 
     tsa.setStartTemperature(m_startTemperature);

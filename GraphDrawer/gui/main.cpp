@@ -9,6 +9,8 @@
 #include <ogdf/TSAAttraction.h>
 #include <ogdf/TSAPlanarity.h>
 #include <ogdf/TSAAngularResolution.h>
+#include <ogdf/TSAEdgeLength.h>
+#include <ogdf/NodeEdgeDistance.h>
 #include <QApplication>
 
 void loadGraph(const std::string filename, ogdf::Graph &G, ogdf::GraphAttributes &GA)
@@ -38,7 +40,7 @@ void compareAccStruct()
     ogdf::GraphAttributes GA = ogdf::GraphAttributes(G, ogdf::GraphAttributes::nodeGraphics |
        ogdf::GraphAttributes::edgeGraphics | ogdf::GraphAttributes::nodeLabel);
 
-    loadGraph("../GraphDrawer/GraphDrawer/graphs/grid.gml", G, GA);
+    loadGraph("../GraphDrawer/GraphDrawer/graphs/60.gml", G, GA);
 
     ogdf::TSALayout layout = ogdf::TSALayout();
     int samples = 10;
@@ -47,45 +49,55 @@ void compareAccStruct()
     layout.setRepulsionWeight(1);
     layout.setAngularResolutionWeight(1);
     layout.setPlanarityWeight(3);
-    layout.setQuality(7);
+    layout.setEdgeLengthWeight(0);
+    layout.setQuality(10);
     layout.setPreferredEdgeLength(5);
     layout.setAccelerationStructureParameter(ogdf::TSALayout::grid);
 
-    double meanRepulsionEnergy = 0;
-    double meanAttractionEnergy = 0;
-    double meanPlanarityEnergy = 0;
-    double meanAngResEnergy = 0;
+    //double meanRepulsionEnergy = 0;
+    //double meanAttractionEnergy = 0;
+    //double meanPlanarityEnergy = 0;
+    //double meanAngResEnergy = 0;
+    //double meanEnergy = 0.0;
     //double meanTime;
-    //QTime time;
+    QTime time;
     for(int i=0; i<samples; i++) {
         randomLayout(G, GA);
+        time.start();
         layout.call(GA);
+        cout << time.elapsed() << endl;
         //ogdf::TSAUniformGrid accStruct(GA);
         //ogdf::TSAPlanarity planarity(GA, &accStruct);
         //time.start();
         //layout.call(GA);
         //cout << time.elapsed() << endl;
 
-        ogdf::TSAUniformGrid accStruct(GA);
+        /*ogdf::TSAUniformGrid accStruct(GA);
         ogdf::TSARepulsion repulsion(GA);
         ogdf::TSAAttraction attraction(GA);
         ogdf::TSAPlanarity planarity(GA, &accStruct);
         ogdf::TSAAngularResolution angres(GA);
+        ogdf::TSAEdgeLength edgeLength(GA, 5);
+        ogdf::NodeEdgeDistance nodeEdgeDist(GA, &accStruct);*/
 
-        attraction.computeEnergy();
+        /*attraction.computeEnergy();
         repulsion.computeEnergy();
         planarity.computeEnergy();
         angres.computeEnergy();
-        meanAttractionEnergy += attraction.energy();
+        edgeLength.computeEnergy();
+        nodeEdgeDist.computeEnergy();
+        meanEnergy += attraction.energy() + repulsion.energy() + 3*planarity.energy() + angres.energy() + edgeLength.energy() + nodeEdgeDist.energy();*/
+        /*meanAttractionEnergy += attraction.energy();
         meanRepulsionEnergy += repulsion.energy();
         meanPlanarityEnergy += planarity.energy();
-        meanAngResEnergy += angres.energy();
+        meanAngResEnergy += angres.energy();*/
     }
-    meanAttractionEnergy /= samples;
+    /*meanAttractionEnergy /= samples;
     meanRepulsionEnergy /= samples;
     meanPlanarityEnergy /= samples;
-    meanAngResEnergy /= samples;
-    cout << meanAttractionEnergy + meanRepulsionEnergy + meanAngResEnergy + meanPlanarityEnergy * 3 << endl;
+    meanAngResEnergy /= samples;*/
+    //meanEnergy /= samples;
+    //cout << meanEnergy << endl;
     //meanTime /= samples;
     /*cout << "attraction: " << meanAttractionEnergy << endl;
     cout << "repulsion: " << meanRepulsionEnergy << endl;

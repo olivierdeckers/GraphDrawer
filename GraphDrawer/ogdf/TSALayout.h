@@ -114,7 +114,7 @@ public:
 	double getPlanarityWeight() const {return m_planarityWeight;}
 
 	//! Sets the starting temperature to \a t.
-	void setStartTemperature(int t);
+    void setStartTemperature(double t);
 
 	//! Returns the starting temperature.
 	int getStartTemperature() const {return m_startTemperature;}

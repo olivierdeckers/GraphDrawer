@@ -55,12 +55,12 @@
 
 namespace ogdf {
 
-    const double TSA::m_startingTemp = 1e-1;
 	//const int TSA::m_iterationMultiplier = 25;  //best//30;ori
 	const double TSA::m_defaultEndTemperature = 1e-5;
 
 	//initializes internal data and the random number generator
     TSA::TSA():
+        m_startingTemp(1e-1),
         m_temperature(m_startingTemp),
         m_energy(0.0),
         m_quality(1.0),
@@ -90,9 +90,9 @@ namespace ogdf {
         }
 
         unsigned int t = (unsigned) time(NULL);
-		cout << "seed: " << t << endl;
+        //cout << "seed: " << t << endl;
 		srand(t);
-		//srand((unsigned int) 1385114936);
+        //srand((unsigned int) 1385114936);
 	}
 
 	void TSA::setQuality(double quality) 
@@ -104,7 +104,8 @@ namespace ogdf {
 	void TSA::setStartTemperature(double startTemp)
 	{
 		OGDF_ASSERT(startTemp >= 0);
-		m_temperature=startTemp;
+        m_startingTemp = startTemp;
+        m_temperature = startTemp;
 	}
 
 	/*void TSA::setNumberOfIterations(int steps)
@@ -234,12 +235,12 @@ namespace ogdf {
         ListIterator<TSAEnergyFunction*> it;
 		ListIterator<double> it2;
         it2 = m_weightsOfEnergyFunctions.begin();
-        cout << "initial energy components: " << endl;
+        //cout << "initial energy components: " << endl;
         for(it = m_energyFunctions.begin(); it.valid() && it2.valid(); it=it.succ(), it2 = it2.succ()) {
 			m_energy += (*it)->energy() * (*it2);
-            cout << (*it)->getName() << ": " << (*it)->energy() << endl;
+            //cout << (*it)->getName() << ": " << (*it)->energy() << endl;
         }
-        cout << "Initial energy" << m_energy << endl;
+        //cout << "Initial energy" << m_energy << endl;
 	}
 
 	//the vertices with degree zero are placed below all other vertices on a horizontal
@@ -372,7 +373,7 @@ namespace ogdf {
             double costDiffPrediction = 0;
             double alpha = 0.9;
             bool updateTemp = true;
-            //m_temperature = 5;
+            int nbIterationsSinceChange = 0;
             while((m_temperature > m_endTemperature || i < 20) && i < 1e5) {
                 Hashing<node, DPoint> layoutChanges;
                 int neighbourhood = chooseNeighbourhood(i);
@@ -402,6 +403,9 @@ namespace ogdf {
                         costDiffSinceLastUpdate = costDiff;
                     else
                         costDiffSinceLastUpdate = min(costDiffSinceLastUpdate, costDiff);
+
+                    if(costDiff < 0.0001 * m_totalCostDiff)
+                        nbIterationsSinceChange = 0;
                 }
 
                 if(costDiff > 0) {
@@ -423,7 +427,8 @@ namespace ogdf {
                 else if(updateTemp) {
                     m_temperature = m_quality * (m_totalCostDiff / m_totalEntropyDiff);
                 }
-                //m_temperature = 0.9997 * m_temperature;
+                //if(i%10 == 0)
+                    //m_temperature = 0.97 * m_temperature;
 
 
                 updateTemp = i%1 == 0;
@@ -443,10 +448,13 @@ namespace ogdf {
 				cout << "energy: " << m_energy << endl;
 				cout << "iteration: " << i << endl;*/
 
-                if(costDiff <= 0)
-                    costDiffPrediction = alpha * costDiff + (1-alpha) * costDiffPrediction;
+                //if(costDiff <= 0)
+                //    costDiffPrediction = alpha * costDiff + (1-alpha) * costDiffPrediction;
 
-                if(costDiffPrediction > -1e-4 && i > 1000)
+                //if(costDiffPrediction > -1e-4 && i > 1000)
+                //    break;
+
+                if (nbIterationsSinceChange > 1000)
                     break;
 
                 /*cout << m_temperature << ",";
@@ -456,13 +464,14 @@ namespace ogdf {
                 cout << costDiffPrediction << endl;*/
 
                 i ++;
+                nbIterationsSinceChange++;
 			}
 
-            cout << i << ", "<< m_energy << endl;
+            //cout << i << ", "<< m_energy << endl;
 
             //cout << "Time: " << (time(NULL) - start) << endl;
-            //cout << std::fixed << i << "\t";
-            //cout << std::fixed << m_energy << endl;
+            cout << std::fixed << i << "\t";
+            cout << std::fixed << m_energy << "\t";
 
             postProcessingPhase(AG, grid);
 		}
@@ -470,8 +479,8 @@ namespace ogdf {
 		//if there are zero degree vertices, they are placed using placeIsolatedNodes
         //if(m_nonIsolatedNodes.size() != G.numberOfNodes())
         //	placeIsolatedNodes(AG);
-		cout << "Time: " << (time(NULL) - start) << endl;
-        cout << "iterations: " << std::fixed << i << endl;
+        //cout << "Time: " << (time(NULL) - start) << endl;
+        //cout << "iterations: " << std::fixed << i << endl;
     }
 
     void TSA::postProcessingPhase(GraphAttributes &AG, AccelerationStructure *grid)

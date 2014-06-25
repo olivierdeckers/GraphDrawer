@@ -66,6 +66,12 @@ void MainWindow::loadGraph(const std::string filename) {
         m_GA->height(v) = 0.05;
     }
 
+    double width = m_GA->boundingBox().width();
+    forall_nodes(v, *m_G) {
+        m_GA->x(v) /= width;
+        m_GA->y(v) /= width;
+    }
+
     ui->graphCanvas->update();
 }
 

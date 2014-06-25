@@ -322,8 +322,8 @@ TEST_F(TSAUniformGridTest, DeltaUpdatesCorrectness) {
         G->newEdge(nodes[a], nodes[b]);
     }
 
-    ogdf::TSAAttraction *attraction = new ogdf::TSAAttraction(*GA, 5);
-    ogdf::TSARepulsion *repulsion = new ogdf::TSARepulsion(*GA, 5);
+    ogdf::TSAAttraction *attraction = new ogdf::TSAAttraction(*GA);
+    ogdf::TSARepulsion *repulsion = new ogdf::TSARepulsion(*GA);
     ogdf::TSAAngularResolution *angres = new ogdf::TSAAngularResolution(*GA);
     attraction->computeEnergy();
     repulsion->computeEnergy();

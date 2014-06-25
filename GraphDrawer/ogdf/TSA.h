@@ -95,7 +95,7 @@ public:
 
 private:
 	//! The default starting temperature.
-    const static double m_startingTemp;
+    double m_startingTemp;
 	//! The default end temperature
 	const static double m_defaultEndTemperature;
 
